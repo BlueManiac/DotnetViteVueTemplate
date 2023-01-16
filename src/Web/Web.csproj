@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<TypeScriptCompileBlocked>True</TypeScriptCompileBlocked>
+	</PropertyGroup>
+
+	<Target Name="Spa" AfterTargets="Publish">
+		<!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
+		<Exec Command="node -e &quot;console.log('NPM Installing dependencies...')&quot;" />
+		<Exec Command="npm install" />
+		<Exec Command="npm run build -- --emptyOutDir false --outDir $(PublishDir)wwwroot" />
+	</Target>
+
+</Project>

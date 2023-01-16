@@ -1,0 +1,19 @@
+{
+  "profiles": {
+    "Watch": {
+      "commandName": "Executable",
+      "executablePath": "wt",
+      "commandLineArgs": "-w 0 --title $(ProjectName) -d $(ProjectDir) powershell -NoExit dotnet watch --non-interactive `; split-pane --title $(ProjectName) -d $(ProjectDir) powershell -NoExit ./Properties/npmrun.ps1 `; split-pane --title $(ProjectName) -d $(ProjectDir)",
+      "workingDirectory": "$(ProjectDir)"
+    },
+    "Web": {
+      "commandName": "Project",
+      "launchBrowser": false,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "dotnetRunMessages": false,
+      "applicationUrl": "https://localhost:7126;http://localhost:7115"
+    }
+  }
+}
