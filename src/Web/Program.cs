@@ -1,6 +1,7 @@
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddResponseCompression(options => options.EnableForHttps = true);
+builder.Services.AddProblemDetails();
 
 if (builder.Environment.IsDevelopment())
 {
@@ -34,6 +35,11 @@ app.MapGet("/hello", async () =>
     await Task.Delay(500);
 
     return new { Hello = "Hello World!" };
+});
+
+app.MapGet("/error", () =>
+{
+    throw new Exception("error");
 });
 
 app.MapFallbackToFile("index.html");

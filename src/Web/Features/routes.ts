@@ -8,11 +8,27 @@ export const baseRoutes: RouteRecordRaw[] = [
   },
   {
     path: '/test',
+    meta: { title: 'Test' },
     children: [{
       path: 'hello',
       component: () => import('./Hello/Hello.vue'),
       meta: { title: 'Hello' }
-    }],
-    meta: { title: 'Test' }
+    }]
+  },
+  {
+    path: "/errors",
+    meta: { title: 'Errors' },
+    children: [
+      {
+        path: 'serverError',
+        component: () => import('./Errors/ServerError.vue'),
+        meta: { title: 'Server exception' }
+      },
+      {
+        path: 'clientError',
+        component: () => import('./Errors/ClientError.vue'),
+        meta: { title: 'Client error' }
+      }
+    ]
   },
 ]

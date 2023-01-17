@@ -12,5 +12,9 @@ window.fetch = async (input: RequestInfo | URL, init?: RequestInitExtended) => {
     return response
   }
 
+  if (!response.ok) {
+    throw await response.json()
+  }
+
   return response.json()
-};
+}
