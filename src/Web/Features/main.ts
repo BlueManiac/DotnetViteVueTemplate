@@ -5,10 +5,8 @@ import { createApp } from 'vue'
 import 'bootstrap'
 
 import '../Util/Client/array'
-import { setupFetch } from '../Util/Client/fetch'
-import { apiUrl } from './info'
-
-setupFetch(apiUrl)
+import '../Util/Client/fetch'
+import './info'
 
 import App from './App.vue'
 import { Router } from './router'

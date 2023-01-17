@@ -3,5 +3,5 @@
 </template>
 
 <script setup>
-await fetch('/error')
+  await get('/error')
 </script>

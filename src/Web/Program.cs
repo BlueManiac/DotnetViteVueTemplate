@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Mvc;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddResponseCompression(options => options.EnableForHttps = true);
@@ -40,6 +42,11 @@ app.MapGet("/hello", async () =>
 app.MapGet("/error", () =>
 {
     throw new Exception("error");
+});
+
+app.MapPost("/hello2", ([FromBody] string data) =>
+{
+    return new { data };
 });
 
 app.MapFallbackToFile("index.html");

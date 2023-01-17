@@ -19,7 +19,7 @@
 </template>
 
 <script setup>
-  import { rotation, speed, isActive, pause, resume } from './data'
+  import { rotation, speed, isActive, pause, resume, load } from './data'
 
-  const { hello } = await fetch('/hello')
+  const { hello } = await load()
 </script>

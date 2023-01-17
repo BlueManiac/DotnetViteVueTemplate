@@ -7,3 +7,7 @@ export const speed = useStorage('speed', 1)
 export const { isActive, pause, resume } = useIntervalFn(() => {
   rotation.value = (rotation.value + speed.value) % 360
 }, 50)
+
+export type Hello = { hello: string }
+
+export const load = () => get<Hello>('/hello')
