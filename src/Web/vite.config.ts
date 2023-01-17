@@ -24,7 +24,7 @@ export default ({ mode }) => {
       }),
       ViteEjsPlugin({
         apiUrl: env.VITE_API_URL,
-        applicationName: 'DotnetViteVueTemplate'
+        applicationName: env.VITE_APPLICATION_NAME
       })
     ]
   }

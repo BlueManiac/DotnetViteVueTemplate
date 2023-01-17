@@ -4,8 +4,11 @@ import './main.scss'
 import { createApp } from 'vue'
 import 'bootstrap'
 
-import '/Util/Client/array.js'
-import '/Util/Client/fetch.ts'
+import '../Util/Client/array'
+import { setupFetch } from '../Util/Client/fetch'
+import { apiUrl } from './info'
+
+setupFetch(apiUrl)
 
 import App from './App.vue'
 import { Router } from './router'
