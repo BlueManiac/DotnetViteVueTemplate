@@ -31,4 +31,9 @@ export const baseRoutes: RouteRecordRaw[] = [
       }
     ]
   },
+  {
+    path: '/realtime',
+    component: () => import('./RealTime/RealTime.vue'),
+    meta: { title: 'Realtime' }
+  },
 ]

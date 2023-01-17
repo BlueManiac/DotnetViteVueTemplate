@@ -1,13 +1,15 @@
 using Microsoft.AspNetCore.Mvc;
+using Web.Features.Realtime;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddResponseCompression(options => options.EnableForHttps = true);
 builder.Services.AddProblemDetails();
+builder.Services.AddSignalR();
 
 if (builder.Environment.IsDevelopment())
 {
-    builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin()));
+    builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowCredentials().SetIsOriginAllowed((hosts) => true)));
 }
 
 var app = builder.Build();
@@ -32,10 +34,10 @@ if (builder.Environment.IsDevelopment())
     app.UseCors();
 }
 
-app.MapGet("/hello", async () =>
-{
-    await Task.Delay(500);
+app.MapHub<RealTimeHub>("/realtime");
 
+app.MapGet("/hello", () =>
+{
     return new { Hello = "Hello World!" };
 });
 
