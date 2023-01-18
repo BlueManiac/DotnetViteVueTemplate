@@ -14,7 +14,6 @@ export function useSignalr(url: string) {
 
   const close = () => {
     connection.stop()
-    console.log('disconnected')
   }
 
   useEventListener(window, 'beforeunload', () => close())
