@@ -32,6 +32,8 @@
 
 <style scoped>
   h5 {
+    font-size: 1em;
     white-space: pre-line;
+    word-wrap: anywhere;
   }
 </style>

@@ -1,15 +1,17 @@
 ﻿<template>
   <Navbar />
-  <div class="container-fluid vh-100 pt-3">
+  <div class="container-fluid vh-100">
     <RouterView v-slot="{ Component }">
-      <problem-details v-if="error" :error="error" :component="Component" />
-      <template v-else-if="Component">
-        <suspense>
-          <component :is="Component"></component>
-          <template #fallback>
-            Loading...
-          </template>
-        </suspense>
+      <template v-if="Component">
+          <suspense timeout="30">
+              <template #default>
+                  <problem-details v-if="error" :error="error" :component="Component" />
+                  <component v-else :is="Component"></component>
+              </template>
+              <template #fallback>
+                  Loading...
+              </template>
+          </suspense>
       </template>
     </RouterView>
   </div>
@@ -33,5 +35,6 @@
 
   import.meta.hot.on('vite:afterUpdate', () => {
     error.value = null
+    console.clear()
   })
 </script>
