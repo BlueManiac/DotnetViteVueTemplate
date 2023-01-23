@@ -11,6 +11,7 @@
     "@iconify/json": "=2.2.8",
     "@vitejs/plugin-vue": "=4.0.0",
     "sass": "npm:sass-embedded@=1.57.1",
+    "unplugin-auto-import": "=0.12.1",
     "unplugin-icons": "=0.15.1",
     "unplugin-vue-components": "=0.22.12",
     "vite": "=4.0.4",

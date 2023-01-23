@@ -1,5 +1,4 @@
 ﻿import { useIntervalFn, useStorage } from "@vueuse/core"
-import { ref } from "vue"
 
 export const rotation = ref(0)
 export const speed = useStorage('speed', 1)
