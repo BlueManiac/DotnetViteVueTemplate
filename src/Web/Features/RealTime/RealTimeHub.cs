@@ -10,7 +10,7 @@ public class RealTimeHub : Hub<IRealTimeClient>
 
     public Task Data(string message)
     {
-        return Clients.Caller.Message("Server recieved " + message + " " + DateTime.Now);
+        return Clients.Caller.Message("Server received " + message + " " + DateTime.Now);
     }
 }
 

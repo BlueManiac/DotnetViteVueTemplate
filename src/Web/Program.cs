@@ -1,11 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
-using Web.Features.Realtime;
+using Web.Features.RealTime;
+using Web.Util.Modules;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddResponseCompression(options => options.EnableForHttps = true);
 builder.Services.AddProblemDetails();
 builder.Services.AddSignalR();
+
+builder.AddModule<RealTimeModule>();
 
 if (builder.Environment.IsDevelopment())
 {
@@ -34,7 +37,7 @@ if (builder.Environment.IsDevelopment())
     app.UseCors();
 }
 
-app.MapHub<RealTimeHub>("/realtime");
+app.MapModule<RealTimeModule>();
 
 app.MapGet("/hello", () =>
 {
