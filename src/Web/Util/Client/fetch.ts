@@ -12,6 +12,8 @@ declare global {
   function get<T>(input: RequestInfo | URL, init?: RequestInitExtended): Promise<T>
   function post<T>(input: RequestInfo | URL, data: any, init?: RequestInitExtended): Promise<T>
   function post(input: RequestInfo | URL, data: any, init?: RequestInitExtended): Promise<string>
+  function put<T>(input: RequestInfo | URL, data: any, init?: RequestInitExtended): Promise<T>
+  function put(input: RequestInfo | URL, data: any, init?: RequestInitExtended): Promise<string>
 }
 
 const { fetch: originalFetch } = window
@@ -43,6 +45,33 @@ window.post = async function <T>(input: RequestInfo | URL, data?: any, init?: Re
   init ??= {}
 
   init.method = 'POST'
+  init.apiUrl ??= apiUrl
+  init.headers ??= {
+    'accept': 'application/json',
+    'content-type': 'application/json'
+  }
+
+  init.body ??= JSON.stringify(data)
+
+  const response = await fetch<T>(input, init)
+
+  if (!response.ok) {
+    throw await response.json()
+  }
+
+  const contentType = response.headers.get("content-type")
+
+  if (contentType?.indexOf("application/json") >= 0) {
+    return await response.json()
+  }
+
+  return response.text()
+}
+
+window.put = async function <T>(input: RequestInfo | URL, data?: any, init?: RequestInitExtended) {
+  init ??= {}
+
+  init.method = 'PUT'
   init.apiUrl ??= apiUrl
   init.headers ??= {
     'accept': 'application/json',
