@@ -7,15 +7,6 @@ export const baseRoutes: RouteRecordRaw[] = [
     meta: { title: 'Home' }
   },
   {
-    path: '/test',
-    meta: { title: 'Test' },
-    children: [{
-      path: 'hello',
-      component: () => import('./Hello/Hello.vue'),
-      meta: { title: 'Hello' }
-    }]
-  },
-  {
     path: "/errors",
     meta: { title: 'Errors' },
     children: [

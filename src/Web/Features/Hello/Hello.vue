@@ -9,8 +9,12 @@
         <i-mdi-account-cowboy-hat />
       </text-rotated>
     </h1>
-    <button-primary v-if="isActive" @click="pause()">Pause</button-primary>
-    <button-primary v-else @click="resume()">Resume</button-primary>
+    <btn v-if="isActive" @click="pause()">
+      Pause
+    </btn>
+    <btn v-else @click="resume()">
+      Resume
+    </btn>
     <range v-model.number="speed" min="-20" max="20" class="mt-3"></range>
     Rotation speed
     <br />

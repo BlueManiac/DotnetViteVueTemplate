@@ -1,5 +1,5 @@
 ﻿<template>
-  <button-primary @click="send()" class="mb-3">Send</button-primary>
+  <btn @click="send()" class="mb-3">Send</btn>
   <br />
   {{message}}
 </template>
