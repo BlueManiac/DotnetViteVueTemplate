@@ -1,6 +1,7 @@
 ﻿<template>
-  <Navbar />
   <div class="container-fluid vh-100">
+    <Navbar />
+    <Breadcrumb />
     <RouterView v-slot="{ Component }">
       <template v-if="Component">
         <suspense timeout="30">
