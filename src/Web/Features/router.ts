@@ -1,6 +1,5 @@
 ﻿import { ref } from 'vue'
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
-import { applicationName } from './info'
 import { baseRoutes } from './routes'
 
 export const Router = createRouter({
@@ -12,11 +11,7 @@ export const Router = createRouter({
 
 export const routes = ref(createRouteRecords(baseRoutes))
 
-Router.beforeEach(to => {
-  document.title = to.meta?.title
-    ? to.meta.title + " - " + applicationName
-    : applicationName
-})
+export const title = computed(() => Router.currentRoute.value.meta?.title)
 
 function createRouteRecords(routes?: RouteRecordRaw[], parentRoutePath?: string) {
   if (!routes?.length)

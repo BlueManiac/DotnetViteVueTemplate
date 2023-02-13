@@ -6,11 +6,18 @@ import 'bootstrap'
 
 import '../Util/Client/array'
 import '../Util/Client/fetch'
-import './info'
+import { applicationName } from './info'
 
 import App from './App.vue'
-import { Router } from './router'
+import { Router, title } from './router'
 
 createApp(App)
   .use(Router)
   .mount('#app')
+
+import { useTitle } from '@vueuse/core'
+
+useTitle(() => title.value
+  ? title.value + " - " + applicationName
+  : applicationName
+)
