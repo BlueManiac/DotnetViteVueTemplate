@@ -3,7 +3,7 @@
     "Watch": {
       "commandName": "Executable",
       "executablePath": "wt",
-      "commandLineArgs": "-w 0 --title $(ProjectName) -d $(ProjectDir) powershell -NoExit $env:DOTNET_WATCH_RESTART_ON_RUDE_EDIT = 'true'\\; dotnet watch `; split-pane --title $(ProjectName) -d $(ProjectDir) powershell -NoExit ./Properties/npmrun.ps1 `; split-pane --title $(ProjectName) -d $(ProjectDir)",
+      "commandLineArgs": "-w 0 --title $(ProjectName) -d $(ProjectDir) PowerShell -NoExit $env:DOTNET_WATCH_RESTART_ON_RUDE_EDIT = 'true'\\; dotnet watch ; split-pane --title $(ProjectName) -d $(ProjectDir) PowerShell -NoExit ./Properties/npmrun.ps1 ; split-pane --title $(ProjectName) -d $(ProjectDir)",
       "workingDirectory": "$(ProjectDir)"
     },
     "Web": {
