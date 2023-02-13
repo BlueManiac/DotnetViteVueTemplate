@@ -1,16 +1,12 @@
 ﻿export { }
 declare global {
   interface Array<T> {
-    orderBy(lambda: (item: T) => any, reverse?: boolean)
+    toSorted(lambda: (item: T) => any): Array<T>
   }
 }
 
-Array.prototype.orderBy = function (lambda, reverse = false) {
-  const sortedList = this.slice(0).sort((a, b) =>
+Array.prototype.toSorted = function (lambda) {
+  return this.slice(0).sort((a, b) =>
     lambda(a) > lambda(b) ? 1 : lambda(a) < lambda(b) ? -1 : 0
   )
-
-  return reverse
-    ? sortedList.reverse()
-    : sortedList
 }
