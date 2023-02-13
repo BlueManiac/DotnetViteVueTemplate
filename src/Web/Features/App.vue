@@ -34,10 +34,8 @@
     error.value = null
   })
 
-  if (import.meta.env.DEV) {
-    import.meta.hot.on('vite:afterUpdate', () => {
-      error.value = null
-      console.clear()
-    })
-  }
+  import.meta.hot?.on('vite:afterUpdate', () => {
+    error.value = null
+    console.clear()
+  })
 </script>
