@@ -11,6 +11,7 @@
   "devDependencies": {
     "@iconify/json": "=2.2.21",
     "@vitejs/plugin-vue": "=4.0.0",
+    "core-dts": "=0.0.3",
     "sass": "npm:sass-embedded@=1.57.1",
     "unplugin-auto-import": "=0.14.2",
     "unplugin-icons": "=0.15.2",
@@ -22,6 +23,7 @@
     "@microsoft/signalr": "=7.0.2",
     "@vueuse/core": "=9.12.0",
     "bootstrap": "=5.3.0-alpha1",
+    "core-js": "=3.28.0",
     "vue": "=3.2.47",
     "vue-router": "=4.1.6"
   }

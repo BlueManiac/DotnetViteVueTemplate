@@ -3,7 +3,11 @@
     "module": "ESNext",
     "target": "ES2017",
     "moduleResolution": "Node",
-    // Syntax highlighting for ex. import.meta.hot in vite
-    "types": [ "vite/client" ]
+    "types": [
+      // Syntax highlighting for ex. import.meta.hot in vite
+      "vite/client",
+      // Syntax highlighting for core-js
+      "core-dts"
+    ]
   }
 }
