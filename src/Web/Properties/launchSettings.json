@@ -8,12 +8,12 @@
     },
     "Web": {
       "commandName": "Project",
+      "dotnetRunMessages": false,
       "launchBrowser": false,
+      "applicationUrl": "https://localhost:7126;http://localhost:7115",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "dotnetRunMessages": false,
-      "applicationUrl": "https://localhost:7126;http://localhost:7115"
+      }
     }
   }
 }

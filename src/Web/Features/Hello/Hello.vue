@@ -23,7 +23,7 @@
 </template>
 
 <script setup>
-  import { rotation, speed, isActive, pause, resume, load } from './data'
+  import { rotation, speed, isActive, pause, resume, load } from './HelloData'
 
   const { hello } = await load()
 </script>

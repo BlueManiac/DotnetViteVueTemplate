@@ -1,4 +1,5 @@
-using Microsoft.AspNetCore.Mvc;
+using Web.Features.Errors;
+using Web.Features.Hello;
 using Web.Features.RealTime;
 using Web.Util.Modules;
 
@@ -12,10 +13,15 @@ builder.AddModule<RealTimeModule>();
 
 if (builder.Environment.IsDevelopment())
 {
-    builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowCredentials().SetIsOriginAllowed((hosts) => true)));
+    builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowCredentials().SetIsOriginAllowed(_ => true)));
 }
 
 var app = builder.Build();
+
+if (builder.Environment.IsProduction())
+{
+    app.UseExceptionHandler();
+}
 
 app.UseResponseCompression();
 app.UseHttpsRedirection();
@@ -38,21 +44,8 @@ if (builder.Environment.IsDevelopment())
 }
 
 app.MapModule<RealTimeModule>();
-
-app.MapGet("/hello", () =>
-{
-    return new { Hello = "Hello World!" };
-});
-
-app.MapGet("/error", () =>
-{
-    throw new Exception("error");
-});
-
-app.MapPost("/hello2", ([FromBody] string data) =>
-{
-    return new { data };
-});
+app.MapModule<HelloModule>();
+app.MapModule<ErrorModule>();
 
 app.MapFallbackToFile("index.html");
 app.Run();
