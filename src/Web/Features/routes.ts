@@ -3,7 +3,7 @@ import { RouteRecordRaw } from 'vue-router'
 export const baseRoutes: RouteRecordRaw[] = [
   {
     path: '/',
-    component: () => import('./Hello/Hello.vue'),
+    component: () => import('./Home/HomeView.vue'),
     meta: { title: 'Home' }
   },
   {

@@ -1,5 +1,5 @@
 using Web.Features.Errors;
-using Web.Features.Hello;
+using Web.Features.Home;
 using Web.Features.RealTime;
 using Web.Util.Modules;
 
@@ -43,9 +43,9 @@ if (builder.Environment.IsDevelopment())
     app.UseCors();
 }
 
-app.MapModule<RealTimeModule>();
-app.MapModule<HelloModule>();
+app.MapModule<HomeModule>();
 app.MapModule<ErrorModule>();
+app.MapModule<RealTimeModule>();
 
 app.MapFallbackToFile("index.html");
 app.Run();
