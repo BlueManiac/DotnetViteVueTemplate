@@ -28,7 +28,7 @@ window.fetch = (input: RequestInfo | URL, init?: RequestInitExtended) => {
 
 window.get = function <T>(input: RequestInfo | URL, init: RequestInitExtended = {}) {
   init.apiUrl ??= apiUrl
-  
+
   return processFetch<T>(input, init)
 }
 
