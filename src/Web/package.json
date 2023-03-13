@@ -5,17 +5,17 @@
   "scripts": {
     "dev": "vite --open --strictPort",
     "build": "vite build",
-    "debug": "vite --open -d --clearScreen false",
+    "debug": "vite --open --strictPort -d --clearScreen false",
     "update": "npm i -g npm-check-updates && ncu -u && npm i"
   },
   "devDependencies": {
-    "@iconify/json": "=2.2.26",
+    "@iconify/json": "=2.2.34",
     "@vitejs/plugin-vue": "=4.0.0",
     "core-dts": "=0.0.3",
-    "sass": "npm:sass-embedded@=1.58.3",
-    "unplugin-auto-import": "=0.14.4",
+    "sass": "npm:sass-embedded@=1.59.2",
+    "unplugin-auto-import": "=0.15.1",
     "unplugin-icons": "=0.15.3",
-    "unplugin-vue-components": "=0.24.0",
+    "unplugin-vue-components": "=0.24.1",
     "vite": "=4.1.4",
     "vite-plugin-ejs": "=1.6.4"
   },
@@ -23,7 +23,7 @@
     "@microsoft/signalr": "=7.0.3",
     "@vueuse/core": "=9.13.0",
     "bootstrap": "=5.3.0-alpha1",
-    "core-js": "=3.28.0",
+    "core-js": "=3.29.1",
     "vue": "=3.2.47",
     "vue-router": "=4.1.6"
   }
