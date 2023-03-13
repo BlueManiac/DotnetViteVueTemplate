@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --open --strictPort",
+    "dev": "vite --open --strictPort --port 5043",
     "build": "vite build",
-    "debug": "vite --open --strictPort -d --clearScreen false",
+    "debug": "vite --open --strictPort --port 5043 -d --clearScreen false",
     "update": "npm i -g npm-check-updates && ncu -u && npm i"
   },
   "devDependencies": {
