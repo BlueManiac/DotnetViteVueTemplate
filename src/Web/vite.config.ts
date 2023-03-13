@@ -10,13 +10,18 @@ import { loadEnv } from 'vite'
 export default ({ mode }) => {
   const env = { ...process.env, ...loadEnv(mode, process.cwd()) }
 
+  const iconsResolver = IconsResolver({
+    componentPrefix: "icon",
+    enabledCollections: ["carbon", "mdi"],
+  })
+
   return {
     plugins: [
       vue(),
       ViteComponents({
         dirs: ['Components', 'Features'],
         resolvers: [
-          IconsResolver(),
+          iconsResolver
         ]
       }),
       Icons({
@@ -27,7 +32,10 @@ export default ({ mode }) => {
         dts: 'auto-imports.d.ts',
         imports: {
           'vue': ['ref', 'computed']
-        }
+        },
+        resolvers: [
+          iconsResolver
+        ],
       }),
       ViteEjsPlugin({
         apiUrl: env.VITE_API_URL,

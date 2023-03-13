@@ -27,4 +27,9 @@ export const baseRoutes: RouteRecordRaw[] = [
     component: () => import('./RealTime/RealTime.vue'),
     meta: { title: 'Realtime' }
   },
+  {
+    path: '/icons',
+    component: () => import('./Icons/IconView.vue'),
+    meta: { title: 'Icons' }
+  }
 ]
