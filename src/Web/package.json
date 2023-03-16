@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --open --strictPort --port 5043",
+    "dev": "vite --open --strictPort --port 5043 --https",
     "build": "vite build",
-    "debug": "vite --open --strictPort --port 5043 -d --clearScreen false",
+    "debug": "vite --open --strictPort --port 5043 --https -d --clearScreen false",
     "update": "npm i -g npm-check-updates && ncu -u && npm i"
   },
   "devDependencies": {
@@ -17,7 +17,8 @@
     "unplugin-icons": "=0.15.3",
     "unplugin-vue-components": "=0.24.1",
     "vite": "=4.2.0",
-    "vite-plugin-ejs": "=1.6.4"
+    "vite-plugin-ejs": "=1.6.4",
+    "vite-plugin-mkcert": "=1.13.3"
   },
   "dependencies": {
     "@microsoft/signalr": "=7.0.4",

@@ -10,9 +10,6 @@ public class HomeModule : IModule
 
     public static void MapRoutes(WebApplication app)
     {
-        app.MapGet("/hello", () =>
-        {
-            return new { Hello = "Hello World!" };
-        });
+        app.MapGet("/hello", () => new { Hello = "Hello World!" });
     }
 }
