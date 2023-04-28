@@ -22,6 +22,7 @@
             <router-link class="nav-link" aria-current="page" :to="route.meta.fullPath">{{route.meta.title}}</router-link>
           </li>
         </template>
+        <color-theme-toggle />
       </ul>
     </div>
   </nav>

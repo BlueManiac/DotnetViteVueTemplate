@@ -11,6 +11,8 @@ import { applicationName } from './info'
 import App from './App.vue'
 import { Router, title } from './router'
 
+import './ColorSchemes/color-schemes.ts'
+
 createApp(App)
   .use(Router)
   .mount('#app')
