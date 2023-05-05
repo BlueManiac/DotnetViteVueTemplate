@@ -1,5 +1,5 @@
 ﻿<template>
-  <div class="text-center col-4">
+  <div class="text-center col-md-6 col-lg-4">
     <p>
       {{hello}}
       <IconMdiAccountCowboyHat />
