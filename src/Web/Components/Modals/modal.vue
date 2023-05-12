@@ -1,7 +1,7 @@
 ﻿<template>
   <teleport to="#app" v-if="state.visible">
     <div class="modal fade" tabindex="-1" ref="wrapper">
-      <div class="modal-dialog">
+      <div class="modal-dialog" v-bind="$attrs">
         <div class="modal-content">
           <div class="modal-header">
             <slot name="header" v-bind="props">

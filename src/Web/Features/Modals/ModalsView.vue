@@ -5,7 +5,7 @@
       Modal state: {{modalState}}<br />
       Modal header: {{header}}
     </p>
-    <inlineModal>
+    <inlineModal class="modal-sm">
       <template #title>
         {{header}}
       </template>

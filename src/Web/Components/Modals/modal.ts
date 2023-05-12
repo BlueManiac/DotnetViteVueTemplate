@@ -1,5 +1,5 @@
 ﻿import modal from "./modal.vue";
-import { h, reactive, render, VNode, toRef } from 'vue'
+import { h, reactive, render, VNode } from 'vue'
 import { until } from "@vueuse/core";
 
 export const useModal = (props: Object = {}, component: VNode = null) => {
