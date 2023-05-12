@@ -5,15 +5,13 @@
   </span>
 </template>
 
-<script setup>
-    import { computed } from 'vue'
+<script setup lang="ts">
+  const { rotation } = defineProps<{
+    text: string,
+    rotation: number | string
+  }>()
 
-    const props = defineProps({
-        text: String,
-        rotation: [Number, String]
-    })
-
-    const rotationInDegrees = computed(() => props.rotation + 'deg')
+  const rotationInDegrees = computed(() => rotation + 'deg')
 </script>
 
 <style scoped>

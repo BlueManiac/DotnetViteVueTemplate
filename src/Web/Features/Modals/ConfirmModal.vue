@@ -13,16 +13,16 @@
   </modal>
 </template>
 
-<script setup>
-  const props = defineProps({
-    header: String,
-    modal: Object
-  });
-  const emit = defineEmits(['update:confirmed'])
+<script setup lang="ts">
+  const { modal } = defineProps<{
+    header: string,
+    modal: any
+  }>();
+  const confirmed = defineModel<boolean>()
 
   const set = (result) => {
-    emit('update:confirmed', result)
+    confirmed.value = result;
 
-    props.modal.visible = false
+    modal.visible = false
   }
 </script>

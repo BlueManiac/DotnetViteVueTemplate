@@ -4,20 +4,14 @@
   </div>
 </template>
 
-<script setup>
-  const props = defineProps({
-    modelValue: Number,
-    min: {
-      type: [Number, String],
-      default: 0
-    },
-    max: {
-      type: [Number, String],
-      default: 100
-    },
-  })
+<script setup lang="ts">
+  const { modelValue, min = 0, max = 100 } = defineProps < {
+    modelValue: number,
+    min: number | string,
+    max: number | string,
+  }>()
 
-  const width = computed(() => props.modelValue/props.max * 100)
+  const width = computed(() => modelValue/Number(max) * 100)
 </script>
 
 <style scoped>

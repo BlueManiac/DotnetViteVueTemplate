@@ -1,5 +1,5 @@
 ﻿import modal from "./modal.vue";
-import { h, reactive, render, VNode } from 'vue'
+import { h, reactive, render, VNode, toRef } from 'vue'
 import { until } from "@vueuse/core";
 
 export const useModal = (props: Object = {}, component: VNode = null) => {
@@ -35,10 +35,12 @@ export const showModal = async (component, props) => {
   const response = {}
   const emits = {}
 
-  for (const emit of component.emits) {
-    const modelValue = emit.split(':')[1]
+  if (component.emits) {
+    for (const emit of component.emits) {
+      const modelValue = emit.split(':')[1]
 
-    emits["onUpdate:" + modelValue] = (value) => response[modelValue] = value;
+      emits["onUpdate:" + modelValue] = (value) => response[modelValue] = value;
+    }
   }
 
   const { modal, open } = useModal({ ...props, ...emits }, component)

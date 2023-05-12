@@ -3,7 +3,7 @@
     <btn @click="open()">Open inline options modal</btn>
     <p>
       Modal state: {{modalState}}<br />
-      Modal header: {{header}}<br />
+      Modal header: {{header}}
     </p>
     <inlineModal>
       <template #title>

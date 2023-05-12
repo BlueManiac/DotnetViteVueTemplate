@@ -29,22 +29,21 @@
   </template>
 </template>
 
-<script setup>
-  import { computed, watch, watchEffect } from "vue"
+<script setup lang="ts">
+  import { watchEffect } from "vue"
 
-  const props = defineProps({
-    error: [Object, String, Error],
-    component: Object
-  })
+  const { component, error } = defineProps < {
+    component: any,
+    error: (object | string | Error) & { problemDetails: any, stack: any }
+  }>()
 
-  const file = computed(() => props.component?.type?.__file)
-  const problemDetails = computed(() => props.error.problemDetails)
+  const file = computed(() => component?.type?.__file)
+  const problemDetails = computed(() => error.problemDetails)
 
   watchEffect(() => {
     console.error()
-    console.error("Error occurred in %s\n%s", file.value, props.error.stack)
+    console.error("Error occurred in %s\n%s", file.value, error.stack)
   })
-
 </script>
 
 <style scoped>

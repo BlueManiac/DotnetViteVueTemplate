@@ -18,7 +18,12 @@ export default ({ mode }): UserConfig => {
 
   return {
     plugins: [
-      vue(),
+      vue({
+        script: {
+          defineModel: true,
+          propsDestructure: true
+        }
+      }),
       ViteComponents({
         dirs: ['Components', 'Features'],
         resolvers: [

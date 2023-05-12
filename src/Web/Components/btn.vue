@@ -4,11 +4,8 @@
   </button>
 </template>
 
-<script setup>
-  defineProps({
-    theme: {
-      type: String,
-      default: 'primary'
-    }
-  })
+<script setup lang="ts">
+  const { theme = 'primary' } = defineProps<{
+    theme: string
+  }>()
 </script>

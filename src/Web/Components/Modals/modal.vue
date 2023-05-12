@@ -26,12 +26,15 @@
   </teleport>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import { useEventListener } from "@vueuse/core";
   import { Modal } from "bootstrap"
   import { watch } from "vue"
 
-  const props = defineProps(['state', 'modal'])
+  const props = defineProps<{
+    state: any,
+    modal: any
+  }>()
 
   const wrapper = ref();
   const component = ref();
