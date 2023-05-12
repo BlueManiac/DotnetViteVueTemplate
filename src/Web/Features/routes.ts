@@ -31,5 +31,10 @@ export const baseRoutes: RouteRecordRaw[] = [
     path: '/icons',
     component: () => import('./Icons/IconView.vue'),
     meta: { title: 'Icons' }
-  }
+  },
+  {
+    path: "/modals",
+    component: () => import('./Modals/ModalsView.vue'),
+    meta: { title: 'Modals' }
+  },
 ]
