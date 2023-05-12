@@ -18,7 +18,7 @@
     header: string,
     modal: any
   }>();
-  const confirmed = defineModel<boolean>()
+  const confirmed = defineModel<boolean>("confirmed")
 
   const set = (result) => {
     confirmed.value = result;
