@@ -9,14 +9,14 @@
     "update": "npm i -g npm-check-updates && ncu -u && npm i"
   },
   "devDependencies": {
-    "@iconify/json": "=2.2.64",
+    "@iconify/json": "=2.2.68",
     "@vitejs/plugin-vue": "=4.2.3",
     "core-dts": "=0.0.3",
     "sass": "npm:sass-embedded@=1.62.0",
-    "unplugin-auto-import": "=0.15.3",
+    "unplugin-auto-import": "=0.16.2",
     "unplugin-icons": "=0.16.1",
     "unplugin-vue-components": "=0.24.1",
-    "vite": "=4.3.5",
+    "vite": "=4.3.8",
     "vite-plugin-ejs": "=1.6.4",
     "vite-plugin-mkcert": "=1.15.0"
   },
@@ -27,7 +27,7 @@
     "buffer": "=6.0.3",
     "core-js": "=3.30.2",
     "stacktracey": "=2.1.8",
-    "vue": "=3.3.2",
-    "vue-router": "=4.2.0"
+    "vue": "=3.3.4",
+    "vue-router": "=4.2.1"
   }
 }
