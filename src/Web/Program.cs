@@ -27,13 +27,10 @@ app.UseResponseCompression();
 app.UseHttpsRedirection();
 app.UseStaticFiles(new StaticFileOptions()
 {
-    OnPrepareResponse = context =>
+    OnPrepareResponse = context => context.Context.Response.GetTypedHeaders().CacheControl = new()
     {
-        context.Context.Response.GetTypedHeaders().CacheControl = new Microsoft.Net.Http.Headers.CacheControlHeaderValue
-        {
-            Public = true,
-            MaxAge = TimeSpan.FromDays(30)
-        };
+        Public = true,
+        MaxAge = TimeSpan.FromDays(30)
     }
 });
 app.UseRouting();

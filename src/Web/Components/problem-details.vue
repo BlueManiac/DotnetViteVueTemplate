@@ -1,6 +1,4 @@
 ﻿<template>
-  Component error
-  <h5>{{file}}</h5>
   <template v-if="error.url">
     Url
     <h5><a target="_blank" :href="error.url">{{error.url}}</a></h5>
@@ -25,24 +23,60 @@
     </template>
   </template>
   <template v-else>
-    <pre>{{error?.stack ?? error}}</pre>
+    Error
+    <h5 class="text-danger">{{error.message}}</h5>
+    <template v-if="source">
+      <div class="card col-lg-6 mb-2">
+        <h5 class="card-header">{{source.fileShort}}</h5>
+        <div class="card-body p-2 d-flex">
+          <div class="pe-2">
+            <pre v-for="line in lines" class="m-0">{{line.line}}<br /></pre>
+          </div>
+          <div>
+            <pre v-for="line in lines" class="m-0" v-bind:class="{'text-bg-danger': line.error }">{{line.text}}<br /></pre>
+          </div>
+        </div>
+      </div>
+      Stack
+      <pre>{{stack}}</pre>
+    </template>
   </template>
 </template>
 
 <script setup lang="ts">
   import { watchEffect } from "vue"
+  import StackTracey from 'stacktracey'
+  import { Buffer } from 'buffer'
 
-  const { component, error } = defineProps < {
-    component: any,
+  // Needed for data-uri-to-buffer dependency in StackTracey
+  window.Buffer = Buffer
+
+  const { error } = defineProps<{
     error: (object | string | Error) & { problemDetails: any, stack: any }
   }>()
 
-  const file = computed(() => component?.type?.__file)
   const problemDetails = computed(() => error.problemDetails)
 
-  watchEffect(() => {
+  const lines = ref([])
+  const stack = ref()
+  const source = ref()
+
+  watchEffect(async () => {
     console.error()
-    console.error("Error occurred in %s\n%s", file.value, error.stack)
+    console.error("Error occurred %s", error.stack)
+
+    if (!(error instanceof Error))
+      return;
+
+    const stackTrace = await new StackTracey(error as Error).cleanAsync();
+
+    stack.value = stackTrace.asTable();
+
+    source.value = stackTrace.withSourceAt(0)
+
+    lines.value = source.value?.sourceFile?.lines
+      .map((x, i) => ({ text: x, line: i + 1, error: i === source.value.line - 1 }))
+      .slice(Math.max(0, source.value.line - 11), Math.min(source.value.sourceFile.lines.length, source.value.line + 9)) ?? [];
   })
 </script>
 
