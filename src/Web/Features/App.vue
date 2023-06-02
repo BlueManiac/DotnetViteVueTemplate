@@ -2,7 +2,7 @@
   <div class="container-fluid vh-100">
     <Navbar />
     <Breadcrumb />
-    <problem-details v-if="error" :error="error" />
+    <error-display v-if="error" :error="error" />
     <RouterView v-slot="{ Component }">
       <template v-if="Component">
         <suspense timeout="30">

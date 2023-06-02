@@ -1,11 +1,13 @@
 ﻿<template>
-  <button class="btn" v-bind:class="`btn-${theme}`">
+  <button :class="classes">
     <slot />
   </button>
 </template>
 
 <script setup lang="ts">
   const { theme = 'primary' } = defineProps<{
-    theme: string
+    theme?: string
   }>()
+
+  const classes = computed(() => `btn btn-${theme}`)
 </script>

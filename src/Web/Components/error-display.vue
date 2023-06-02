@@ -24,7 +24,7 @@
   </template>
   <template v-else>
     Error
-    <h5 class="text-danger">{{error.message}}</h5>
+    <h5 class="text-danger">{{error?.message ?? error}}</h5>
     <template v-if="source">
       <div class="card col-lg-6 mb-2">
         <h5 class="card-header">{{source.fileShort}}</h5>
@@ -62,7 +62,6 @@
   const source = ref()
 
   watchEffect(async () => {
-    console.error()
     console.error("Error occurred %s", error.stack)
 
     if (!(error instanceof Error))

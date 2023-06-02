@@ -33,7 +33,7 @@
 
   const props = defineProps<{
     state: any,
-    modal: any
+    modal?: any
   }>()
 
   const wrapper = ref();
