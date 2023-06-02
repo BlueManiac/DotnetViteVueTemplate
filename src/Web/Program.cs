@@ -25,6 +25,12 @@ if (builder.Environment.IsProduction())
 
 app.UseResponseCompression();
 app.UseHttpsRedirection();
+
+if (builder.Environment.IsDevelopment())
+{
+    app.UseCors();
+}
+
 app.UseStaticFiles(new StaticFileOptions()
 {
     OnPrepareResponse = context => context.Context.Response.GetTypedHeaders().CacheControl = new()
@@ -34,11 +40,6 @@ app.UseStaticFiles(new StaticFileOptions()
     }
 });
 app.UseRouting();
-
-if (builder.Environment.IsDevelopment())
-{
-    app.UseCors();
-}
 
 app.MapModule<HomeModule>();
 app.MapModule<ErrorModule>();
