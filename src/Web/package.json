@@ -9,13 +9,13 @@
     "update": "npm i -g npm-check-updates && ncu -u && npm i"
   },
   "devDependencies": {
-    "@iconify/json": "=2.2.73",
+    "@iconify/json": "=2.2.74",
     "@vitejs/plugin-vue": "=4.2.3",
     "core-dts": "=0.0.3",
     "sass": "npm:sass-embedded@=1.62.0",
     "unplugin-auto-import": "=0.16.4",
     "unplugin-icons": "=0.16.2",
-    "unplugin-vue-components": "=0.25.0",
+    "unplugin-vue-components": "=0.25.1",
     "vite": "=4.3.9",
     "vite-plugin-ejs": "=1.6.4",
     "vite-plugin-mkcert": "=1.15.0"
