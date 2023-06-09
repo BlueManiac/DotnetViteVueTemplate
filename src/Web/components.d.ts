@@ -16,6 +16,7 @@ declare module 'vue' {
     ErrorDisplay: typeof import('./Components/error-display.vue')['default']
     HomeView: typeof import('./Features/Home/HomeView.vue')['default']
     IconMdiAccountCowboyHat: typeof import('~icons/mdi/account-cowboy-hat')['default']
+    IconMdiArrowDown: typeof import('~icons/mdi/arrow-down')['default']
     IconMdiCheck: typeof import('~icons/mdi/check')['default']
     IconView: typeof import('./Features/Icons/IconView.vue')['default']
     Modal: typeof import('./Components/Modals/modal.vue')['default']

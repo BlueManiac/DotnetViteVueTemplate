@@ -23,3 +23,9 @@ useTitle(() => title.value
   ? title.value + " - " + applicationName
   : applicationName
 )
+
+if (import.meta.env.DEV) {
+  var script = document.createElement('script');
+  script.src = `${import.meta.env.VITE_API_URL}/_framework/aspnetcore-browser-refresh.js`
+  document.querySelector('body').appendChild(script)
+}

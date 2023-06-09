@@ -15,7 +15,7 @@
     <btn v-else @click="resume()">
       Resume
     </btn>
-    <range v-model.number="speed" min="-20" max="20" class="mt-3"></range>
+    <range v-model.number="speed" min="-20" max="20" class="mt-3" />
     <progress-bar v-model="absoluteSpeed" max="20" class="mb-2" />
     Rotation speed
     <br />

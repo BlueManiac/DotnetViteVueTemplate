@@ -6,9 +6,8 @@ wt -w 0 split-pane --title $projectName -d $projectPath PowerShell -NoExit ./Pro
 
 wt -w 0 split-pane --title $projectName -d $projectPath
 
-cd $projectPath
-
-clear
+Set-Location $projectPath
+Clear-Host
 
 $env:DOTNET_WATCH_RESTART_ON_RUDE_EDIT = 'true'
 
