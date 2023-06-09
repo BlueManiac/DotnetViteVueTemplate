@@ -1,4 +1,4 @@
-﻿import { shallowRef } from "vue";
+﻿import { shallowRef } from "vue"
 
 export const themes = [{
   id: 'light',
@@ -12,11 +12,11 @@ export const themes = [{
   id: 'auto',
   name: 'Auto',
   icon: IconMdiCircleHalfFull
-}];
+}]
 
-export const currentTheme = shallowRef(null);
+export const currentTheme = shallowRef(null)
 
-export const setTheme = theme => {
+export const setTheme = (theme: string) => {
   localStorage.setItem('theme', theme)
   currentTheme.value = themes.find(x => x.id == theme)
 

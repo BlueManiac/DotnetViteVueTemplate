@@ -2,8 +2,8 @@
   "profiles": {
     "Watch": {
       "commandName": "Executable",
-      "executablePath": "wt",
-      "commandLineArgs": "-w 0 --title $(ProjectName) -d $(ProjectDir) PowerShell -NoExit $env:DOTNET_WATCH_RESTART_ON_RUDE_EDIT = 'true'\\; dotnet watch ; split-pane --title $(ProjectName) -d $(ProjectDir) PowerShell -NoExit ./Properties/npmrun.ps1 ; split-pane --title $(ProjectName) -d $(ProjectDir)",
+      "executablePath": "powershell",
+      "commandLineArgs": "-NoExit ./Properties/run.ps1",
       "workingDirectory": "$(ProjectDir)"
     },
     "Web": {

@@ -1,7 +1,7 @@
 ﻿<template>
   <div class="text-center col-md-6 col-lg-4">
     <p>
-      {{hello}}
+      {{ hello }}
       <IconMdiAccountCowboyHat />
     </p>
     <h1>
@@ -19,14 +19,14 @@
     <progress-bar v-model="absoluteSpeed" max="20" class="mb-2" />
     Rotation speed
     <br />
-    {{speed}}
+    {{ speed }}
   </div>
 </template>
 
 <script setup>
-  import { rotation, speed, isActive, pause, resume, load } from './HelloData'
+import { rotation, speed, isActive, pause, resume, load } from './HelloData'
 
-  const { hello } = await load()
+const { hello } = await load()
 
-  const absoluteSpeed = computed(() => Math.abs(speed.value))
+const absoluteSpeed = computed(() => Math.abs(speed.value))
 </script>

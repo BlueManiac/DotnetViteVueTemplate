@@ -28,7 +28,8 @@ export default ({ mode }): UserConfig => {
         dirs: ['Components', 'Features'],
         resolvers: [
           iconsResolver
-        ]
+        ],
+        dts: true
       }),
       Icons({
         scale: 1,

@@ -16,5 +16,5 @@
 </template>
 
 <script setup>
-  import { themes, currentTheme, setTheme } from "../Features/ColorSchemes/color-schemes";
+  import { themes, currentTheme, setTheme } from './color-schemes'
 </script>

@@ -1,0 +1,7 @@
+{
+    "dotnet.defaultSolution": "src\\DotnetViteVueTemplate.sln",
+    "files.exclude": {
+        "**/.sarif": true
+    },
+    "explorer.excludeGitIgnore": true
+}
