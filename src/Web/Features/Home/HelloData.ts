@@ -9,4 +9,6 @@ export const { isActive, pause, resume } = useIntervalFn(() => {
 
 export type Hello = { hello: string }
 
-export const load = () => get<Hello>('/hello')
+export const isLoading = ref(false)
+
+export const load = () => api.get<Hello>('/hello', { isLoading })

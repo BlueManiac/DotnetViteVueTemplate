@@ -3,5 +3,5 @@
 </template>
 
 <script setup>
-  await get('/error')
+  await api.get('/error')
 </script>

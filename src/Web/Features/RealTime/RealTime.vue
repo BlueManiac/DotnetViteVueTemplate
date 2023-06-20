@@ -5,9 +5,7 @@
 </template>
 
 <script setup>
-  import { useSignalr } from "../../Util/Client/signalr"
-
-  const { connection, data } = useSignalr(apiUrl + '/realtime')
+  const { connection, data } = api.signalr('/realtime')
 
   const message = data('message')
 

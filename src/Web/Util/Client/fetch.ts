@@ -1,80 +1,86 @@
-﻿export { }
-declare global {
-  type RequestInitExtended = RequestInit & { apiUrl?: string }
-  interface TypedResponse<T> extends Response {
-    json(): Promise<T>
+import { Ref } from "vue"
+
+type RequestInitExtended = RequestInit & {
+  isLoading?: Ref<boolean>
+}
+
+export const fetch = async (url: RequestInfo | URL, init: RequestInitExtended) => {
+  if (init.isLoading) {
+    init.isLoading.value = true
   }
-
-  function fetch(input: RequestInfo | URL, init?: RequestInitExtended): Promise<Response>
-  function fetch<T>(input: RequestInfo | URL, init?: RequestInitExtended): Promise<TypedResponse<T>>
-
-  var apiUrl: string
-  function get<T>(input: RequestInfo | URL, init?: RequestInitExtended): Promise<T>
-  function get(input: RequestInfo | URL, init?: RequestInitExtended): Promise<string>
-  function post<T>(input: RequestInfo | URL, data: any, init?: RequestInitExtended): Promise<T>
-  function post(input: RequestInfo | URL, data: any, init?: RequestInitExtended): Promise<string>
-  function put<T>(input: RequestInfo | URL, data: any, init?: RequestInitExtended): Promise<T>
-  function put(input: RequestInfo | URL, data: any, init?: RequestInitExtended): Promise<string>
-}
-
-const { fetch: originalFetch } = window
-window.fetch = (input: RequestInfo | URL, init?: RequestInitExtended) => {
-  if (init?.apiUrl) {
-    input = init.apiUrl + input
+  const response = await window.fetch(url, init)
+  if (init.isLoading) {
+    init.isLoading.value = false
   }
-
-  return originalFetch(input, init)
-}
-
-window.get = function <T>(input: RequestInfo | URL, init: RequestInitExtended = {}) {
-  init.apiUrl ??= apiUrl
-
-  return processFetch<T>(input, init)
-}
-
-window.post = function <T>(input: RequestInfo | URL, data?: any, init: RequestInitExtended = {}) {
-  init.apiUrl ??= apiUrl
-  init.method = 'POST'
-  init.headers ??= {
-    'accept': 'application/json',
-    'content-type': 'application/json'
-  }
-  init.body ??= JSON.stringify(data)
-
-  return processFetch<T>(input, init)
-}
-
-window.put = function <T>(input: RequestInfo | URL, data?: any, init: RequestInitExtended = {}) {
-  init.apiUrl ??= apiUrl
-  init.method = 'PUT'
-  init.headers ??= {
-    'accept': 'application/json',
-    'content-type': 'application/json'
-  }
-  init.body ??= JSON.stringify(data)
-
-  return processFetch<T>(input, init)
-}
-
-const processFetch = async function <T>(input: RequestInfo | URL, init?: RequestInitExtended) {
-  const response = await fetch<T>(input, init)
-
-  const contentType = response.headers.get("content-type")
 
   if (!response.ok) {
+    const contentType = response.headers.get("content-type")
+
     throw {
       url: response.url,
+      body: init.body,
       status: response.status,
       method: init?.method ?? 'GET',
       problemDetails: contentType?.indexOf("application/problem+json") >= 0
         ? await response.json()
-        : null
+        : undefined
     }
   }
 
-  if (contentType?.indexOf("application/json") >= 0) {
-    return await response.json()
-  }
+  return response
+}
 
-  return await response.text()
+export const useApi = ({ apiUrl }) => {
+  return {
+    fetch: (url: RequestInfo | URL, init: RequestInitExtended = {}) => fetch(apiUrl + url, init),
+    get: async <T>(url: RequestInfo | URL, init?: RequestInitExtended) => {
+      const response = await fetch(apiUrl + url, { method: 'GET', ...init })
+
+      const json = await response.json()
+
+      return json as T
+    },
+    post: async <T>(url: RequestInfo | URL, body?: any, init?: RequestInitExtended) => {
+      const response = await fetch(apiUrl + url, {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        ...init
+      })
+
+      const json = await response.json()
+
+      return json as T
+    },
+    put: async <T>(url: RequestInfo | URL, body?: any, init?: RequestInitExtended) => {
+      const response = await fetch(apiUrl + url, {
+        method: 'PUT',
+        body: JSON.stringify(body),
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        ...init
+      })
+
+      const json = await response.json()
+
+      return json as T
+    },
+    delete: async <T>(url: RequestInfo | URL, body?: any, init?: RequestInitExtended) => {
+      const response = await fetch(apiUrl + url, {
+        method: 'DELETE',
+        body: JSON.stringify(body),
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        ...init
+      })
+
+      const json = await response.json()
+
+      return json as T
+    }
+  }
 }

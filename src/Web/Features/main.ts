@@ -1,17 +1,30 @@
 ﻿import 'bootstrap/scss/bootstrap.scss'
 import './main.scss'
 
-import { createApp } from 'vue'
 import 'bootstrap'
 
 import '../Util/Client/array'
-import '../Util/Client/fetch'
-import { applicationName } from './info'
 
-import App from './App.vue'
+import { apiUrl, applicationName } from './info'
+import { useApi } from '../Util/Client/fetch'
+import { useSignalr } from '../Util/Client/signalr'
+
+declare global {
+  var api: ReturnType<typeof useApi> & { signalr: typeof useSignalr }
+}
+
+window.api = {
+  ...useApi({ apiUrl }),
+  signalr: (url) => useSignalr(apiUrl + url)
+}
+
+import { setPreferredTheme } from '../Components/ColorSchemes/color-schemes'
+
+setPreferredTheme();
+
+import { createApp } from 'vue'
 import { Router, title } from './router'
-
-import '../Components/ColorSchemes/color-schemes'
+import App from './App.vue'
 
 createApp(App)
   .use(Router)
