@@ -39,8 +39,7 @@ export const routePath = computed(() => {
 
 function addRouteMetadata(routes: RouteRecordRaw[], parentRoute?: RouteRecordRaw) {
   for (const route of routes) {
-    if (!route.meta)
-      continue
+    route.meta ??= {}
 
     const id = route.meta.id = createUniqueId()
 
