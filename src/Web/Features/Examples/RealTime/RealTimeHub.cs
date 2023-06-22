@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 
-namespace Web.Features.Realtime;
+namespace Web.Features.Examples.RealTime;
 public class RealTimeHub : Hub<IRealTimeClient>
 {
     public override async Task OnConnectedAsync()

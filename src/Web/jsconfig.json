@@ -7,8 +7,7 @@
       // Syntax highlighting for ex. import.meta.hot in vite
       "vite/client",
       // Syntax highlighting for core-js
-      "core-dts",
-      "./components.d.ts"
+      "core-dts"
     ]
   }
 }

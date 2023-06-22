@@ -1,7 +1,6 @@
-﻿using Web.Features.Realtime;
-using Web.Util.Modules;
+﻿using Web.Util.Modules;
 
-namespace Web.Features.RealTime;
+namespace Web.Features.Examples.RealTime;
 
 public class RealTimeModule : IModule
 {

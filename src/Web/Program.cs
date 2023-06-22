@@ -1,6 +1,6 @@
-using Web.Features.Errors;
-using Web.Features.Home;
-using Web.Features.RealTime;
+using Web.Features.Examples.Errors;
+using Web.Features.Examples.Home;
+using Web.Features.Examples.RealTime;
 using Web.Util.Modules;
 
 var builder = WebApplication.CreateBuilder(args);

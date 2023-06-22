@@ -1,7 +1,7 @@
 ﻿using Web.Util.Modules;
 
-namespace Web.Features.Errors;
-public class ErrorModule : IModule
+namespace Web.Features.Examples.Home;
+public class HomeModule : IModule
 {
     public static void AddServices(IServiceCollection services, IWebHostEnvironment environment, IConfiguration configuration)
     {
@@ -10,9 +10,6 @@ public class ErrorModule : IModule
 
     public static void MapRoutes(WebApplication app)
     {
-        app.MapGet("/error", () =>
-        {
-            throw new Exception("error");
-        });
+        app.MapGet("/hello", () => new { Hello = "Hello World!" });
     }
 }

@@ -27,7 +27,7 @@
 </template>
 
 <script setup>
-  import { useModal, showModal } from "../../Components/Modals/modal";
+  import { showModal, useModal } from "../../../Components/Modals/modal";
   import ConfirmModal from "./ConfirmModal.vue";
 
   const { modal: inlineModal, open, state: modalState } = useModal();
