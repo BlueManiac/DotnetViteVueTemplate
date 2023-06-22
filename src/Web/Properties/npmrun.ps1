@@ -2,8 +2,8 @@
 $oldHash = (Get-Content '.\node_modules\hash' -First 1 -ErrorAction SilentlyContinue | Out-String).Trim()
 
 if ($currentHash -ne $oldHash) {
-	npm install
+	pnpm install
 	$currentHash | Out-File '.\node_modules\hash'
 }
 
-npm run dev
+pnpm run dev

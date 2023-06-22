@@ -6,7 +6,7 @@
     "dev": "vite --open --strictPort --port 5043 --https",
     "build": "vite build",
     "debug": "vite --open --strictPort --port 5043 --https -d --clearScreen false",
-    "update": "npm i -g npm-check-updates && ncu -u && npm i"
+    "update": "pnpm dlx npm-check-updates --packageManager pnpm --upgrade"
   },
   "devDependencies": {
     "@iconify/json": "=2.2.80",
