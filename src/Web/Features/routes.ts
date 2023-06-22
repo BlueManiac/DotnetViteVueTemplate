@@ -17,12 +17,12 @@ export const baseRoutes: RouteRecordRaw[] = [
     meta: { title: 'Icons' }
   },
   {
-    path: "/modals",
+    path: '/modals',
     component: () => import('./Examples/Modals/ModalsView.vue'),
     meta: { title: 'Modals' }
   },
   {
-    path: "/errors",
+    path: '/errors',
     meta: { title: 'Errors' },
     children: [
       {
@@ -37,4 +37,8 @@ export const baseRoutes: RouteRecordRaw[] = [
       }
     ]
   },
+  {
+    path: '/:pathMatch(.*)*',
+    component: () => import('/Components/NotFound.vue'),
+  }
 ]

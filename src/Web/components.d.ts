@@ -22,6 +22,7 @@ declare module 'vue' {
     Modal: typeof import('./Components/Modals/modal.vue')['default']
     ModalsView: typeof import('./Features/Examples/Modals/ModalsView.vue')['default']
     Navbar: typeof import('./Features/Navigation/Navbar.vue')['default']
+    NotFound: typeof import('./Components/NotFound.vue')['default']
     ProgressBar: typeof import('./Components/progress-bar.vue')['default']
     Range: typeof import('./Components/range.vue')['default']
     RealTime: typeof import('./Features/Examples/RealTime/RealTime.vue')['default']
