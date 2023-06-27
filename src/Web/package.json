@@ -9,7 +9,7 @@
     "update": "pnpm dlx npm-check-updates --packageManager pnpm --upgrade && pnpm install"
   },
   "devDependencies": {
-    "@iconify/json": "=2.2.81",
+    "@iconify/json": "=2.2.83",
     "@vitejs/plugin-vue": "=4.2.3",
     "core-dts": "=0.0.3",
     "sass": "npm:sass-embedded@=1.63.6",

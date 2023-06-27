@@ -1,7 +1,7 @@
 ﻿using Web.Util.Modules;
 
-namespace Web.Features.Examples.Home;
-public class HomeModule : IModule
+namespace Web.Features.Examples.Hello;
+public class HelloModule : IModule
 {
     public static void AddServices(IServiceCollection services, IWebHostEnvironment environment, IConfiguration configuration)
     {

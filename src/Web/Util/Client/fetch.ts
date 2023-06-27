@@ -32,6 +32,7 @@ export const fetch = async (url: RequestInfo | URL, init: RequestInitExtended) =
 
 export const useApi = ({ apiUrl }) => {
   return {
+    url: apiUrl,
     fetch: (url: RequestInfo | URL, init: RequestInitExtended = {}) => fetch(apiUrl + url, init),
     get: async <T>(url: RequestInfo | URL, init?: RequestInitExtended) => {
       const response = await fetch(apiUrl + url, { method: 'GET', ...init })

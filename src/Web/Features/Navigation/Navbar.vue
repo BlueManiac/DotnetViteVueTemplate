@@ -24,6 +24,9 @@
             <router-link class="nav-link" aria-current="page" :to="route.meta.fullPath">{{route.meta.title}}</router-link>
           </li>
         </template>
+      </ul>
+      <ul class="navbar-nav float-end">
+        <li class="nav-item"><a class="nav-link">Login</a></li>
         <color-theme-toggle />
       </ul>
     </div>

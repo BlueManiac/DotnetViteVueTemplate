@@ -1,5 +1,5 @@
 using Web.Features.Examples.Errors;
-using Web.Features.Examples.Home;
+using Web.Features.Examples.Hello;
 using Web.Features.Examples.RealTime;
 using Web.Util.Modules;
 
@@ -41,7 +41,7 @@ app.UseStaticFiles(new StaticFileOptions()
 });
 app.UseRouting();
 
-app.MapModule<HomeModule>();
+app.MapModule<HelloModule>();
 app.MapModule<ErrorModule>();
 app.MapModule<RealTimeModule>();
 
