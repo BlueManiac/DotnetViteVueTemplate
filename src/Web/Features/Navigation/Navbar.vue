@@ -34,8 +34,8 @@
 </template>
 
 <script setup>
-  import { applicationName } from "../info"
-  import { routes } from "../router"
+  import { applicationName } from '../info'
+  import { routes } from '../router'
 </script>
 
 <style scoped>

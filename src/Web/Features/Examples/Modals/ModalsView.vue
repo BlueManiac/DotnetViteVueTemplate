@@ -27,11 +27,11 @@
 </template>
 
 <script setup>
-  import { showModal, useModal } from "../../../Components/Modals/modal";
-  import ConfirmModal from "./ConfirmModal.vue";
+  import { showModal, useModal } from '../../../Components/Modals/modal';
+  import ConfirmModal from './ConfirmModal.vue';
 
   const { modal: inlineModal, open, state: modalState } = useModal();
-  const header = ref("Options");
+  const header = ref('Options');
 
   const confirmResult = ref();
   const confirm = async () => {

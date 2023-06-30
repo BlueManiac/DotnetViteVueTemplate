@@ -1,6 +1,6 @@
-﻿import { tryOnScopeDispose, useEventListener } from "@vueuse/core"
-import { HubConnectionBuilder } from "@microsoft/signalr"
-import { onMounted, ref } from "vue"
+﻿import { tryOnScopeDispose, useEventListener } from '@vueuse/core'
+import { HubConnectionBuilder } from '@microsoft/signalr'
+import { onMounted, ref } from 'vue'
 
 export function useSignalr(url: string) {
   const connection = new HubConnectionBuilder()

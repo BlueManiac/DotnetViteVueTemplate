@@ -1,4 +1,4 @@
-﻿import { shallowRef } from "vue"
+﻿import { shallowRef } from 'vue'
 
 export const themes = [{
   id: 'light',

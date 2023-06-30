@@ -1,6 +1,6 @@
 ﻿import modal from "./modal.vue";
 import { h, reactive, render, VNode } from 'vue'
-import { until } from "@vueuse/core";
+import { until } from '@vueuse/core';
 
 export const useModal = (props: Object = {}, component: VNode = null) => {
   const state = reactive({
@@ -39,13 +39,13 @@ export const showModal = async (component, props) => {
     for (const emit of component.emits) {
       const modelValue = emit.split(':')[1]
 
-      emits["onUpdate:" + modelValue] = (value) => response[modelValue] = value;
+      emits['onUpdate:' + modelValue] = (value) => response[modelValue] = value;
     }
   }
 
   const { modal, open } = useModal({ ...props, ...emits }, component)
 
-  const wrapper = document.createElement("div")
+  const wrapper = document.createElement('div')
 
   render(modal, wrapper)
 

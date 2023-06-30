@@ -44,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-  import { watchEffect } from "vue"
+  import { watchEffect } from 'vue'
   import StackTracey from 'stacktracey'
   import { Buffer } from 'buffer'
 
@@ -62,7 +62,7 @@
   const source = ref()
 
   watchEffect(async () => {
-    console.error("Error occurred %s", error.stack)
+    console.error('Error occurred %s', error.stack)
 
     if (!(error instanceof Error))
       return;

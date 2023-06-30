@@ -1,4 +1,4 @@
-import { Ref } from "vue"
+import { Ref } from 'vue'
 
 type RequestInitExtended = RequestInit & {
   isLoading?: Ref<boolean>
@@ -14,14 +14,14 @@ export const fetch = async (url: RequestInfo | URL, init: RequestInitExtended) =
   }
 
   if (!response.ok) {
-    const contentType = response.headers.get("content-type")
+    const contentType = response.headers.get('content-type')
 
     throw {
       url: response.url,
       body: init.body,
       status: response.status,
       method: init?.method ?? 'GET',
-      problemDetails: contentType?.indexOf("application/problem+json") >= 0
+      problemDetails: contentType?.indexOf('application/problem+json') >= 0
         ? await response.json()
         : undefined
     }

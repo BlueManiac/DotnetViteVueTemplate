@@ -10,6 +10,6 @@ export const baseRoutes: RouteRecordRaw[] = [
   ...exampleRoutes,
   {
     path: '/:pathMatch(.*)*',
-    component: () => import('/Components/NotFound.vue'),
+    component: () => import('/Components/Views/NotFound.vue'),
   }
 ]

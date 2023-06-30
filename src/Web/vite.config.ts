@@ -8,8 +8,8 @@ import mkcert from 'vite-plugin-mkcert'
 
 export default (): UserConfig => {
   const iconsResolver = IconsResolver({
-    componentPrefix: "icon",
-    enabledCollections: ["carbon", "mdi"],
+    componentPrefix: 'icon',
+    enabledCollections: ['carbon', 'mdi'],
   })
 
   return {

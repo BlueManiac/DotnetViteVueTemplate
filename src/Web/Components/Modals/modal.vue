@@ -27,9 +27,9 @@
 </template>
 
 <script setup lang="ts">
-  import { useEventListener } from "@vueuse/core";
-  import { Modal } from "bootstrap"
-  import { watch } from "vue"
+  import { useEventListener } from '@vueuse/core';
+  import { Modal } from 'bootstrap'
+  import { watch } from 'vue'
 
   const props = defineProps<{
     state: any,

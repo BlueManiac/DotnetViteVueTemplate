@@ -19,8 +19,8 @@
 </template>
 
 <script setup>
-  import { onErrorCaptured, ref } from "vue"
-  import { Router } from "./router"
+  import { onErrorCaptured, ref } from 'vue'
+  import { Router } from './router'
 
   const error = ref(null)
 

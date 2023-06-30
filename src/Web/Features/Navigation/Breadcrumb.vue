@@ -10,5 +10,5 @@
 </template>
 
 <script setup>
-  import { routePath } from "../router";
+  import { routePath } from '../router';
 </script>
