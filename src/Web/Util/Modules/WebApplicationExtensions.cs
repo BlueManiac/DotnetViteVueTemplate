@@ -17,29 +17,35 @@ public static class WebApplicationExtensions
         return app;
     }
 
-    public static WebApplicationBuilder AddModules(this WebApplicationBuilder builder)
+    public static WebApplicationBuilder AddModules(this WebApplicationBuilder builder, Assembly? assembly = null)
     {
-        var modules = Assembly.GetExecutingAssembly()
-            .GetTypes()
-            .Where(t => t.IsClass && !t.IsAbstract && t.GetInterfaces().Contains(typeof(IModule)));
+        assembly ??= Assembly.GetExecutingAssembly();
 
-        foreach (var module in modules)
+        foreach (var type in assembly.GetTypes())
         {
-            module?.GetMethod(nameof(IModule.AddServices), BindingFlags.Static | BindingFlags.Public)?.Invoke(null, new object[] { builder.Services, builder.Environment, builder.Configuration });
+            if (!type.IsClass || type.IsAbstract || !typeof(IModule).IsAssignableFrom(type))
+                continue;
+
+            var method = type.GetMethod(nameof(IModule.AddServices), BindingFlags.Static | BindingFlags.Public);
+
+            method?.Invoke(null, new object[] { builder.Services, builder.Environment, builder.Configuration });
         }
 
         return builder;
     }
 
-    public static WebApplication MapModules(this WebApplication app)
+    public static WebApplication MapModules(this WebApplication app, Assembly? assembly = null)
     {
-        var modules = Assembly.GetExecutingAssembly()
-            .GetTypes()
-            .Where(t => t.IsClass && !t.IsAbstract && t.GetInterfaces().Contains(typeof(IModule)));
+        assembly ??= Assembly.GetExecutingAssembly();
 
-        foreach (var module in modules)
+        foreach (var type in assembly.GetTypes())
         {
-            module?.GetMethod(nameof(IModule.MapRoutes), BindingFlags.Static | BindingFlags.Public)?.Invoke(null, new object[] { app });
+            if (!type.IsClass || type.IsAbstract || !typeof(IModule).IsAssignableFrom(type))
+                continue;
+
+            var method = type?.GetMethod(nameof(IModule.MapRoutes), BindingFlags.Static | BindingFlags.Public);
+
+            method?.Invoke(null, new object[] { app });
         }
 
         return app;
