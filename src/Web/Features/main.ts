@@ -1,5 +1,5 @@
-﻿import 'bootstrap/scss/bootstrap.scss'
-import './main.scss'
+﻿import 'bootstrap/dist/css/bootstrap.css'
+import './main.css'
 
 import 'bootstrap'
 

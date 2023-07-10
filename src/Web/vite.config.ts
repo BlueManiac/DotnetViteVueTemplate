@@ -41,6 +41,17 @@ export default (): UserConfig => {
         ],
       }),
       mkcert()
-    ]
+    ],
+    css: {
+      transformer: 'lightningcss',
+      lightningcss: {
+        drafts: {
+          nesting: true
+        }
+      }
+    },
+    build: {
+      cssMinify: 'lightningcss'
+    }
   }
 }
