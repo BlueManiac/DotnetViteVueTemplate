@@ -6,7 +6,7 @@ import ViteComponents from 'unplugin-vue-components/vite'
 import { UserConfig } from 'vite'
 import mkcert from 'vite-plugin-mkcert'
 
-export default (): UserConfig => {
+export default ({ mode }): UserConfig => {
   const iconsResolver = IconsResolver({
     componentPrefix: 'icon',
     enabledCollections: ['carbon', 'mdi'],
@@ -42,6 +42,17 @@ export default (): UserConfig => {
       }),
       mkcert()
     ],
+    server: {
+      proxy: {
+        ...(mode === 'development' && {
+          '/api': {
+            target: 'https://localhost:7126',
+            changeOrigin: true,
+            secure: false
+          }
+        })
+      }
+    },
     css: {
       transformer: 'lightningcss',
       lightningcss: {

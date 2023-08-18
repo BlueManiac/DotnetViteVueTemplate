@@ -10,6 +10,6 @@ public class HelloModule : IModule
 
     public static void MapRoutes(WebApplication app)
     {
-        app.MapGet("/hello", () => new { Hello = "Hello World!" });
+        app.MapGet("/api/hello", () => new { Hello = "Hello World!" });
     }
 }

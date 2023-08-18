@@ -11,4 +11,4 @@ export type Hello = { hello: string }
 
 export const isLoading = ref(false)
 
-export const load = () => api.get<Hello>('/hello', { isLoading })
+export const load = () => api.get<Hello>('/api/hello', { isLoading })
