@@ -1,5 +1,5 @@
 ﻿<template>
-  <li class="nav-item dropdown">
+  <div class="nav-item dropdown">
     <button class="btn btn-link nav-link dropdown-toggle d-flex align-items-center" id="bd-theme" type="button" data-bs-toggle="dropdown" data-bs-display="static">
       <component :is="currentTheme.icon" class="my-1" />
     </button>
@@ -12,7 +12,7 @@
         </button>
       </li>
     </ul>
-  </li>
+  </div>
 </template>
 
 <script setup>

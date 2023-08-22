@@ -17,14 +17,14 @@ export const themes = [{
 export const currentTheme = shallowRef(null)
 
 export const setTheme = (theme: string) => {
-  localStorage.setItem('theme', theme)
   currentTheme.value = themes.find(x => x.id == theme)
+  localStorage.setItem('theme', theme)
 
   if (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    document.documentElement.setAttribute('data-bs-theme', 'dark')
-  } else {
-    document.documentElement.setAttribute('data-bs-theme', theme)
+    theme = 'dark'
   }
+
+  document.documentElement.setAttribute('data-bs-theme', theme)
 }
 
 const getPreferredTheme = () => {

@@ -25,10 +25,10 @@
           </li>
         </template>
       </ul>
-      <ul class="navbar-nav float-end">
-        <li class="nav-item"><a class="nav-link">Login</a></li>
+      <div class="navbar-nav float-end">
+        <div class="nav-item"><a class="nav-link">Login</a></div>
         <color-theme-toggle />
-      </ul>
+      </div>
     </div>
   </nav>
 </template>
