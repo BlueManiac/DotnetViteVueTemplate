@@ -17,6 +17,11 @@ export const exampleRoutes : RouteRecordRaw[] = [
     meta: { title: 'Modals' }
   },
   {
+    path: '/tables',
+    component: () => import('./Tables/TableView.vue'),
+    meta: { title: 'Tables' }
+  },
+  {
     path: '/errors',
     meta: { title: 'Errors' },
     children: [

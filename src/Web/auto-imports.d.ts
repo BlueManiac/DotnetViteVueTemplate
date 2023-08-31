@@ -8,8 +8,12 @@ declare global {
   const IconMdiAccountCowboyHat: typeof import('~icons/mdi/account-cowboy-hat')['default']
   const IconMdiAlarm: typeof import('~icons/mdi/alarm')['default']
   const IconMdiCircleHalfFull: typeof import('~icons/mdi/circle-half-full')['default']
+  const IconMdiFileHidden: typeof import('~icons/mdi/file-hidden')['default']
+  const IconMdiFileRestore: typeof import('~icons/mdi/file-restore')['default']
+  const IconMdiFlagVariantRemove: typeof import('~icons/mdi/flag-variant-remove')['default']
   const IconMdiLightbulbOn: typeof import('~icons/mdi/lightbulb-on')['default']
   const IconMdiMoonWaningCrescent: typeof import('~icons/mdi/moon-waning-crescent')['default']
+  const IconMdiSortDescending: typeof import('~icons/mdi/sort-descending')['default']
   const computed: typeof import('vue')['computed']
   const ref: typeof import('vue')['ref']
 }
