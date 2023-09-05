@@ -2,11 +2,11 @@
   <div class="text-center col-md-6 col-lg-4">
     <p>
       {{ hello }}
-      <IconMdiAccountCowboyHat />
+      <MdiAccountCowboyHat />
     </p>
     <h1>
       <text-rotated :text="hello" :rotation="rotation">
-        <IconMdiAccountCowboyHat />
+        <MdiAccountCowboyHat />
       </text-rotated>
     </h1>
     <btn v-if="isActive" @click="pause()">

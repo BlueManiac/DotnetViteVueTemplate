@@ -3,15 +3,15 @@
 export const themes = [{
   id: 'light',
   name: 'Light',
-  icon: IconMdiLightbulbOn
+  icon: MdiLightbulbOn
 }, {
   id: 'dark',
   name: 'Dark',
-  icon: IconMdiMoonWaningCrescent
+  icon: MdiMoonWaningCrescent
 }, {
   id: 'auto',
   name: 'Auto',
-  icon: IconMdiCircleHalfFull
+  icon: MdiCircleHalfFull
 }]
 
 export const currentTheme = shallowRef(null)

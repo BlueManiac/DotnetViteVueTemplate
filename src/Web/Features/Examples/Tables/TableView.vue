@@ -51,8 +51,8 @@
 
   const onHeaderContextMenu = (col, event) => {
     contextMenuElement.value.show(event, [
-      { name: 'Hide', icon: IconMdiFileHidden, command: () => col.hidden = true },
-      { name: 'Restore', icon: IconMdiFileRestore, command: () => columns.value.forEach(x => x.hidden = false), visible: () => columns.value.some(x => x.hidden) }
+      { name: 'Hide', icon: MdiFileHidden, command: () => col.hidden = true },
+      { name: 'Restore', icon: MdiFileRestore, command: () => columns.value.forEach(x => x.hidden = false), visible: () => columns.value.some(x => x.hidden) }
     ])
   }
 

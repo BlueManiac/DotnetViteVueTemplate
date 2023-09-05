@@ -8,7 +8,7 @@ export const useVirtualization = () => {
 
   const observer = new IntersectionObserver((entries) => {
     for (const entry of entries) {
-      const elem = entry.target as HTMLTableRowElement;
+      const elem = entry.target as HTMLTableRowElement & { __vnode: any };
 
       if (!elem.parentNode) {
         return;

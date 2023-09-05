@@ -8,7 +8,7 @@ import mkcert from 'vite-plugin-mkcert'
 
 export default ({ mode }): UserConfig => {
   const iconsResolver = IconsResolver({
-    componentPrefix: 'icon',
+    prefix: false,
     enabledCollections: ['carbon', 'mdi'],
   })
 
