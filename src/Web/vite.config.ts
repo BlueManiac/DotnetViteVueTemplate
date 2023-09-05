@@ -9,7 +9,7 @@ import mkcert from 'vite-plugin-mkcert'
 export default ({ mode }): UserConfig => {
   const iconsResolver = IconsResolver({
     prefix: false,
-    enabledCollections: ['carbon', 'mdi'],
+    enabledCollections: ['carbon', 'mdi', 'svg-spinners'],
   })
 
   return {
