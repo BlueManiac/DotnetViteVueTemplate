@@ -20,7 +20,7 @@
       </tr>
     </thead>
     <TransitionGroup name="list" tag="tbody">
-      <tr v-for="item of items" :ref="el => setVisible(el as HTMLTableRowElement)" @contextmenu="onRowContextMenu(item, $event)" :key="item[dataKey]" :class="{ 'table-active': selectedSet.has(item) }">
+      <tr v-for="item of items" :ref="el => observeElement(el as HTMLTableRowElement)" @contextmenu="onRowContextMenu(item, $event)" :key="item[dataKey]" :class="{ 'table-active': selectedSet.has(item) }">
         <template v-if="isVisible(item[dataKey])">
           <td class="fs-4 lh-1 selection-column" @click="onRowClick(item, null, $event)">
             <input class="form-check-input mt-0" type="checkbox" :checked="selectedSet.has(item)" @input="toggleSelected(item, $event.target.checked)">
@@ -69,7 +69,7 @@
       : []
   }, { immediate: true })
 
-  const { setVisible, isVisible, isLoaded } = useVirtualization()
+  const { observeElement, isVisible, isLoaded } = useVirtualization()
   const { selectedSet, toggleSelected, selectAll, checkbox } = useSelection(items, selected)
   const { sort } = useSorting(sortField, sortOrder, columns, items)
   const { onRowClick, onHeaderContextMenu, onRowContextMenu } = useClick(selectedSet, emit)

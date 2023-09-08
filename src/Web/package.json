@@ -9,7 +9,7 @@
     "update": "pnpm dlx npm-check-updates --packageManager pnpm --upgrade && pnpm install"
   },
   "devDependencies": {
-    "@iconify/json": "=2.2.111",
+    "@iconify/json": "=2.2.113",
     "@vitejs/plugin-vue": "=4.3.4",
     "core-dts": "=0.0.3",
     "lightningcss": "^1.21.7",
@@ -25,7 +25,7 @@
     "@vueuse/core": "=10.4.1",
     "bootstrap": "=5.3.1",
     "buffer": "=6.0.3",
-    "core-js": "=3.32.1",
+    "core-js": "=3.32.2",
     "stacktracey": "=2.1.8",
     "vue": "=3.3.4",
     "vue-router": "=4.2.4"

@@ -10,10 +10,6 @@ export const useVirtualization = () => {
     for (const entry of entries) {
       const elem = entry.target as HTMLTableRowElement & { __vnode: any };
 
-      if (!elem.parentNode) {
-        return;
-      }
-
       const index = elem.__vnode.key
 
       if (entry.isIntersecting) {
@@ -27,7 +23,7 @@ export const useVirtualization = () => {
     isLoaded.value = true
   }, { rootMargin: "500px 0px 500px 0px" });
 
-  const setVisible = (element: HTMLTableRowElement) => {
+  const observeElement = (element: HTMLTableRowElement) => {
     if (!element) {
       return;
     }
@@ -43,7 +39,7 @@ export const useVirtualization = () => {
     observer.disconnect()
   })
 
-  return { setVisible, isVisible, isLoaded }
+  return { observeElement, isVisible, isLoaded }
 }
 
 export const useSelection = (items: Ref<any[]>, selected: Ref<any[]>) => {
