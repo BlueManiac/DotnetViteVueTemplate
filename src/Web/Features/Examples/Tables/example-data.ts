@@ -6,7 +6,10 @@ export const createPerson = () => {
     name: faker.person.fullName(),
     age: faker.number.int({ min: 1, max: 100 }),
     sex: faker.person.sex(),
-    color: faker.color.rgb()
+    color: faker.color.rgb(),
+    date: faker.datatype.boolean({ probability: .8 })
+      ? faker.date.anytime()
+      : null,
   }
 }
 

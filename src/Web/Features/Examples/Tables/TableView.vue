@@ -13,6 +13,9 @@
     <template #color="{ item }">
       <div class="px-2" :style="{ 'background-color': item.color, 'color': invertColor(item.color, true) }">{{item.color}}</div>
     </template>
+    <template #date="{ item, col }">
+      {{item[col.field]?.toLocaleDateString('sv')}}
+    </template>
   </data-table>
 </template>
 
@@ -24,7 +27,8 @@
     { field: 'name', hidden: false },
     { field: 'age' },
     { field: 'sex' },
-    { field: 'color' }
+    { field: 'color' },
+    { field: 'date' }
   ]);
   const visibleColumns = computed(() => columns.value.filter(x => !x.hidden))
   const items = ref([]);
