@@ -10,10 +10,14 @@ import { useApi } from '../Util/Client/fetch'
 import { useSignalr } from '../Util/Client/signalr'
 
 declare global {
-  var api: ReturnType<typeof useApi> & { signalr: typeof useSignalr }
+  var api: ReturnType<typeof useApi> & {
+    url: string,
+    signalr: typeof useSignalr
+  }
 }
 
 window.api = {
+  url: apiUrl,
   ...useApi({ apiUrl }),
   signalr: (url) => useSignalr(apiUrl + url)
 }

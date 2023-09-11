@@ -1,5 +1,4 @@
 ﻿import { watchArray } from '@vueuse/core';
-import entryUnbind from 'core-js/internals/entry-unbind';
 import { Ref, onBeforeUnmount, watch } from 'vue';
 
 export const useVirtualization = () => {

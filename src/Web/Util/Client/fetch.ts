@@ -1,7 +1,8 @@
 import { Ref } from 'vue'
 
 type RequestInitExtended = RequestInit & {
-  isLoading?: Ref<boolean>
+  isLoading?: Ref<boolean>,
+  query?: object
 }
 
 export const fetch = async (url: RequestInfo | URL, init: RequestInitExtended) => {
@@ -35,6 +36,26 @@ export const useApi = ({ apiUrl }) => {
     url: apiUrl,
     fetch: (url: RequestInfo | URL, init: RequestInitExtended = {}) => fetch(apiUrl + url, init),
     get: async <T>(url: RequestInfo | URL, init?: RequestInitExtended) => {
+      if (init?.query) {
+        const params = new URLSearchParams()
+
+        for (const [key, value] of Object.entries(init.query)) {
+          if (Array.isArray(value)) {
+            for (const item of value) {
+              params.append(key, item)
+            }
+
+            continue
+          }
+
+          for (const item of value.split(',')) {
+            params.append(key, item)
+          }
+        }
+
+        url += "?" + params
+      }
+
       const response = await fetch(apiUrl + url, { method: 'GET', ...init })
 
       const json = await response.json()
