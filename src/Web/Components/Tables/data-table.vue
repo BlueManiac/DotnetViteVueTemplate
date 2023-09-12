@@ -20,8 +20,8 @@
       </tr>
     </thead>
     <TransitionGroup name="list" tag="tbody">
-      <tr v-for="item of items" :ref="el => observeElement(el as HTMLTableRowElement)" @contextmenu="onRowContextMenu(item, $event)" :key="item[dataKey]" :class="{ 'table-active': selectedSet.has(item) }">
-        <template v-if="isVisible(item[dataKey])">
+      <tr v-for="(item, index) of items" :ref="el => observeElement(el as HTMLTableRowElement, index)" @contextmenu="onRowContextMenu(item, $event)" :key="item[dataKey]" :class="{ 'table-active': selectedSet.has(item) }">
+        <template v-if="isVisible(index)">
           <td class="fs-4 lh-1 selection-column" @click="onRowClick(item, null, $event)">
             <input class="form-check-input mt-0" type="checkbox" :checked="selectedSet.has(item)" @input="toggleSelected(item, $event.target.checked)">
           </td>

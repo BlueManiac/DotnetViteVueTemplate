@@ -1,7 +1,7 @@
 ﻿<template>
   <div class="d-flex gap-1 align-items-center mb-2">
     <btn @click="remove()">Remove</btn>
-    <btn @click="add(1000)">Add 1000</btn>
+    <btn @click="add(1)">Add 1000</btn>
     <span>Quantity: {{items.length}}</span>
   </div>
   Selected: {{selected.length}} {{selected[0]}}

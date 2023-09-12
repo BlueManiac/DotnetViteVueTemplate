@@ -7,9 +7,9 @@ export const useVirtualization = () => {
 
   const observer = new IntersectionObserver((entries) => {
     for (const entry of entries) {
-      const elem = entry.target as HTMLTableRowElement & { __vnode: any };
+      const elem = entry.target as HTMLTableRowElement
 
-      const index = elem.__vnode.key
+      const index = elem.rowIndex - 1;
 
       if (entry.isIntersecting) {
         showSet.value.add(index);
@@ -22,12 +22,27 @@ export const useVirtualization = () => {
     isLoaded.value = true
   }, { rootMargin: "500px 0px 500px 0px" });
 
-  const observeElement = (element: HTMLTableRowElement) => {
+  const observedElements = new WeakMap<HTMLTableRowElement, number>()
+
+  const observeElement = (element: HTMLTableRowElement, index: number) => {
     if (!element) {
       return;
     }
 
+    const storedIndex = observedElements.get(element)
+
+    if (storedIndex == index) {
+      return;
+    }
+
+    if (storedIndex >= 0) {
+      // If an element is reused, we need to unobserve it so that it can rechecked for visibility
+      observer.unobserve(element)
+    }
+
     observer.observe(element)
+
+    observedElements.set(element, index)
   }
 
   const isVisible = (index: any) => {
