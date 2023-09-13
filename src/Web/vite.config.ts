@@ -62,7 +62,8 @@ export default ({ mode }): UserConfig => {
       }
     },
     build: {
-      cssMinify: 'lightningcss'
+      cssMinify: 'lightningcss',
+      target: 'esnext',
     }
   }
 }

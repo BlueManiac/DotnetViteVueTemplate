@@ -9,10 +9,10 @@
     "update": "pnpm dlx npm-check-updates --packageManager pnpm --upgrade && pnpm install"
   },
   "devDependencies": {
-    "@iconify/json": "=2.2.113",
+    "@iconify/json": "=2.2.115",
     "@vitejs/plugin-vue": "=4.3.4",
     "core-dts": "=0.0.3",
-    "lightningcss": "^1.21.7",
+    "lightningcss": "^1.21.8",
     "unplugin-auto-import": "=0.16.6",
     "unplugin-icons": "=0.17.0",
     "unplugin-vue-components": "=0.25.2",
@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@faker-js/faker": "^8.0.2",
-    "@microsoft/signalr": "=7.0.10",
+    "@microsoft/signalr": "=7.0.11",
     "@vueuse/core": "=10.4.1",
     "bootstrap": "=5.3.1",
     "buffer": "=6.0.3",
