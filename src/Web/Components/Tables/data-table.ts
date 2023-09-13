@@ -105,7 +105,8 @@ export const useSorting = (sortField: Ref<string>, sortOrder: Ref<number>, colum
   const sort = (column) => {
     if (sortField.value == column.field) {
       sortOrder.value = sortOrder.value * -1
-    } else {
+    }
+    else {
       sortField.value = column.field
       sortOrder.value = 1
     }
@@ -118,21 +119,16 @@ export const useSorting = (sortField: Ref<string>, sortOrder: Ref<number>, colum
       const field1 = a[field]
       const field2 = b[field]
 
-      let result;
-
       if (typeof field1 == 'string' || typeof field2 == 'string') {
         if (!field1)
-          result = -1
-        else if (!field2)
-          result = 1
-        else
-          result = field1.localeCompare(field2)
-      }
-      else {
-        result = Number(field1) - Number(field2)
+          return -1 * modifier
+        if (!field2)
+          return 1 * modifier
+
+        return field1.localeCompare(field2) * modifier
       }
 
-      return result * modifier
+      return (Number(field1) - Number(field2)) * modifier
     }
   }
 
@@ -140,11 +136,11 @@ export const useSorting = (sortField: Ref<string>, sortOrder: Ref<number>, colum
     items.value.sort(compareFunction(sortField.value, sortOrder.value == 1))
   }
 
-  watch(() => items, () => {
-    sortItems()
-  }, { immediate: true, deep: true })
-
-  watch(() => [sortField.value, sortOrder.value], () => sortItems())
+  watch(
+    () => [items, sortField.value, sortOrder.value],
+    () => sortItems(),
+    { immediate: true, deep: true }
+  )
 
   return { sort }
 }
@@ -192,12 +188,12 @@ export const useClick = (selectedSet: Ref<Set<any>>, emit) => {
     emit('headerContextMenuClick', column, event)
   }
 
-  const onRowContextMenu = (item, event) => {
+  const onRowContextMenu = (event, item, index) => {
     if (event.ctrlKey) {
       return
     }
     event.preventDefault()
-    emit('rowContextMenuClick', item, event)
+    emit('rowContextMenuClick', event, item, index)
   }
 
   return { onRowClick, onHeaderContextMenu, onRowContextMenu }
