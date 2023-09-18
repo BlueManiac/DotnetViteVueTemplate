@@ -59,7 +59,7 @@ export const useVirtualization = () => {
 export const useSelection = (items: Ref<any[]>, selected: Ref<any[]>) => {
   const selectedSet = ref(new Set<number>())
 
-  const toggleSelected = (item, checked) => {
+  const toggleSelected = (item: any, checked: boolean) => {
     if (checked) {
       selectedSet.value.add(item)
     } else {

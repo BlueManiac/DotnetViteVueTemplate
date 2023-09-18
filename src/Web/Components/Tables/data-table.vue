@@ -3,7 +3,7 @@
     <thead>
       <tr v-show="isLoaded">
         <th class="fs-4 lh-1">
-          <input class="form-check-input mt-0" type="checkbox" @input="selectAll($event.target.checked)" ref="checkbox">
+          <input class="form-check-input mt-0" type="checkbox" @input="selectAll(($event.target as HTMLInputElement).checked)" ref="checkbox">
         </th>
         <template v-for="col of columns" :key="col.field">
           <th @click="sort(col)" @contextmenu="onHeaderContextMenu(col, $event)" :class="{'table-active': col.field == sortField }">
@@ -25,7 +25,7 @@
       <tr v-for="(item, index) of items" :ref="el => observeElement(el as HTMLTableRowElement, index)" @contextmenu="onRowContextMenu($event, item, index)" :key="item[dataKey]" :class="{ 'table-active': selectedSet.has(item) }">
         <template v-if="isVisible(index)">
           <td class="fs-4 lh-1 selection-column" @click="onRowClick(item, null, $event)">
-            <input class="form-check-input mt-0" type="checkbox" :checked="selectedSet.has(item)" @input="toggleSelected(item, $event.target.checked)">
+            <input class="form-check-input mt-0" type="checkbox" :checked="selectedSet.has(item)" @input="toggleSelected(item, ($event.target as HTMLInputElement).checked)">
           </td>
           <template v-for="col of columns" :key="col.field">
             <td @click="onRowClick(item, col, $event)">
@@ -99,9 +99,6 @@
 
   .list-enter-active {
     transition: all 0.3s ease;
-  }
-
-  .list-leave-active {
   }
 
   .list-enter-from,
