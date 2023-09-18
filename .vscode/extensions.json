@@ -1,6 +1,10 @@
 {
     "recommendations": [
+        "antfu.file-nesting",
         "antfu.goto-alias",
-        "pkief.material-icon-theme"
+        "ms-dotnettools.csdevkit",
+        "pkief.material-icon-theme",
+        "vue.volar",
+        "vue.vscode-typescript-vue-plugin",
     ]
 }
