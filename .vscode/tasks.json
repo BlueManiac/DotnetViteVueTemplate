@@ -1,5 +1,10 @@
 {
     "version": "2.0.0",
+    "options": {
+        "env": {
+            "DOTNET_WATCH_RESTART_ON_RUDE_EDIT": "true"
+        }
+    },
     "tasks": [
         {
             "label": "build",
@@ -35,18 +40,32 @@
                 "--project",
                 "${workspaceFolder}/src/Web/Web.csproj"
             ],
-            "problemMatcher": "$msCompile"
+            "problemMatcher": "$msCompile",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new",
+                "group": "watch"
+            }
+        },
+        {
+            "label": "watch vite",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-NoExit",
+                "${workspaceFolder}/src/Web/Properties/npmrun.ps1"
+            ],
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "new",
+                "group": "watch"
+            }
         },
         {
             "label": "watch all",
-            "type": "shell",
-            "command": "wt",
-            "args": [
-                "Powershell",
-                "-NoExit",
-                "${workspaceFolder}/src/Web/Properties/run.ps1"
-            ],
-            "problemMatcher": []
+            "problemMatcher": [],
+            "dependsOn": ["watch vite", "watch"]
         }
     ]
 }
