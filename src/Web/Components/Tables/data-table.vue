@@ -8,7 +8,9 @@
         <template v-for="col of columns" :key="col.field">
           <th @click="sort(col)" @contextmenu="onHeaderContextMenu(col, $event)" :class="{'table-active': col.field == sortField }">
             <template v-if="col.field == sortField">
-              <span class="text-primary-emphasis pe-1">{{col.header ?? col.field}}</span>
+              <span class="text-primary-emphasis pe-1">
+              {{col.header ?? col.field}}
+              </span>
               <MdiSortAscending v-if="sortOrder == 1" />
               <MdiSortDescending v-else />
             </template>
