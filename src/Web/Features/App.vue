@@ -2,7 +2,6 @@
   <div class="container-fluid vh-100">
     <Navbar />
     <Breadcrumb />
-    <error-display v-if="error" :error="error" />
     <RouterView v-slot="{ Component }">
       <template v-if="Component">
         <suspense timeout="30">
@@ -21,17 +20,19 @@
 <script setup>
   import { onErrorCaptured, ref } from 'vue'
   import { Router } from './router'
+  import { showErrorDialog } from '../Util/Client/client-error-handler';
 
   const error = ref(null)
 
   onErrorCaptured(e => {
     error.value = e
 
-    return false
+    return showErrorDialog(e)
   })
 
   Router.onError(e => {
     error.value = e
+    showErrorDialog(e)
   })
 
   Router.afterEach(() => {
