@@ -16,16 +16,16 @@ export const fetch = async (url: RequestInfo | URL, init: RequestInitExtended) =
 
   if (!response.ok) {
     const contentType = response.headers.get('content-type')
+    
+    const error = new Error( `${init.method ?? 'GET'} ${response.url} ${response.status}`)
+    
+    const problemDetails = contentType?.indexOf('application/problem+json') >= 0 && await response.json()
 
-    throw {
-      url: response.url,
-      body: init.body,
-      status: response.status,
-      method: init?.method ?? 'GET',
-      problemDetails: contentType?.indexOf('application/problem+json') >= 0
-        ? await response.json()
-        : undefined
+    if (problemDetails?.exception?.details) {
+      error.stack = problemDetails.exception.details + "\n\n" + error.stack
     }
+
+    throw error
   }
 
   return response

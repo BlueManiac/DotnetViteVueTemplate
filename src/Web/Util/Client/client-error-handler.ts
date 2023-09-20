@@ -1,6 +1,6 @@
 import { ErrorPayload } from "vite"
 
-export const showErrorDialog = async (error: Error) => {
+export const showErrorOverlay = async (error: unknown) => {
     const ErrorOverlay = customElements.get('vite-error-overlay')
 
     if (!ErrorOverlay)
@@ -19,23 +19,28 @@ export const showErrorDialog = async (error: Error) => {
     return false
 }
 
-const createErrorObject = async (error: Error): Promise<ErrorPayload["err"]> => {
+const createErrorObject = async (error: unknown): Promise<ErrorPayload["err"]> => {
+    if (!(error instanceof Error)) {
+        return {
+            message: error as string,
+            stack: null
+        }
+    }
+
     const stackLine = Array.from(parseStackLines(error))[0]
 
-    if (!stackLine)
-        return
-
-    const sourceMap = await getSourceMap(stackLine.url)
+    const sourceMap = stackLine && await getSourceMap(stackLine.url)
 
     return {
         plugin: 'client-error-handler',
         message: error["message"],
         stack: error["stack"],
-        loc: {
-            file: sourceMap.file.replace(/\//g, '\\'),
-            line: Number(stackLine.lineNumber),
-            column: Number(stackLine.columnNumber)
-        }
+        loc: sourceMap && {
+            file: sourceMap.file?.replace(/\//g, '\\'),
+            line: Number(stackLine?.lineNumber),
+            column: Number(stackLine?.columnNumber)
+        },
+        id: stackLine?.url
     }
 
     async function getSourceMap(url: string): Promise<{ file: string } | undefined> {
