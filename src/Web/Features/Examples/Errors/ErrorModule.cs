@@ -12,7 +12,7 @@ public class ErrorModule : IModule
     {
         app.MapGet("/error", () =>
         {
-            throw new Exception("error");
+            throw new Exception("Server error");
         });
     }
 }

@@ -22,6 +22,7 @@ export const showErrorOverlay = async (error: unknown) => {
 const createErrorObject = async (error: unknown): Promise<ErrorPayload["err"]> => {
     if (!(error instanceof Error)) {
         return {
+            plugin: 'client-error-handler',
             message: error as string,
             stack: null
         }

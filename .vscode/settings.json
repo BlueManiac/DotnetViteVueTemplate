@@ -3,5 +3,6 @@
     "files.exclude": {
         "**/.sarif": true
     },
-    "explorer.excludeGitIgnore": true
+    "explorer.excludeGitIgnore": true,
+    "terminal.integrated.cwd": "src\\Web"
 }
