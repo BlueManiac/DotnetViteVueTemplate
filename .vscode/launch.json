@@ -17,8 +17,7 @@
         {
             "name": ".NET Core Attach",
             "type": "coreclr",
-            "request": "attach",
-            "processName": "Web.exe"
+            "request": "attach"
         },
         {
             "name": "Debug javascript",

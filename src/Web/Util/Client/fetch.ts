@@ -6,6 +6,26 @@ type RequestInitExtended = RequestInit & {
 }
 
 export const fetch = async (url: RequestInfo | URL, init: RequestInitExtended) => {
+  if (init?.query) {
+    const params = new URLSearchParams()
+
+    for (const [key, value] of Object.entries(init.query)) {
+      if (Array.isArray(value)) {
+        for (const item of value) {
+          params.append(key, item)
+        }
+
+        continue
+      }
+
+      for (const item of value.split(',')) {
+        params.append(key, item)
+      }
+    }
+
+    url += "?" + params
+  }
+
   if (init.isLoading) {
     init.isLoading.value = true
   }
@@ -31,36 +51,27 @@ export const fetch = async (url: RequestInfo | URL, init: RequestInitExtended) =
   return response
 }
 
+const parseResponse = async<T>(response: Response) => {
+  const contentType = response.headers.get('content-type')
+
+  if (contentType && contentType.indexOf('application/json') >= 0) {
+    return response.json() as T
+  }
+
+  return response.text()
+}
+
 export const useApi = ({ apiUrl }) => {
   return {
     url: apiUrl,
     fetch: (url: RequestInfo | URL, init: RequestInitExtended = {}) => fetch(apiUrl + url, init),
     get: async <T>(url: RequestInfo | URL, init?: RequestInitExtended) => {
-      if (init?.query) {
-        const params = new URLSearchParams()
+      const response = await fetch(apiUrl + url, {
+        method: 'GET',
+        ...init
+      })
 
-        for (const [key, value] of Object.entries(init.query)) {
-          if (Array.isArray(value)) {
-            for (const item of value) {
-              params.append(key, item)
-            }
-
-            continue
-          }
-
-          for (const item of value.split(',')) {
-            params.append(key, item)
-          }
-        }
-
-        url += "?" + params
-      }
-
-      const response = await fetch(apiUrl + url, { method: 'GET', ...init })
-
-      const json = await response.json()
-
-      return json as T
+      return await parseResponse<T>(response)
     },
     post: async <T>(url: RequestInfo | URL, body?: any, init?: RequestInitExtended) => {
       const response = await fetch(apiUrl + url, {
@@ -72,9 +83,7 @@ export const useApi = ({ apiUrl }) => {
         ...init
       })
 
-      const json = await response.json()
-
-      return json as T
+      return await parseResponse<T>(response)
     },
     put: async <T>(url: RequestInfo | URL, body?: any, init?: RequestInitExtended) => {
       const response = await fetch(apiUrl + url, {
@@ -86,9 +95,7 @@ export const useApi = ({ apiUrl }) => {
         ...init
       })
 
-      const json = await response.json()
-
-      return json as T
+      return await parseResponse<T>(response)
     },
     delete: async <T>(url: RequestInfo | URL, body?: any, init?: RequestInitExtended) => {
       const response = await fetch(apiUrl + url, {
@@ -100,9 +107,7 @@ export const useApi = ({ apiUrl }) => {
         ...init
       })
 
-      const json = await response.json()
-
-      return json as T
+      return await parseResponse<T>(response)
     }
   }
 }
