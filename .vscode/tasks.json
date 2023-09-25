@@ -26,7 +26,8 @@
                 "publish",
                 "${workspaceFolder}/src/Web/Web.csproj",
                 "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
+                "/consoleloggerparameters:NoSummary",
+                "/p:PublishProfile=${workspaceFolder}/src/Web/Properties/PublishProfiles/FolderProfile.pubxml",
             ],
             "problemMatcher": "$msCompile"
         },

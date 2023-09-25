@@ -11,7 +11,7 @@
 		<!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
 		<Exec Command="node -e &quot;console.log('NPM Installing dependencies...')&quot;" />
 		<Exec Command="pnpm install" />
-		<Exec Command="npm run build -- --emptyOutDir false --outDir $(PublishDir)wwwroot" />
+		<Exec Command="npm run build -- --emptyOutDir true --outDir $(PublishDir)wwwroot" />
 	</Target>
 
 </Project>
