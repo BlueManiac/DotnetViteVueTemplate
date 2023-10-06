@@ -8,6 +8,11 @@
       "vite/client",
       // Syntax highlighting for core-js
       "core-dts"
-    ]
+    ],
+    "paths": {
+      "/*": [
+        "*"
+      ]
+    }
   }
 }
