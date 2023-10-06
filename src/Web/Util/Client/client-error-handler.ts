@@ -10,6 +10,7 @@ export const showErrorOverlay = async (error: unknown) => {
         const err = await createErrorObject(error)
         const overlay = new ErrorOverlay(err, true)
 
+        clearErrorOverlay()
         document.body.appendChild(overlay)
     
         return true
@@ -18,6 +19,12 @@ export const showErrorOverlay = async (error: unknown) => {
 
     return false
 }
+
+function clearErrorOverlay() {
+    document
+        .querySelectorAll('vite-error-overlay')
+        .forEach((n: any) => n.close())
+  }
 
 const createErrorObject = async (error: unknown): Promise<ErrorPayload["err"]> => {
     if (!(error instanceof Error)) {
