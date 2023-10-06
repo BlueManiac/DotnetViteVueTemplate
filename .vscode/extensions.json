@@ -2,6 +2,8 @@
     "recommendations": [
         "antfu.file-nesting",
         "antfu.goto-alias",
+        "bradgashler.htmltagwrap",
+        "formulahendry.auto-rename-tag",
         "ms-dotnettools.csdevkit",
         "pkief.material-icon-theme",
         "vue.volar",
