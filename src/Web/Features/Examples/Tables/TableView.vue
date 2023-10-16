@@ -6,7 +6,7 @@
   </div>
   Selected: {{selected.length}} {{selected[0]}}
   <context-menu ref="contextMenuElement" />
-  <data-table class="table-sm" v-model:items="items" :columns="visibleColumns" v-model:selected="selected" v-model:sortField="sortField" v-model:sortOrder="sortOrder" dataKey="id" @headerContextMenuClick="onHeaderContextMenu" @rowContextMenuClick="onRowContextMenu">
+  <data-table class="table-sm" v-model="items" :columns="visibleColumns" v-model:selected="selected" v-model:sortField="sortField" v-model:sortOrder="sortOrder" dataKey="id" @headerContextMenuClick="onHeaderContextMenu" @rowContextMenuClick="onRowContextMenu">
     <template #id="{ item, col }">
       {{item[col.field]}}
     </template>
