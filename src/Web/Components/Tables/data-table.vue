@@ -9,13 +9,13 @@
           <th @click="sort(col)" @contextmenu="onHeaderContextMenu(col, $event)" :class="{'table-active': col.field == sortField }">
             <template v-if="col.field == sortField">
               <span class="text-primary-emphasis pe-1">
-              {{col.header ?? col.field}}
+                {{toValue(col.header) ?? col.field}}
               </span>
               <MdiSortAscending v-if="sortOrder == 1" />
               <MdiSortDescending v-else />
             </template>
             <template v-else>
-              {{col.header ?? col.field}}
+              {{toValue(col.header) ?? col.field}}
             </template>
           </th>
         </template>
@@ -41,69 +41,70 @@
 </template>
 
 <script setup lang="ts">
-  import { watch } from 'vue'
-  import { useClick, useSelection, useSorting, useVirtualization } from './data-table'
+import { useClick, useSelection, useSorting, useVirtualization } from './data-table'
+import { MaybeRefOrGetter, toValue, watch } from 'vue';
 
-  const { dataKey, rowHeight = '33px' } = defineProps<{
-    dataKey: string,
-    rowHeight?: string
-  }>()
+const { dataKey, rowHeight = '33px' } = defineProps<{
+  dataKey: string,
+  rowHeight?: string
+}>()
 
-  const columns = defineModel<(any & { field: string, header?: string })[]>("columns", { local: true })
-  const items = defineModel<any[]>("items")
-  const sortField = defineModel<string>("sortField", { local: true })
-  const sortOrder = defineModel<number>("sortOrder", { local: true })
-  const selected = defineModel<any[]>("selected", { local: true })
+const columns = defineModel<(any & { field: string, header?: MaybeRefOrGetter<string> })[]>("columns", { local: true })
+const items = defineModel<any[]>("items")
+const sortField = defineModel<string>("sortField", { local: true })
+const sortOrder = defineModel<number>("sortOrder", { local: true })
+const selected = defineModel<any[]>("selected", { local: true })
 
-  const emit = defineEmits<{
-    rowClick: [item: any, column: any, event: Event],
-    headerContextMenuClick: [column: any, event: Event],
-    rowContextMenuClick: [item: any, column: any, event: Event]
-  }>()
+const emit = defineEmits<{
+  rowClick: [item: any, column: any, event: Event],
+  headerContextMenuClick: [column: any, event: Event],
+  rowContextMenuClick: [item: any, column: any, event: Event]
+}>()
 
-  // Retrive columns from items if not set
-  watch(() => [items.value.length, columns.value], () => {
-    if (columns.value && columns.value.length > 0)
-      return
+// Retrive columns from items if not set
+watch(() => [items.value.length, columns.value], () => {
+  if (columns.value && columns.value.length > 0)
+    return
 
-    columns.value = items.value.length > 0
-      ? Object.keys(items.value[0]).map(key => ({ field: key }))
-      : []
-  }, { immediate: true })
+  columns.value = items.value.length > 0
+    ? Object.keys(items.value[0]).map(key => ({ field: key }))
+    : []
+}, { immediate: true })
 
-  const { observeElement, isVisible, isLoaded } = useVirtualization()
-  const { selectedSet, toggleSelected, selectAll, checkbox } = useSelection(items, selected)
-  const { sort } = useSorting(sortField, sortOrder, columns, items)
-  const { onRowClick, onHeaderContextMenu, onRowContextMenu } = useClick(selectedSet, emit)
+const { observeElement, isVisible, isLoaded } = useVirtualization()
+const { selectedSet, toggleSelected, selectAll, checkbox } = useSelection(items, selected)
+const { sort } = useSorting(sortField, sortOrder, columns, items)
+const { onRowClick, onHeaderContextMenu, onRowContextMenu } = useClick(selectedSet, emit)
 </script>
 
 <style scoped>
-  th {
-    position: relative;
+th {
+  position: relative;
 
-    &:hover {
-      cursor: pointer;
-    }
+  &:hover {
+    cursor: pointer;
   }
+}
 
-  tr {
-    height: v-bind(rowHeight);
-  }
+tr {
+  height: v-bind(rowHeight);
+}
 
-  th, td {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 50ch;
-  }
+th,
+td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 50ch;
+}
 
-  .list-enter-active {
-    transition: all 0.3s ease;
-  }
+.list-enter-active {
+  transition: all 0.3s ease;
+}
 
-  .list-enter-from,
-  .list-leave-to {
-    opacity: 0;
-    transform: translateY(10px);
-  }
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
+}
 </style>

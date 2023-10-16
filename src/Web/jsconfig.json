@@ -9,7 +9,9 @@
       // Syntax highlighting for core-js
       "core-dts"
     ],
+    "baseUrl": "./",
     "paths": {
+      // Support absolute imports
       "/*": [
         "*"
       ]
