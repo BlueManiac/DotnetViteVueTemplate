@@ -15,7 +15,6 @@ declare module 'vue' {
     ConfirmModal: typeof import('./Features/Examples/Modals/ConfirmModal.vue')['default']
     ContextMenu: typeof import('./Components/context-menu.vue')['default']
     DataTable: typeof import('./Components/Tables/data-table.vue')['default']
-    ErrorDisplay: typeof import('./Components/error-display.vue')['default']
     HelloView: typeof import('./Features/Examples/Hello/HelloView.vue')['default']
     HomeView: typeof import('./Features/Home/HomeView.vue')['default']
     IconView: typeof import('./Features/Examples/Icons/IconView.vue')['default']
