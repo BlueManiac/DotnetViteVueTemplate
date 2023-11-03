@@ -10,5 +10,5 @@
     max: number | string
   }>()
 
-  const modelValue = defineModel<number>()
+  const modelValue = defineModel<number | string>()
 </script>

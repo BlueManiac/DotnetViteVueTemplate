@@ -54,13 +54,13 @@ useTitle(() => title.value
 )
 
 if (import.meta.env.DEV) {
-    window.addEventListener('error', ({ error }) => {
-        showErrorOverlay(error)
+  window.addEventListener('error', ({ error }) => {
+    showErrorOverlay(error)
   })
 
   import.meta.hot?.on('vite:beforeUpdate', () => {
     console.clear()
-      })
+  })
   
   const script = document.createElement('script');
   script.src = `${import.meta.env.VITE_API_URL}/_framework/aspnetcore-browser-refresh.js`

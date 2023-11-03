@@ -1,5 +1,5 @@
 <template>
-  <div :class="$attrs.class ?? 'mb-2'">
+  <div>
     <label v-if="slots.default" class="form-label"><slot /></label>
     <input v-bind:type="type" class="form-control" v-model="value" :placeholder="placeholder" ref="target">
   </div>
