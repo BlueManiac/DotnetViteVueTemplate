@@ -112,12 +112,16 @@ export const useSorting = (sortField: Ref<string>, sortOrder: Ref<number>, colum
     }
   }
 
-  const compareFunction = (field, asc) => {
+  const compareFunction = (field: string, asc: boolean) => {
     const modifier = asc ? 1 : -1
 
-    return (a, b) => {
+    return (a: unknown, b: unknown) => {
       const field1 = a[field]
       const field2 = b[field]
+
+      if (field1 === field2) {
+        return 0
+      }
 
       if (typeof field1 == 'string' || typeof field2 == 'string') {
         if (!field1)
