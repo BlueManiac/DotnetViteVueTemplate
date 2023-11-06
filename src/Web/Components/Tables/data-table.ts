@@ -84,7 +84,7 @@ export const useSelection = (items: Ref<any[]>, selected: Ref<any[]>) => {
     for (const item of removed) {
       selectedSet.value.delete(item)
     }
-  })
+  }, { deep: true })
 
   watch(() => [selectedSet.value.size, items.value.length], () => {
     checkbox.value.checked = selectedSet.value.size > 0

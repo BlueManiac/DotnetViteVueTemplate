@@ -55,14 +55,33 @@
 
   const onHeaderContextMenu = (col, event) => {
     contextMenuElement.value.show(event, [
-      { name: 'Hide', icon: MdiFileHidden, command: () => col.hidden = true },
-      { name: 'Restore', icon: MdiFileRestore, command: () => columns.value.forEach(x => x.hidden = false), visible: () => columns.value.some(x => x.hidden) }
+      {
+        name: 'Hide',
+        icon: MdiFileHidden,
+        command: () => col.hidden = true
+      },
+      {
+        name: 'Restore',
+        icon: MdiFileRestore,
+        command: () => columns.value.forEach(x => x.hidden = false),
+        visible: () => columns.value.some(x => x.hidden)
+      }
     ])
   }
 
   const onRowContextMenu = (event, item, index) => {
     contextMenuElement.value.show(event, [
-      { name: 'Remove', command: () => items.value.splice(index, 1) }
+      {
+        name: 'Remove',
+        command: () => {
+          if (!selected.value.includes(item)) {
+            items.value.splice(index, 1)
+          }
+          else {
+            items.value = items.value.filter(x => !selected.value.includes(x))
+          }
+        }
+      }
     ])
   }
 </script>
