@@ -21,7 +21,7 @@
         </template>
       </tr>
     </thead>
-    <TransitionGroup name="list" tag="tbody">
+    <tbody>
       <tr v-for="(item, index) of items" :ref="el => observeElement(el as HTMLTableRowElement, index)" @contextmenu="onRowContextMenu($event, item, index)" :key="item[dataKey]" :class="{ 'table-active': selectedSet.has(item) }">
         <template v-if="isVisible(index)">
           <td class="fs-4 lh-1 selection-column" @click="onRowClick(item, null, $event)">
@@ -36,7 +36,7 @@
           </template>
         </template>
       </tr>
-    </TransitionGroup>
+    </tbody>
   </table>
 </template>
 
@@ -96,15 +96,5 @@ td {
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 50ch;
-}
-
-.list-enter-active {
-  transition: all 0.3s ease;
-}
-
-.list-enter-from,
-.list-leave-to {
-  opacity: 0;
-  transform: translateY(10px);
 }
 </style>
