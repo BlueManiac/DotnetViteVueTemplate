@@ -22,27 +22,18 @@ export const useVirtualization = () => {
     isLoaded.value = true
   }, { rootMargin: "500px 0px 500px 0px" });
 
-  const observedElements = new WeakMap<HTMLTableRowElement, number>()
+  const observedElements = new WeakSet<HTMLTableRowElement>()
 
-  const observeElement = (element: HTMLTableRowElement, index: number) => {
+  const observeElement = (element: HTMLTableRowElement) => {
     if (!element) {
       return;
     }
 
-    const storedIndex = observedElements.get(element)
-
-    if (storedIndex == index) {
+    if (observedElements.has(element)) {
       return;
     }
-
-    if (storedIndex >= 0) {
-      // If an element is reused, we need to unobserve it so that it can rechecked for visibility
-      observer.unobserve(element)
-    }
-
+    
     observer.observe(element)
-
-    observedElements.set(element, index)
   }
 
   const isVisible = (index: any) => {

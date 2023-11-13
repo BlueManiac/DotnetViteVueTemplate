@@ -1,10 +1,10 @@
 ﻿<template>
   <div class="d-flex gap-1 align-items-center mb-2">
+    <btn @click="add()">Add</btn>
+    <textfield v-model.number="changeQuantity" type="number"></textfield>
     <btn @click="remove()">Remove</btn>
-    <btn @click="add(1000)">Add 1000</btn>
-    <span>Quantity: {{items.length}}</span>
   </div>
-  Selected: {{selected.length}} {{selected[0]}}
+  Quantity: {{items.length}}, Selected: {{selected.length}} {{selected[0]}}
   <context-menu ref="contextMenuElement" />
   <data-table class="table-sm" v-model="items" :columns="visibleColumns" v-model:selected="selected" v-model:sortField="sortField" v-model:sortOrder="sortOrder" dataKey="id" @headerContextMenuClick="onHeaderContextMenu" @rowContextMenuClick="onRowContextMenu">
     <template #id="{ item, col }">
@@ -38,15 +38,20 @@
 
   const selected = ref([])
 
-  const remove = () => {
-    items.value.splice(0, 1);
-  }
-  const add = quantity => {
+  const changeQuantity = useLocalStorage<number>('changeQuantity', 1)
+  const add = (quantity?: number) => {
+    quantity ??= changeQuantity.value
+
     const max = items.value.length + quantity
 
     for (let i = items.value.length; i < max; i++) {
       items.value.push(createPerson());
     }
+  }
+  const remove = (quantity?: number) => {
+    quantity ??= changeQuantity.value
+
+    items.value.splice(0, quantity);
   }
 
   add(1000)
