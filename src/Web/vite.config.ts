@@ -58,12 +58,7 @@ export default ({ mode }): UserConfig => {
       }
     },
     css: {
-      transformer: 'lightningcss',
-      lightningcss: {
-        drafts: {
-          nesting: true
-        }
-      }
+      transformer: 'lightningcss'
     },
     build: {
       cssMinify: 'lightningcss',
