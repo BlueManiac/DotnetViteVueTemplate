@@ -5,7 +5,7 @@ public static class WebApplicationExtensions
 {
     public static WebApplicationBuilder AddModule<TModule>(this WebApplicationBuilder builder) where TModule : IModule
     {
-        TModule.AddServices(builder.Services, builder.Environment, builder.Configuration);
+        TModule.AddServices(builder);
 
         return builder;
     }
@@ -28,7 +28,7 @@ public static class WebApplicationExtensions
 
             var method = type.GetMethod(nameof(IModule.AddServices), BindingFlags.Static | BindingFlags.Public);
 
-            method?.Invoke(null, new object[] { builder.Services, builder.Environment, builder.Configuration });
+            method?.Invoke(null, [builder]);
         }
 
         return builder;
@@ -45,7 +45,7 @@ public static class WebApplicationExtensions
 
             var method = type?.GetMethod(nameof(IModule.MapRoutes), BindingFlags.Static | BindingFlags.Public);
 
-            method?.Invoke(null, new object[] { app });
+            method?.Invoke(null, [app]);
         }
 
         return app;

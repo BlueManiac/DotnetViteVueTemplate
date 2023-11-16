@@ -4,7 +4,7 @@ namespace Web.Features.Examples.RealTime;
 
 public class RealTimeModule : IModule
 {
-    public static void AddServices(IServiceCollection services, IWebHostEnvironment environment, IConfiguration configuration)
+    public static void AddServices(WebApplicationBuilder builder)
     {
     }
 

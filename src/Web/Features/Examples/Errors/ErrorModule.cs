@@ -3,7 +3,7 @@
 namespace Web.Features.Examples.Errors;
 public class ErrorModule : IModule
 {
-    public static void AddServices(IServiceCollection services, IWebHostEnvironment environment, IConfiguration configuration)
+    public static void AddServices(WebApplicationBuilder builder)
     {
         throw new NotImplementedException();
     }
