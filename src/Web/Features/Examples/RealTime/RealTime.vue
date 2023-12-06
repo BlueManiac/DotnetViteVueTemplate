@@ -1,13 +1,15 @@
 ﻿<template>
   <btn @click="send()" class="mb-3">Send</btn>
   <br />
-  {{message}}
+  {{ message }}
 </template>
 
 <script setup>
-  const { connection, data } = api.signalr('/realtime')
+import { api } from '/Features/api';
 
-  const message = data('message')
+const { connection, data } = api.signalr('/api/realtime')
 
-  const send = () => connection.send('Data', 'hi')
+const message = data('message')
+
+const send = () => connection.send('Data', 'hi')
 </script>

@@ -10,6 +10,6 @@ public class RealTimeModule : IModule
 
     public static void MapRoutes(WebApplication app)
     {
-        app.MapHub<RealTimeHub>("/realTime");
+        app.MapHub<RealTimeHub>("/api/realTime");
     }
 }

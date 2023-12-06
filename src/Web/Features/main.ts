@@ -5,24 +5,8 @@ import 'bootstrap'
 
 import '../Util/Client/array'
 
-import { apiUrl, applicationName } from './info'
-import { useApi } from '../Util/Client/fetch'
-import { useSignalr } from '../Util/Client/signalr'
+import { applicationName } from './info'
 import { showErrorOverlay } from '../Util/Client/client-error-handler'
-
-declare global {
-  var api: ReturnType<typeof useApi> & {
-    url: string,
-    signalr: typeof useSignalr
-  }
-}
-
-window.api = {
-  url: apiUrl,
-  ...useApi({ apiUrl }),
-  signalr: (url) => useSignalr(apiUrl + url)
-}
-
 import { setPreferredTheme } from '../Components/ColorSchemes/color-schemes'
 
 setPreferredTheme();
