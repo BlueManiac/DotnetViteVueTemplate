@@ -14,6 +14,7 @@ public class AuthenticationModule : IModule
             .AddBearerToken(BearerTokenDefaults.AuthenticationScheme, options =>
             {
                 options.BearerTokenExpiration = TimeSpan.FromMinutes(60);
+                options.RefreshTokenExpiration = TimeSpan.FromMinutes(60);
             });
     }
 

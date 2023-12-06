@@ -11,13 +11,15 @@ interface AccessTokenResponse {
 
 const loginResponse = useLocalStorage<AccessTokenResponse>('auth-login', {});
 
-export const isLoggedIn = computed(() => loginResponse.value?.accessToken && Date.now() < loginResponse.value.date + loginResponse.value.expiresIn * 1000);
-export const accessToken = computed(() => loginResponse.value?.accessToken)
+export const isLoggedIn = computed(() => loginResponse.value.accessToken && Date.now() < loginResponse.value.date + loginResponse.value.expiresIn * 1000);
+export const accessToken = computed(() => loginResponse.value.accessToken)
 
 const refresh = async () => {
     try {
-        loginResponse.value = await api.post<AccessTokenResponse>('/auth/refresh', { refreshToken: loginResponse.value.refreshToken });
-        loginResponse.value.date = Date.now();
+        loginResponse.value = {
+            ...await api.post<AccessTokenResponse>('/auth/refresh', { refreshToken: loginResponse.value.refreshToken }),
+            date: Date.now()
+        }
     }
     catch {
         loginResponse.value = {};
@@ -32,12 +34,15 @@ const startBackgroundRefresh = () => {
         clearTimeout(refreshTimeout);
     }
 
-    if (!loginResponse.value?.refreshToken || !isLoggedIn.value) {
+    if (!isLoggedIn.value) {
         loginResponse.value = {};
         return;
     }
 
-    const refreshDelay = loginResponse.value.expiresIn * 1000 - (Date.now() - loginResponse.value.date) + 5000;
+    const elapsedTime = Date.now() - loginResponse.value.date;
+
+    // Refresh the token 5 seconds before it expires
+    const refreshDelay = loginResponse.value.expiresIn * 1000 - elapsedTime - 5000;
 
     refreshTimeout = setTimeout(async () => {
         if (isLoggedIn.value) {
@@ -49,8 +54,10 @@ const startBackgroundRefresh = () => {
 }
 
 export const login = async (username: string, password: string) => {
-    loginResponse.value = await api.post<AccessTokenResponse>('/auth/login', { username, password });
-    loginResponse.value.date = Date.now();
+    loginResponse.value = {
+        ...await api.post<AccessTokenResponse>('/auth/login', { username, password }),
+        date: Date.now()
+    }
 
     // Spawn a background task to get updated login based on refresh token
     startBackgroundRefresh()
