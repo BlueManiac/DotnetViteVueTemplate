@@ -5,7 +5,7 @@ import Icons from 'unplugin-icons/vite'
 import ViteComponents from 'unplugin-vue-components/vite'
 import { UserConfig } from 'vite'
 import mkcert from 'vite-plugin-mkcert'
-import Inspector from 'unplugin-vue-inspector/vite'
+import Inspector from 'vite-plugin-vue-inspector'
 
 export default ({ mode }): UserConfig => {
   const iconsResolver = IconsResolver({
