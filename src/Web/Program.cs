@@ -7,6 +7,12 @@ builder.Services.AddResponseCompression(options => options.EnableForHttps = true
 builder.Services.AddProblemDetails();
 builder.Services.AddSignalR();
 
+builder.Services.Configure<HostOptions>(options =>
+{
+    options.ServicesStartConcurrently = true;
+    options.ServicesStopConcurrently = true;
+});
+
 builder.AddModule<RealTimeModule>();
 
 if (builder.Environment.IsDevelopment())
