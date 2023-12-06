@@ -19,6 +19,7 @@ public class AuthenticationModule : IModule
     }
 
     public record LoginRequest(string UserName, string Password);
+    public record UserResponse(string Name);
 
     public static void MapRoutes(WebApplication app)
     {
@@ -50,7 +51,11 @@ public class AuthenticationModule : IModule
 
         group.MapGet("/user", (ClaimsPrincipal user) =>
         {
-            return user.Identity?.Name;
+            if (user.Identity?.Name is null) {
+                return Results.Unauthorized();
+            }
+
+            return TypedResults.Ok(new UserResponse(user.Identity.Name));
         })
         .RequireAuthorization();
     }
