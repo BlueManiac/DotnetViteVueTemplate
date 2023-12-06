@@ -1,7 +1,7 @@
 import { accessToken } from './Auth/AuthenticationService'
 import { apiUrl } from './info'
 import { useApi } from '/Util/Client/fetch'
-import { useSignalr } from '/Util/Client/signalr'
+import { useSignalr, SignalrSender, SignalrReciever } from '/Util/Client/signalr'
 
 export const api = {
   url: apiUrl,
@@ -16,5 +16,7 @@ export const api = {
       return request
     }
   }),
-  signalr: (url: string) => useSignalr(apiUrl + url)
+  signalr<TSender extends SignalrSender = SignalrSender, TReciever extends SignalrReciever = SignalrReciever>(url: string) {
+    return useSignalr<TSender, TReciever>(apiUrl + url)
+  }
 }

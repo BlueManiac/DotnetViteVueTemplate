@@ -1,8 +1,11 @@
 ﻿import { tryOnScopeDispose, useEventListener } from '@vueuse/core'
 import { HubConnectionBuilder } from '@microsoft/signalr'
-import { onMounted, ref } from 'vue'
+import { Ref, onMounted, ref } from 'vue'
 
-export function useSignalr(url: string) {
+export type SignalrSender = { [key: string]: (...rest: unknown[]) => Promise<void> }
+export type SignalrReciever = { [key: string]: Ref<unknown> }
+
+export function useSignalr<TSender extends SignalrSender = SignalrSender, TReciever extends SignalrReciever = SignalrReciever>(url: string) {
   const connection = new HubConnectionBuilder()
     .withUrl(url)
     .withAutomaticReconnect()
@@ -29,5 +32,19 @@ export function useSignalr(url: string) {
     return val
   }
 
-  return { connection, data }
+  const sender = new Proxy({}, {
+    get(target, prop, receiver) {
+      return function (...args: any[]) {
+        return connection.send.apply(connection, [prop, ...args]);
+      };
+    },
+  }) as TSender;
+
+  const receiver = new Proxy({}, {
+    get(target, prop: string, receiver) {
+      return data(prop)
+    },
+  }) as TReciever;
+
+  return { connection, data, sender, receiver }
 }
