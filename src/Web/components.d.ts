@@ -18,6 +18,7 @@ declare module 'vue' {
     HelloView: typeof import('./Features/Examples/Hello/HelloView.vue')['default']
     HomeView: typeof import('./Features/Home/HomeView.vue')['default']
     IconView: typeof import('./Features/Examples/Icons/IconView.vue')['default']
+    LoginView: typeof import('./Features/Auth/LoginView.vue')['default']
     MdiAccountCowboyHat: typeof import('~icons/mdi/account-cowboy-hat')['default']
     MdiArrowDown: typeof import('~icons/mdi/arrow-down')['default']
     MdiCheck: typeof import('~icons/mdi/check')['default']

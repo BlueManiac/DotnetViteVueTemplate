@@ -1,3 +1,4 @@
+using Web.Features.Auth;
 using Web.Features.Examples.RealTime;
 using Web.Util.Modules;
 
@@ -14,6 +15,7 @@ builder.Services.Configure<HostOptions>(options =>
 });
 
 builder.AddModule<RealTimeModule>();
+builder.AddModule<AuthenticationModule>();
 
 if (builder.Environment.IsDevelopment())
 {
