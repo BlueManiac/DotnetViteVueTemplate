@@ -15,7 +15,7 @@ import { Ref } from 'vue';
 import { api } from '/Features/api';
 
 type RealtimeSender = {
-  Data: (message: string) => Promise<void>
+  Data(message: string): Promise<void>
 }
 type RealtimeReciever = {
   message: Ref<string>
