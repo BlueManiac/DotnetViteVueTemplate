@@ -17,7 +17,6 @@ export default ({ mode }): UserConfig => {
     plugins: [
       vue({
         script: {
-          defineModel: true,
           propsDestructure: true
         }
       }),

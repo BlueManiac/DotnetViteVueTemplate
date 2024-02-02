@@ -49,11 +49,11 @@ const { dataKey, rowHeight = '33px' } = defineProps<{
   rowHeight?: string
 }>()
 
-const columns = defineModel<(any & { field: string, header?: MaybeRefOrGetter<string> })[]>("columns", { local: true })
+const columns = defineModel<(any & { field: string, header?: MaybeRefOrGetter<string> })[]>("columns")
 const items = defineModel<any[]>("modelValue")
-const sortField = defineModel<string>("sortField", { local: true })
-const sortOrder = defineModel<number>("sortOrder", { local: true })
-const selected = defineModel<any[]>("selected", { local: true })
+const sortField = defineModel<string>("sortField")
+const sortOrder = defineModel<number>("sortOrder")
+const selected = defineModel<any[]>("selected")
 
 const emit = defineEmits<{
   rowClick: [item: any, column: any, event: Event],
