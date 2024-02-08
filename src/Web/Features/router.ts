@@ -1,5 +1,5 @@
 ﻿import { ref } from 'vue'
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHistory, RouteLocationNormalizedLoaded, RouteRecordRaw } from 'vue-router'
 import { baseRoutes } from './routes'
 
 const routeMap = new Map<string, RouteRecordRaw>()
@@ -26,7 +26,7 @@ export const routePath = computed(() => {
 
   return Array.from(create(currentRoute))
 
-  function* create(route) {
+  function* create(route: RouteLocationNormalizedLoaded): Generator<RouteRecordRaw> {
     if (route.meta.parentId) {
       const parentRoute = routeMap[route.meta.parentId]
 

@@ -1,6 +1,15 @@
 import { RouteRecordRaw } from 'vue-router'
 import { exampleRoutes } from './Examples/routes'
 
+declare module 'vue-router' {
+  interface RouteMeta {
+    title?: string
+    id?: string
+    parentId?: string,
+    fullPath?: string
+  }
+}
+
 export const baseRoutes: RouteRecordRaw[] = [
   {
     path: '/',
