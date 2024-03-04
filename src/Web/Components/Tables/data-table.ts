@@ -1,5 +1,4 @@
-﻿import { watchArray } from '@vueuse/core';
-import { Ref, onBeforeUnmount, watch } from 'vue';
+﻿import { Ref, onBeforeUnmount, watch, watchEffect } from 'vue';
 
 export const useVirtualization = () => {
   const showSet = ref(new Set<any>())
@@ -71,11 +70,13 @@ export const useSelection = (items: Ref<any[]>, selected: Ref<any[]>) => {
 
   const checkbox = ref<HTMLInputElement>()
 
-  watchArray(items, (newList, oldList, added, removed) => {
-    for (const item of removed) {
-      selectedSet.value.delete(item)
+  watch(() => [items.value.length, items], () => {
+    for (let item of selectedSet.value) {
+      if (!items.value.includes(item)) {
+        selectedSet.value.delete(item)
+      }
     }
-  }, { deep: true })
+  })
 
   watch(() => [selectedSet.value.size, items.value.length], () => {
     checkbox.value.checked = selectedSet.value.size > 0
@@ -90,8 +91,8 @@ export const useSelection = (items: Ref<any[]>, selected: Ref<any[]>) => {
 }
 
 export const useSorting = (sortField: Ref<string>, sortOrder: Ref<number>, columns: Ref<any[]>, items: Ref<any[]>) => {
-  sortField.value ??= (columns.value.find(x => x.sort) ?? columns[0])?.field
-  sortOrder.value ??= columns.value.find(x => x.sort)?.descending ? -1 : 1
+  sortField.value ??= columns[0]?.field
+  sortOrder.value ??= 1
 
   const sort = (column) => {
     if (sortField.value == column.field) {
@@ -103,9 +104,7 @@ export const useSorting = (sortField: Ref<string>, sortOrder: Ref<number>, colum
     }
   }
 
-  const compareFunction = (field: string, asc: boolean) => {
-    const modifier = asc ? 1 : -1
-
+  const compareFunction = (field: string, modifier: number) => {
     return (a: unknown, b: unknown) => {
       const field1 = a[field]
       const field2 = b[field]
@@ -127,16 +126,10 @@ export const useSorting = (sortField: Ref<string>, sortOrder: Ref<number>, colum
     }
   }
 
-  const sortItems = () => {
-    items.value.sort(compareFunction(sortField.value, sortOrder.value == 1))
-  }
-
-  watch(
-    () => [items, sortField.value, sortOrder.value],
-    () => sortItems(),
-    { immediate: true, deep: true }
-  )
-
+  watchEffect(() => {
+    items.value.sort(compareFunction(sortField.value, sortOrder.value))
+  })
+  
   return { sort }
 }
 

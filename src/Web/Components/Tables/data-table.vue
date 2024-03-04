@@ -6,36 +6,38 @@
           <input class="form-check-input mt-0" type="checkbox" @input="selectAll(($event.target as HTMLInputElement).checked)" ref="checkbox">
         </th>
         <template v-for="col of columns" :key="col.field">
-          <th @click="sort(col)" @contextmenu="onHeaderContextMenu(col, $event)" :class="{'table-active': col.field == sortField }">
+          <th @click="sort(col)" @contextmenu="onHeaderContextMenu(col, $event)" :class="{ 'table-active': col.field == sortField }">
             <template v-if="col.field == sortField">
               <span class="text-primary-emphasis pe-1">
-                {{toValue(col.header) ?? col.field}}
+                {{ toValue(col.header) ?? col.field }}
               </span>
               <MdiSortAscending v-if="sortOrder == 1" />
               <MdiSortDescending v-else />
             </template>
             <template v-else>
-              {{toValue(col.header) ?? col.field}}
+              {{ toValue(col.header) ?? col.field }}
             </template>
           </th>
         </template>
       </tr>
     </thead>
     <tbody>
-      <tr v-for="(item, index) of items" :ref="el => observeElement(el as HTMLTableRowElement)" @contextmenu="onRowContextMenu($event, item, index)" :key="item[dataKey]" :class="{ 'table-active': selectedSet.has(item) }">
-        <template v-if="isVisible(index)">
-          <td class="fs-4 lh-1 selection-column" @click="onRowClick(item, null, $event)">
-            <input class="form-check-input mt-0" type="checkbox" :checked="selectedSet.has(item)" @input="toggleSelected(item, ($event.target as HTMLInputElement).checked)">
-          </td>
-          <template v-for="col of columns" :key="col.field">
-            <td @click="onRowClick(item, col, $event)">
-              <slot :name="col.field" :item="item" :col="col">
-                {{item[col.field]}}
-              </slot>
+      <template v-for="(item, index) of items" :key="index">
+        <tr :ref="el => observeElement(el as HTMLTableRowElement)" @contextmenu="onRowContextMenu($event, item, index)" :class="{ 'table-active': selectedSet.has(item) }">
+          <template v-if="isVisible(index)">
+            <td class="fs-4 lh-1 selection-column" @click="onRowClick(item, null, $event)">
+              <input class="form-check-input mt-0" type="checkbox" :checked="selectedSet.has(item)" @input="toggleSelected(item, ($event.target as HTMLInputElement).checked)">
             </td>
+            <template v-for="col of columns" :key="col.field">
+              <td @click="onRowClick(item, col, $event)">
+                <slot :name="col.field" :item="item" :col="col">
+                  {{ item[col.field] }}
+                </slot>
+              </td>
+            </template>
           </template>
-        </template>
-      </tr>
+        </tr>
+      </template>
     </tbody>
   </table>
 </template>
@@ -44,21 +46,22 @@
 import { useClick, useSelection, useSorting, useVirtualization } from './data-table'
 import { MaybeRefOrGetter, toValue, watch } from 'vue';
 
-const { dataKey, rowHeight = '33px' } = defineProps<{
-  dataKey: string,
+const { rowHeight = '33px' } = defineProps<{
   rowHeight?: string
 }>()
 
-const columns = defineModel<(any & { field: string, header?: MaybeRefOrGetter<string> })[]>("columns")
+export type Column = any & { field: string, header?: MaybeRefOrGetter<string> }
+
+const columns = defineModel<Column[]>("columns")
 const items = defineModel<any[]>("modelValue")
 const sortField = defineModel<string>("sortField")
 const sortOrder = defineModel<number>("sortOrder")
 const selected = defineModel<any[]>("selected")
 
 const emit = defineEmits<{
-  rowClick: [item: any, column: any, event: Event],
-  headerContextMenuClick: [column: any, event: Event],
-  rowContextMenuClick: [item: any, column: any, event: Event]
+  rowClick: [item: any, column: Column, event: Event],
+  headerContextMenuClick: [column: Column, event: Event],
+  rowContextMenuClick: [item: any, column: Column, event: Event]
 }>()
 
 // Retrive columns from items if not set

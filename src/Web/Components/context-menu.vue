@@ -60,18 +60,11 @@
 <style scoped>
   .dropdown-menu {
     --bs-dropdown-padding-y: 0;
+    --bs-dropdown-border-radius: 0;
   }
 
   .dropdown-item:hover {
     color: var(--bs-dropdown-link-active-color);
     background-color: var(--bs-dropdown-link-active-bg);
-  }
-
-  li:first-child .dropdown-item {
-    border-radius: var(--bs-dropdown-border-radius) var(--bs-dropdown-border-radius) 0 0;
-  }
-
-  li:last-child .dropdown-item {
-    border-radius: 0 0 var(--bs-dropdown-border-radius) var(--bs-dropdown-border-radius);
   }
 </style>
