@@ -1,10 +1,10 @@
 ﻿<template>
   <modal>
     <template #header>
-      {{header}}
+      {{ header }}
     </template>
     <p class="m-0">
-      Modal state: {{modal}}
+      Modal state: {{ modal }}
     </p>
     <template #footer>
       <btn @click="set(true)">Yes</btn>
@@ -14,15 +14,15 @@
 </template>
 
 <script setup lang="ts">
-  const { modal } = defineProps<{
-    header: string,
-    modal: any
-  }>();
-  const confirmed = defineModel<boolean>('confirmed')
+const { modal } = defineProps<{
+  header: string,
+  modal: any
+}>();
+const confirmed = defineModel<boolean>('confirmed')
 
-  const set = (result) => {
-    confirmed.value = result;
+const set = (result) => {
+  confirmed.value = result;
 
-    modal.visible = false
-  }
+  modal.visible = false
+}
 </script>

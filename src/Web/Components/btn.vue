@@ -5,9 +5,9 @@
 </template>
 
 <script setup lang="ts">
-  const { theme = 'primary' } = defineProps<{
-    theme?: string
-  }>()
+const { theme = 'primary' } = defineProps<{
+  theme?: string
+}>()
 
-  const classes = computed(() => `btn btn-${theme}`)
+const classes = computed(() => `btn btn-${theme}`)
 </script>

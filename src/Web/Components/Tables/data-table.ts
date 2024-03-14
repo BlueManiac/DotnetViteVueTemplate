@@ -31,7 +31,7 @@ export const useVirtualization = () => {
     if (observedElements.has(element)) {
       return;
     }
-    
+
     observer.observe(element)
   }
 
@@ -129,7 +129,7 @@ export const useSorting = (sortField: Ref<string>, sortOrder: Ref<number>, colum
   watchEffect(() => {
     items.value.sort(compareFunction(sortField.value, sortOrder.value))
   })
-  
+
   return { sort }
 }
 

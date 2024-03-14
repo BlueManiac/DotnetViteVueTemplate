@@ -51,7 +51,8 @@ public class AuthenticationModule : IModule
 
         group.MapGet("/user", (ClaimsPrincipal user) =>
         {
-            if (user.Identity?.Name is null) {
+            if (user.Identity?.Name is null)
+            {
                 return Results.Unauthorized();
             }
 

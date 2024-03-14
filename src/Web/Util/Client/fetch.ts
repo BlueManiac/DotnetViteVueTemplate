@@ -36,9 +36,9 @@ export const fetch = async (url: RequestInfo | URL, init: RequestInitExtended) =
 
   if (!response.ok) {
     const contentType = response.headers.get('content-type')
-    
+
     const error = new Error(`${init.method ?? 'GET'} ${response.url} ${response.status}`)
-    
+
     const problemDetails = contentType?.indexOf('application/problem+json') >= 0 && await response.json()
 
     if (problemDetails?.exception?.details) {
@@ -63,7 +63,7 @@ const parseResponse = async<T>(response: Response) => {
 
 type RequestInterceptor = (init: RequestInitExtended) => RequestInitExtended
 
-export const useApi = ({ apiUrl, intercept = x => x }: { apiUrl: string, intercept?: RequestInterceptor}) => {
+export const useApi = ({ apiUrl, intercept = x => x }: { apiUrl: string, intercept?: RequestInterceptor }) => {
   return {
     url: apiUrl,
     fetch: (url: RequestInfo | URL, init: RequestInitExtended = {}) => fetch(apiUrl + url, intercept(init)),

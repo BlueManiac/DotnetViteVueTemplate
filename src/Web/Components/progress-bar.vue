@@ -5,17 +5,17 @@
 </template>
 
 <script setup lang="ts">
-  const { modelValue, min = 0, max = 100 } = defineProps < {
-    modelValue: number,
-    min?: number | string,
-    max: number | string,
-  }>()
+const { modelValue, min = 0, max = 100 } = defineProps<{
+  modelValue: number,
+  min?: number | string,
+  max: number | string,
+}>()
 
-  const width = computed(() => modelValue / Number(max) * 100)
+const width = computed(() => modelValue / Number(max) * 100)
 </script>
 
 <style scoped>
-  .progress-bar {
-    width: calc(v-bind(width) * 1%);
-  }
+.progress-bar {
+  width: calc(v-bind(width) * 1%);
+}
 </style>

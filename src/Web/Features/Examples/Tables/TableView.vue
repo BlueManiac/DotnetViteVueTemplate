@@ -26,7 +26,7 @@
 <script setup lang="ts">
 import { useLocalStorage } from '@vueuse/core';
 import { createPerson, invertColor } from './example-data';
-import TableFilter, { FilterModel } from './TableFilter.vue';
+import TableFilter from './TableFilter.vue';
 import { Column } from '/Components/Tables/data-table.vue';
 
 const columns = ref([

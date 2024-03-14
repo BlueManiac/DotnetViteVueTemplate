@@ -3,5 +3,5 @@
 </template>
 
 <script setup>
-  throw new Error('client error')
+throw new Error('client error')
 </script>

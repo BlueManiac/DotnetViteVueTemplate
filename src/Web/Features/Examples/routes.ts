@@ -1,6 +1,6 @@
 import { RouteRecordRaw } from 'vue-router'
 
-export const exampleRoutes : RouteRecordRaw[] = [
+export const exampleRoutes: RouteRecordRaw[] = [
   {
     path: '/realtime',
     component: () => import('./RealTime/RealTime.vue'),

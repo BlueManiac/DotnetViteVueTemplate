@@ -7,7 +7,7 @@ export const api = {
   url: apiUrl,
   ...useApi({
     apiUrl,
-    intercept: request =>  {
+    intercept: request => {
       if (accessToken.value && (!request.headers || !request.headers['Authorization'])) {
         request.headers ??= {}
         request.headers['Authorization'] = `Bearer ${accessToken.value}`

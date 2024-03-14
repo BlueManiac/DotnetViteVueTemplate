@@ -1,15 +1,17 @@
 ﻿<template>
   <h1>
-    Load icons using unplugin-vue-components: <MdiArrowDown />
+    Load icons using unplugin-vue-components:
+    <MdiArrowDown />
   </h1>
   <h1>
-    Or unplugin-auto-import: <component v-for="icon in icons" :is="icon" />
+    Or unplugin-auto-import:
+    <component v-for="icon in icons" :is="icon" />
   </h1>
 </template>
 
 <script setup>
-  const icons = [
-    MdiAlarm,
-    MdiAccountCowboyHat
-  ]
+const icons = [
+  MdiAlarm,
+  MdiAccountCowboyHat
+]
 </script>

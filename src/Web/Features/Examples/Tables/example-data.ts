@@ -37,7 +37,7 @@ export const invertColor = (hex: string, blackAndWhite: boolean) => {
       ? '#000000'
       : '#FFFFFF'
   }
-  
+
   // invert color components
   r = (255 - r).toString(16)
   g = (255 - g).toString(16)

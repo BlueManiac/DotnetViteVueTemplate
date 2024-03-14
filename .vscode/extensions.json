@@ -6,7 +6,6 @@
         "formulahendry.auto-rename-tag",
         "ms-dotnettools.csdevkit",
         "pkief.material-icon-theme",
-        "vue.volar",
-        "vue.vscode-typescript-vue-plugin",
+        "vue.volar"
     ]
 }

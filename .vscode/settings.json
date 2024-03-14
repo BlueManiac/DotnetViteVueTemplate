@@ -7,5 +7,9 @@
     "terminal.integrated.cwd": "src\\Web",
     "editor.suggest.insertMode": "replace",
     "javascript.preferences.importModuleSpecifier": "shortest",
-    "html.format.wrapLineLength": 0
+    "html.format.wrapLineLength": 0,
+    "[vue]": {
+        "editor.defaultFormatter": "Vue.volar"
+    },
+    "editor.formatOnSave": true
 }

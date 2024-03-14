@@ -1,5 +1,9 @@
 import { ErrorPayload } from "vite"
 
+// Convert this to a vite plugin and send errors client -> server and get stack info -> client and display
+// See https://github.com/hi-ogawa/unocss-preset-antd/blob/main/packages/vite-runtime-error-overlay/src/index.ts
+// See generateCodeFrame in vite source
+
 export const showErrorOverlay = async (error: unknown) => {
     const ErrorOverlay = customElements.get('vite-error-overlay')
 
@@ -12,10 +16,10 @@ export const showErrorOverlay = async (error: unknown) => {
 
         clearErrorOverlay()
         document.body.appendChild(overlay)
-    
+
         return true
     }
-    catch {}
+    catch { }
 
     return false
 }
@@ -24,7 +28,7 @@ function clearErrorOverlay() {
     document
         .querySelectorAll('vite-error-overlay')
         .forEach((n: any) => n.close())
-  }
+}
 
 const createErrorObject = async (error: unknown): Promise<ErrorPayload["err"]> => {
     if (!(error instanceof Error)) {
@@ -53,16 +57,16 @@ const createErrorObject = async (error: unknown): Promise<ErrorPayload["err"]> =
 
     async function getSourceMap(url: string): Promise<{ file: string } | undefined> {
         const code = await fetch(url, { method: 'get' }).then(x => x.text())
-    
+
         const sourceMappingUrlRegex = /\/\/# sourceMappingURL=data:application\/json;base64,(.*)$/
         const match = code.match(sourceMappingUrlRegex)
-    
+
         if (!match)
             return
-        
+
         const base64Data = match[1]
         const sourceMapJSON = atob(base64Data)
-    
+
         return JSON.parse(sourceMapJSON)
     }
 
