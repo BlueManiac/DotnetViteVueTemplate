@@ -1,5 +1,5 @@
 <template>
-    <div v-if="visible" class="position-absolute" :style="style" ref="root">
+    <div v-if="visible" class="position-absolute" :style ref="root">
         <slot></slot>
     </div>
 </template>

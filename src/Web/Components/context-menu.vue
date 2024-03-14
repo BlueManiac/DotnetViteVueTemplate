@@ -1,7 +1,7 @@
 ﻿<template>
   <ul class="dropdown-menu" ref="element" :style>
-    <slot :value :actions="menuActions" :event="clickEvent">
-      <li v-for="item in menuActions">
+    <slot :value :actions :event="clickEvent">
+      <li v-for="item in actions">
         <a class="dropdown-item" href="#" @click="() => { item.command(); visible = false }">
           <component v-if="item.icon" :is="item.icon" />
           {{ item.name }}
@@ -18,16 +18,14 @@ import { shallowRef } from 'vue'
 const value = defineModel('value')
 
 const element = ref()
-
 const visible = ref(false)
 const x = ref()
 const y = ref()
-
-const menuActions = shallowRef([])
+const actions = shallowRef([])
 
 onClickOutside(element, () => {
   visible.value = false
-  menuActions.value = []
+  actions.value = []
 })
 
 const style = computed(() => {
@@ -47,7 +45,7 @@ const clickEvent = ref()
 const show = (event, actions) => {
   x.value = event.pageX
   y.value = event.pageY
-  menuActions.value = actions.filter(x => x.visible ? x.visible() : true)
+  actions.value = actions.filter(x => x.visible ? x.visible() : true)
   clickEvent.value = event
   visible.value = true
 }

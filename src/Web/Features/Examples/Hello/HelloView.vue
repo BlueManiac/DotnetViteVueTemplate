@@ -5,7 +5,7 @@
       <MdiAccountCowboyHat />
     </p>
     <h1>
-      <text-rotated :text="hello" :rotation="rotation">
+      <text-rotated :text="hello" :rotation>
         <MdiAccountCowboyHat />
       </text-rotated>
     </h1>

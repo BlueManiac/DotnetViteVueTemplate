@@ -3,7 +3,7 @@
     <label v-if="slots.default" class="form-label">
       <slot />
     </label>
-    <input v-bind:type="type" class="form-control" v-model="value" :placeholder ref="target">
+    <input :type class="form-control" v-model="value" :placeholder ref="target">
   </div>
 </template>
 

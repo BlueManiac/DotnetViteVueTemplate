@@ -1,6 +1,6 @@
 <template>
   <div class="progress">
-    <div class="progress-bar" role="progressbar" v-bind:aria-valuenow="modelValue" v-bind:aria-valuemin="min" v-bind:aria-valuemax="max"></div>
+    <div class="progress-bar" role="progressbar" :aria-valuenow="modelValue" :aria-valuemin="min" :aria-valuemax="max"></div>
   </div>
 </template>
 

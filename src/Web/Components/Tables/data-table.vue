@@ -34,7 +34,7 @@
               <input class="form-check-input mt-0" type="checkbox" :checked="selectedSet.has(item)" @input="toggleSelected(item, ($event.target as HTMLInputElement).checked)">
             </td>
             <td v-for="col of columns" :key="col.field" @click="onRowClick(item, col, $event)">
-              <slot :name="col.field" :item="item" :col="col">
+              <slot :name="col.field" :item :col>
                 {{ item[col.field] }}
               </slot>
             </td>

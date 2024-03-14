@@ -43,7 +43,6 @@
 import { isLoggedIn, logout } from '../Auth/AuthenticationService';
 import { applicationName } from '../info'
 import { routes } from '../router'
-
 import { userName } from '/Features/Auth/Profile'
 </script>
 
