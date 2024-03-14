@@ -7,16 +7,21 @@
         </th>
         <template v-for="col of columns" :key="col.field">
           <th @click="sort(col)" @contextmenu="onHeaderContextMenu(col, $event)" :class="{ 'table-active': col.field == sortField }">
-            <template v-if="col.field == sortField">
-              <span class="text-primary-emphasis pe-1">
+            <div class="d-flex align-items-center">
+              <template v-if="col.field == sortField">
+                <span class="text-primary-emphasis pe-1">
+                  {{ toValue(col.header) ?? col.field }}
+                </span>
+                <MdiSortAscending v-if="sortOrder == 1" />
+                <MdiSortDescending v-else />
+              </template>
+              <template v-else>
                 {{ toValue(col.header) ?? col.field }}
-              </span>
-              <MdiSortAscending v-if="sortOrder == 1" />
-              <MdiSortDescending v-else />
-            </template>
-            <template v-else>
-              {{ toValue(col.header) ?? col.field }}
-            </template>
+              </template>
+              <div v-if="onFilterClick" class="ms-auto" @click.stop="emit('filterClick', col, $event, ($event.target as HTMLElement).closest('th'))">
+                <MdiFilterOutline />
+              </div>
+            </div>
           </th>
         </template>
       </tr>
@@ -28,13 +33,11 @@
             <td class="fs-4 lh-1 selection-column" @click="onRowClick(item, null, $event)">
               <input class="form-check-input mt-0" type="checkbox" :checked="selectedSet.has(item)" @input="toggleSelected(item, ($event.target as HTMLInputElement).checked)">
             </td>
-            <template v-for="col of columns" :key="col.field">
-              <td @click="onRowClick(item, col, $event)">
-                <slot :name="col.field" :item="item" :col="col">
-                  {{ item[col.field] }}
-                </slot>
-              </td>
-            </template>
+            <td v-for="col of columns" :key="col.field" @click="onRowClick(item, col, $event)">
+              <slot :name="col.field" :item="item" :col="col">
+                {{ item[col.field] }}
+              </slot>
+            </td>
           </template>
         </tr>
       </template>
@@ -46,8 +49,9 @@
 import { useClick, useSelection, useSorting, useVirtualization } from './data-table'
 import { MaybeRefOrGetter, toValue, watch } from 'vue';
 
-const { rowHeight = '33px' } = defineProps<{
-  rowHeight?: string
+const { rowHeight = '33px', onFilterClick } = defineProps<{
+  rowHeight?: string,
+  onFilterClick?: Function
 }>()
 
 export type Column = any & { field: string, header?: MaybeRefOrGetter<string> }
@@ -61,7 +65,8 @@ const selected = defineModel<any[]>("selected")
 const emit = defineEmits<{
   rowClick: [item: any, column: Column, event: Event],
   headerContextMenuClick: [column: Column, event: Event],
-  rowContextMenuClick: [item: any, column: Column, event: Event]
+  rowContextMenuClick: [item: any, column: Column, event: Event],
+  filterClick: [column: Column, event: MouseEvent, headerElement: HTMLElement]
 }>()
 
 // Retrive columns from items if not set
