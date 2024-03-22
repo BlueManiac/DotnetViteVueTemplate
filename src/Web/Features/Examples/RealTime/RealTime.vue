@@ -11,8 +11,8 @@
 </template>
 
 <script setup lang="ts">
-import { Ref } from 'vue';
-import { api } from '/Features/api';
+import { Ref } from 'vue'
+import { api } from '/Features/api'
 
 type RealtimeSender = {
   Data(message: string): Promise<void>
@@ -24,7 +24,7 @@ type RealtimeReciever = {
 const { connection, data, sender, receiver } = api.signalr<RealtimeSender, RealtimeReciever>('/api/realtime')
 
 const message = data<string>('message')
-const message2 = receiver.message;
+const message2 = receiver.message
 
 const send = () => connection.send('Data', 'hi')
 </script>

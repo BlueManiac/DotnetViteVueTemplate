@@ -47,7 +47,7 @@
 
 <script setup lang="ts">
 import { useClick, useSelection, useSorting, useVirtualization } from './data-table'
-import { MaybeRefOrGetter, toValue, watch } from 'vue';
+import { MaybeRefOrGetter, toValue, watch } from 'vue'
 
 const { rowHeight = '33px', onFilterClick } = defineProps<{
   rowHeight?: string,

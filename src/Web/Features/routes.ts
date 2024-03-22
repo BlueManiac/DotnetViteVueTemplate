@@ -10,7 +10,7 @@ declare module 'vue-router' {
   }
 }
 
-export const baseRoutes: RouteRecordRaw[] = [
+export const routes: RouteRecordRaw[] = [
   {
     path: '/',
     component: () => import('./Home/HomeView.vue'),

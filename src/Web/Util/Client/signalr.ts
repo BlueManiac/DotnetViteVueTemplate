@@ -35,16 +35,16 @@ export function useSignalr<TSender extends SignalrSender = SignalrSender, TRecie
   const sender = new Proxy({}, {
     get(target, prop, receiver) {
       return function (...args: any[]) {
-        return connection.send.apply(connection, [prop, ...args]);
-      };
+        return connection.send.apply(connection, [prop, ...args])
+      }
     },
-  }) as TSender;
+  }) as TSender
 
   const receiver = new Proxy({}, {
     get(target, prop: string, receiver) {
       return data(prop)
     },
-  }) as TReciever;
+  }) as TReciever
 
   return { connection, data, sender, receiver }
 }

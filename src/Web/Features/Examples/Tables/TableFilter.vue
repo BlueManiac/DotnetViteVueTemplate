@@ -5,16 +5,16 @@
 </template>
 
 <script setup lang="ts">
-import { onClickOutside } from '@vueuse/core';
-import { StyleValue } from 'vue';
+import { onClickOutside } from '@vueuse/core'
+import { StyleValue } from 'vue'
 
 export type FilterModel = { top?: number, left?: number, visible?: boolean, width?: number }
 
-const parentElement = defineModel<HTMLElement>("parent");
+const parentElement = defineModel<HTMLElement>("parent")
 
 const visible = computed(() => !!parentElement.value)
 const style = computed<StyleValue>(() => {
-    const { bottom, left, width } = parentElement.value.getBoundingClientRect();
+    const { bottom, left, width } = parentElement.value.getBoundingClientRect()
 
     return {
         top: bottom + "px",
@@ -23,7 +23,7 @@ const style = computed<StyleValue>(() => {
     }
 })
 
-const root = ref<HTMLElement>();
+const root = ref<HTMLElement>()
 onClickOutside(root, () => parentElement.value = null)
 </script>
 

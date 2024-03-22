@@ -8,10 +8,10 @@
 </template>
 
 <script setup lang="ts">
-import { useFocus } from '@vueuse/core';
+import { useFocus } from '@vueuse/core'
 import { useSlots } from 'vue'
 
-const { focus, type = 'text' } = defineProps<{ placeholder?: string, focus?: boolean, type?: string }>();
+const { focus, type = 'text' } = defineProps<{ placeholder?: string, focus?: boolean, type?: string }>()
 
 const value = defineModel<any>()
 const slots = useSlots()

@@ -5,7 +5,7 @@ declare module '*.vue' {
   export default component
 }
 
-import { GlobalComponents } from 'vue';
+import { GlobalComponents } from 'vue'
 
 // Expose all component instance types
 declare global {

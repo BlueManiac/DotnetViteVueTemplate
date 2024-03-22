@@ -1,19 +1,19 @@
 ﻿import { ref } from 'vue'
 import { createRouter, createWebHistory, RouteLocationNormalizedLoaded, RouteRecordRaw } from 'vue-router'
-import { baseRoutes } from './routes'
+import { routes } from './routes'
 
 const routeMap = new Map<string, RouteRecordRaw>()
 
-addRouteMetadata(baseRoutes)
+addRouteMetadata(routes)
 
 export const Router = createRouter({
   scrollBehavior: () => ({ left: 0, top: 0 }),
   history: createWebHistory(),
-  routes: baseRoutes,
+  routes,
   linkActiveClass: 'active'
 })
 
-export const routes = ref(baseRoutes.filter(x => x.meta?.title))
+export const navigationRoutes = ref(routes.filter(x => x.meta?.title))
 
 export const title = computed(() => Router.currentRoute.value.meta?.title)
 

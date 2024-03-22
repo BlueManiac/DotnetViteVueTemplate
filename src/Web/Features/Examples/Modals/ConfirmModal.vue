@@ -17,11 +17,11 @@
 const { modal } = defineProps<{
   header: string,
   modal: any
-}>();
+}>()
 const confirmed = defineModel<boolean>('confirmed')
 
 const set = (result: boolean) => {
-  confirmed.value = result;
+  confirmed.value = result
 
   modal.visible = false
 }

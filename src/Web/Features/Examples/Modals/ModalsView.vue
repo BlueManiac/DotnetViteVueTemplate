@@ -26,15 +26,15 @@
   </div>
 </template>
 
-<script setup>
-import { showModal, useModal } from '../../../Components/Modals/modal';
-import ConfirmModal from './ConfirmModal.vue';
+<script setup lang="ts">
+import { showModal, useModal } from '../../../Components/Modals/modal'
+import ConfirmModal from './ConfirmModal.vue'
 
-const { modal: inlineModal, open, state: modalState } = useModal();
-const header = ref('Options');
+const { modal: inlineModal, open, state: modalState } = useModal()
+const header = ref('Options')
 
-const confirmResult = ref();
+const confirmResult = ref()
 const confirm = async () => {
-  confirmResult.value = await showModal(ConfirmModal, { header: header.value });
+  confirmResult.value = await showModal(ConfirmModal, { header: header.value })
 }
 </script>

@@ -9,7 +9,7 @@ import { applicationName } from './info'
 import { showErrorOverlay } from '../Util/Client/client-error-handler'
 import { setPreferredTheme } from '../Components/ColorSchemes/color-schemes'
 
-setPreferredTheme();
+setPreferredTheme()
 
 import { createApp } from 'vue'
 import { Router, title } from './router'
@@ -46,7 +46,7 @@ if (import.meta.env.DEV) {
     console.clear()
   })
 
-  const script = document.createElement('script');
+  const script = document.createElement('script')
   script.src = `${import.meta.env.VITE_API_URL}/_framework/aspnetcore-browser-refresh.js`
   document.body.appendChild(script)
 }

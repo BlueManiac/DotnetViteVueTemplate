@@ -1,6 +1,6 @@
-﻿import modal from "./modal.vue";
+﻿import modal from "./modal.vue"
 import { h, reactive, render, VNode } from 'vue'
-import { until } from '@vueuse/core';
+import { until } from '@vueuse/core'
 
 export const useModal = (props: Object = {}, component: VNode = null) => {
   const state = reactive({
@@ -8,11 +8,11 @@ export const useModal = (props: Object = {}, component: VNode = null) => {
   })
 
   const open = async () => {
-    state.visible = true;
-    await until(() => state.visible).toBe(false);
+    state.visible = true
+    await until(() => state.visible).toBe(false)
   }
   const close = () => {
-    state.visible = false;
+    state.visible = false
   }
 
   return {
@@ -22,10 +22,10 @@ export const useModal = (props: Object = {}, component: VNode = null) => {
     state,
     toggle: async () => {
       if (state.visible) {
-        close();
+        close()
       }
       else {
-        await open();
+        await open()
       }
     }
   }
@@ -39,7 +39,7 @@ export const showModal = async (component, props) => {
     for (const emit of component.emits) {
       const modelValue = emit.split(':')[1]
 
-      emits['onUpdate:' + modelValue] = (value) => response[modelValue] = value;
+      emits['onUpdate:' + modelValue] = (value) => response[modelValue] = value
     }
   }
 
@@ -49,9 +49,9 @@ export const showModal = async (component, props) => {
 
   render(modal, wrapper)
 
-  await open();
+  await open()
 
-  render(null, wrapper);
+  render(null, wrapper)
 
-  return response;
+  return response
 }

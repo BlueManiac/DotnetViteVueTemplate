@@ -1,4 +1,4 @@
-﻿import { Ref, onBeforeUnmount, watch, watchEffect } from 'vue';
+﻿import { Ref, onBeforeUnmount, watch, watchEffect } from 'vue'
 
 export const useVirtualization = () => {
   const showSet = ref(new Set<any>())
@@ -8,28 +8,28 @@ export const useVirtualization = () => {
     for (const entry of entries) {
       const elem = entry.target as HTMLTableRowElement
 
-      const index = elem.rowIndex - 1;
+      const index = elem.rowIndex - 1
 
       if (entry.isIntersecting) {
-        showSet.value.add(index);
+        showSet.value.add(index)
       }
       else {
-        showSet.value.delete(index);
+        showSet.value.delete(index)
       }
     }
 
     isLoaded.value = true
-  }, { rootMargin: "500px 0px 500px 0px" });
+  }, { rootMargin: "500px 0px 500px 0px" })
 
   const observedElements = new WeakSet<HTMLTableRowElement>()
 
   const observeElement = (element: HTMLTableRowElement) => {
     if (!element) {
-      return;
+      return
     }
 
     if (observedElements.has(element)) {
-      return;
+      return
     }
 
     observer.observe(element)
@@ -137,7 +137,7 @@ export const useClick = (selectedSet: Ref<Set<any>>, emit) => {
   const onRowClick = (data, column, event) => {
     // if the click was on the selection column, do nothing
     if (hasParentClass(event.target, 'selection-column')) {
-      return;
+      return
     }
 
     // if the click was on a link, do nothing
@@ -160,11 +160,11 @@ export const useClick = (selectedSet: Ref<Set<any>>, emit) => {
     function hasParentClass(element, className) {
       do {
         if (element.classList && element.classList.contains(className)) {
-          return true;
+          return true
         }
-        element = element.parentNode;
-      } while (element);
-      return false;
+        element = element.parentNode
+      } while (element)
+      return false
     }
   }
 

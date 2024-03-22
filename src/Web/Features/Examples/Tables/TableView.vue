@@ -24,10 +24,10 @@
 </template>
 
 <script setup lang="ts">
-import { useLocalStorage } from '@vueuse/core';
-import { createPerson, invertColor } from './example-data';
-import TableFilter from './TableFilter.vue';
-import { Column } from '/Components/Tables/data-table.vue';
+import { useLocalStorage } from '@vueuse/core'
+import { createPerson, invertColor } from './example-data'
+import TableFilter from './TableFilter.vue'
+import { Column } from '/Components/Tables/data-table.vue'
 
 const columns = ref([
   { field: 'name', hidden: false },
@@ -35,9 +35,9 @@ const columns = ref([
   { field: 'sex' },
   { field: 'color' },
   { field: 'date' }
-]);
+])
 const visibleColumns = computed(() => columns.value.filter(x => !x.hidden))
-const items = ref([]);
+const items = ref([])
 
 const sortField = useLocalStorage('sortField', 'name')
 const sortOrder = useLocalStorage('sortOrder', 1)
@@ -51,13 +51,13 @@ const add = (quantity?: number) => {
   const max = items.value.length + quantity
 
   for (let i = items.value.length; i < max; i++) {
-    items.value.push(createPerson());
+    items.value.push(createPerson())
   }
 }
 const remove = (quantity?: number) => {
   quantity ??= changeQuantity.value
 
-  items.value.splice(0, quantity);
+  items.value.splice(0, quantity)
 }
 
 add(1000)
@@ -97,8 +97,8 @@ const onRowContextMenu = (event, item, index) => {
   ])
 }
 
-const filterParent = ref<HTMLElement>();
-const filterData = ref(null);
+const filterParent = ref<HTMLElement>()
+const filterData = ref(null)
 
 const onFilterClick = (col: Column, event: MouseEvent, columnElement: HTMLElement) => {
   filterParent.value = columnElement

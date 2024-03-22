@@ -1,17 +1,17 @@
-import { useLocalStorage } from "@vueuse/core";
-import { api } from "/Features/api";
+import { useLocalStorage } from "@vueuse/core"
+import { api } from "/Features/api"
 
 interface AccessTokenResponse {
-    accessToken?: string;
-    refreshToken?: string;
-    expiresIn?: number;
-    tokenType?: string;
-    date?: number;
+    accessToken?: string
+    refreshToken?: string
+    expiresIn?: number
+    tokenType?: string
+    date?: number
 }
 
-const loginResponse = useLocalStorage<AccessTokenResponse>('auth-login', {});
+const loginResponse = useLocalStorage<AccessTokenResponse>('auth-login', {})
 
-export const isLoggedIn = computed(() => loginResponse.value.accessToken && Date.now() < loginResponse.value.date + loginResponse.value.expiresIn * 1000);
+export const isLoggedIn = computed(() => loginResponse.value.accessToken && Date.now() < loginResponse.value.date + loginResponse.value.expiresIn * 1000)
 export const accessToken = computed(() => loginResponse.value.accessToken)
 
 const refresh = async () => {
@@ -22,35 +22,35 @@ const refresh = async () => {
         }
     }
     catch {
-        loginResponse.value = {};
-        throw new Error('Could not refresh token');
+        loginResponse.value = {}
+        throw new Error('Could not refresh token')
     }
 }
 
-let refreshTimeout: NodeJS.Timeout;
+let refreshTimeout: NodeJS.Timeout
 
 const startBackgroundRefresh = () => {
     if (refreshTimeout) {
-        clearTimeout(refreshTimeout);
+        clearTimeout(refreshTimeout)
     }
 
     if (!isLoggedIn.value) {
-        loginResponse.value = {};
-        return;
+        loginResponse.value = {}
+        return
     }
 
-    const elapsedTime = Date.now() - loginResponse.value.date;
+    const elapsedTime = Date.now() - loginResponse.value.date
 
     // Refresh the token 5 seconds before it expires
-    const refreshDelay = loginResponse.value.expiresIn * 1000 - elapsedTime - 5000;
+    const refreshDelay = loginResponse.value.expiresIn * 1000 - elapsedTime - 5000
 
     refreshTimeout = setTimeout(async () => {
         if (isLoggedIn.value) {
-            await refresh();
+            await refresh()
 
             startBackgroundRefresh()
         }
-    }, refreshDelay);
+    }, refreshDelay)
 }
 
 export const login = async (username: string, password: string) => {
@@ -64,7 +64,7 @@ export const login = async (username: string, password: string) => {
 }
 
 export const logout = async () => {
-    loginResponse.value = {};
+    loginResponse.value = {}
 }
 
-startBackgroundRefresh();
+startBackgroundRefresh()

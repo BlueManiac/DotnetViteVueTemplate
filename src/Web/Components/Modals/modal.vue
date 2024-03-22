@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { useEventListener } from '@vueuse/core';
+import { useEventListener } from '@vueuse/core'
 import { Modal } from 'bootstrap'
 import { watch } from 'vue'
 
@@ -36,23 +36,23 @@ const props = defineProps<{
   modal?: any
 }>()
 
-const wrapper = ref();
-const component = ref();
+const wrapper = ref()
+const component = ref()
 
 watch(() => wrapper.value, () => {
   if (wrapper.value) {
     component.value = new Modal(wrapper.value, {})
-    component.value.show();
+    component.value.show()
   }
 })
 
 watch(() => props.state.visible, () => {
   if (!props.state.visible) {
-    component.value?.hide();
+    component.value?.hide()
   }
 })
 
 useEventListener(wrapper, 'hidden.bs.modal', () => {
-  props.state.visible = false;
+  props.state.visible = false
 })
 </script>
