@@ -4,3 +4,12 @@ declare module '*.vue' {
   const component: DefineComponent<{}, {}, any>
   export default component
 }
+
+import { GlobalComponents } from 'vue';
+
+// Expose all component instance types
+declare global {
+  type Components = {
+    [Property in keyof GlobalComponents]: InstanceType<GlobalComponents[Property]>
+  }
+}
