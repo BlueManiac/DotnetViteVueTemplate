@@ -62,7 +62,7 @@ const remove = (quantity?: number) => {
 
 add(1000)
 
-const contextMenuElement = ref()
+const contextMenuElement = ref<Components["ContextMenu"]>()
 
 const onHeaderContextMenu = (col, event) => {
   contextMenuElement.value.show(event, [
@@ -84,6 +84,7 @@ const onRowContextMenu = (event, item, index) => {
   contextMenuElement.value.show(event, [
     {
       name: 'Remove',
+      icon: MdiFileRemove,
       command: () => {
         if (!selected.value.includes(item)) {
           items.value.splice(index, 1)

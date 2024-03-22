@@ -20,7 +20,7 @@ const { modal } = defineProps<{
 }>();
 const confirmed = defineModel<boolean>('confirmed')
 
-const set = (result) => {
+const set = (result: boolean) => {
   confirmed.value = result;
 
   modal.visible = false

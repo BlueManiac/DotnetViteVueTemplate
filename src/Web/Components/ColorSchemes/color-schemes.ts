@@ -1,6 +1,8 @@
 ﻿import { shallowRef } from 'vue'
 
-export const themes = [{
+type Theme = { id: string, name: string, icon: any }
+
+export const themes: Theme[] = [{
   id: 'light',
   name: 'Light',
   icon: MdiLightbulbOn
@@ -14,7 +16,7 @@ export const themes = [{
   icon: MdiCircleHalfFull
 }]
 
-export const currentTheme = shallowRef(null)
+export const currentTheme = shallowRef<Theme>(null)
 
 export const setTheme = (theme: string) => {
   currentTheme.value = themes.find(x => x.id == theme)

@@ -1,6 +1,6 @@
 ﻿<template>
   <ul class="dropdown-menu" ref="element" :style>
-    <slot :value :actions :event="clickEvent">
+    <slot :actions>
       <li v-for="item in actions">
         <a class="dropdown-item" href="#" @click="() => { item.command(); visible = false }">
           <component v-if="item.icon" :is="item.icon" />
@@ -11,17 +11,17 @@
   </ul>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { onClickOutside } from '@vueuse/core'
 import { shallowRef } from 'vue'
 
-const value = defineModel('value')
+export type ContextMenuAction = { name: String, icon: any, command: () => void, visible?: () => boolean }
 
 const element = ref()
 const visible = ref(false)
-const x = ref()
-const y = ref()
-const actions = shallowRef([])
+const x = ref<number>()
+const y = ref<number>()
+const actions = shallowRef<ContextMenuAction[]>([])
 
 onClickOutside(element, () => {
   visible.value = false
@@ -40,13 +40,10 @@ const style = computed(() => {
   }
 })
 
-const clickEvent = ref()
-
-const show = (event, actions) => {
+const show = (event: MouseEvent, contextMenuActions: ContextMenuAction[]) => {
   x.value = event.pageX
   y.value = event.pageY
-  actions.value = actions.filter(x => x.visible ? x.visible() : true)
-  clickEvent.value = event
+  actions.value = contextMenuActions.filter(x => x.visible ? x.visible() : true)
   visible.value = true
 }
 

@@ -5,7 +5,7 @@ declare module 'vue-router' {
   interface RouteMeta {
     title?: string
     id?: string
-    parentId?: string,
+    parentId?: string
     fullPath?: string
   }
 }

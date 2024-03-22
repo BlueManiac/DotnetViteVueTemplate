@@ -1,5 +1,5 @@
 ﻿<template>
-  <button :class="classes">
+  <button :class="`btn btn-${theme}`">
     <slot />
   </button>
 </template>
@@ -8,6 +8,4 @@
 const { theme = 'primary' } = defineProps<{
   theme?: string
 }>()
-
-const classes = computed(() => `btn btn-${theme}`)
 </script>
