@@ -1,19 +1,23 @@
-﻿import { ref } from 'vue'
-import { createRouter, createWebHistory, RouteLocationNormalizedLoaded, RouteRecordRaw } from 'vue-router'
+﻿import { createRouter, createWebHistory, RouteLocationNormalizedLoaded, RouteRecordRaw } from 'vue-router/auto'
 import { routes } from './routes'
 
 const routeMap = new Map<string, RouteRecordRaw>()
 
-addRouteMetadata(routes)
-
 export const Router = createRouter({
   scrollBehavior: () => ({ left: 0, top: 0 }),
   history: createWebHistory(),
-  routes,
+  extendRoutes(autoRoutes) {
+    const allRoutes = [...routes, ...autoRoutes]
+
+    console.log(autoRoutes)
+    addRouteMetadata(allRoutes)
+
+    return allRoutes
+  },
   linkActiveClass: 'active'
 })
 
-export const navigationRoutes = ref(routes.filter(x => x.meta?.title))
+export const navigationRoutes = computed(() => [...createNavigationRoutes(Router.options.routes)])
 
 export const title = computed(() => Router.currentRoute.value.meta?.title)
 
@@ -44,11 +48,9 @@ function addRouteMetadata(routes: RouteRecordRaw[], parentRoute?: RouteRecordRaw
     const id = route.meta.id = createUniqueId()
 
     route.meta.parentId = parentRoute?.meta.id
-    route.meta.fullPath = route.component
-      ? parentRoute?.path
-        ? parentRoute.path + '/' + route.path
-        : route.path
-      : null
+    route.meta.fullPath = createFullPath(route, parentRoute)
+
+    route.name ??= route.meta.fullPath
 
     routeMap[id] = route
 
@@ -59,5 +61,33 @@ function addRouteMetadata(routes: RouteRecordRaw[], parentRoute?: RouteRecordRaw
 
   function createUniqueId() {
     return Math.random().toString(36).substring(2, 9)
+  }
+
+  function createFullPath(route: RouteRecordRaw, parentRoute: RouteRecordRaw) {
+    if (!route.component)
+      return null
+
+    let path = route.path
+
+    while (parentRoute) {
+      path = parentRoute.path + '/' + path
+      parentRoute = routeMap[parentRoute.meta.parentId]
+    }
+
+    return path
+  }
+}
+
+function* createNavigationRoutes(routes) {
+  for (let route of Router.options.routes) {
+    if (route.meta?.title)
+      yield route
+    if (!route.meta.fullPath && route.children) {
+      for (let childRoute of route.children) {
+        // Include root index pages
+        if (childRoute.meta?.title && !childRoute.path)
+          yield childRoute
+      }
+    }
   }
 }

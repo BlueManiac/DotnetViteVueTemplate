@@ -1,11 +1,12 @@
-import vue from '@vitejs/plugin-vue'
+import Vue from '@vitejs/plugin-vue'
 import AutoImport from 'unplugin-auto-import/vite'
 import IconsResolver from 'unplugin-icons/resolver'
 import Icons from 'unplugin-icons/vite'
 import ViteComponents from 'unplugin-vue-components/vite'
 import { UserConfig } from 'vite'
-import mkcert from 'vite-plugin-mkcert'
+import MkCert from 'vite-plugin-mkcert'
 import Inspector from 'vite-plugin-vue-inspector'
+import VueRouter from 'unplugin-vue-router/vite'
 
 export default ({ mode }): UserConfig => {
   const iconsResolver = IconsResolver({
@@ -15,13 +16,33 @@ export default ({ mode }): UserConfig => {
 
   return {
     plugins: [
-      vue({
+      VueRouter({
+        dts: 'typed-router.d.ts',
+        routesFolder: [{
+          src: 'Pages'
+        }, {
+          // Match Features/Feature1/Pages/test.vue to feature1/test
+          src: 'Features',
+          filePatterns: '**/Pages/*',
+          path(file: string) {
+            const prefix = 'Features'
+            // remove the everything before Features
+            const basePath = file.slice(file.lastIndexOf(prefix))
+            // remove Features/ and Pages/ everything before Features
+            let filePath = basePath.slice(prefix.length + 1).replace('Pages/', '').toLocaleLowerCase()
+
+            //console.log(basePath + ' -> ' + filePath)
+            return filePath
+          },
+        }]
+      }),
+      Vue({
         script: {
           propsDestructure: true
         }
       }),
       ViteComponents({
-        dirs: ['Components', 'Features'],
+        globs: ['./Components/**/*.vue', './Features/**/*.vue', '!./Features/**/Pages/**'],
         resolvers: [
           iconsResolver
         ],
@@ -33,14 +54,16 @@ export default ({ mode }): UserConfig => {
       }),
       AutoImport({
         dts: 'auto-imports.d.ts',
-        imports: {
-          'vue': ['ref', 'computed']
-        },
+        imports: [
+          {
+            'vue': ['ref', 'computed']
+          },
+        ],
         resolvers: [
           iconsResolver
         ],
       }),
-      mkcert(),
+      MkCert(),
       Inspector({
         disableInspectorOnEditorOpen: true
       })

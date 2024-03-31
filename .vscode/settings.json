@@ -9,8 +9,14 @@
     "javascript.preferences.importModuleSpecifier": "shortest",
     "html.format.wrapLineLength": 0,
     "[vue]": {
-        "editor.defaultFormatter": "Vue.volar"
+        "editor.defaultFormatter": "Vue.volar",
+        "editor.tabSize": 2
     },
     "editor.formatOnSave": true,
-    "typescript.format.semicolons": "remove"
+    "typescript.format.semicolons": "remove",
+    "explorer.fileNesting.patterns": {
+        "vite.config.ts": "auto-imports.d.ts, components.d.ts, index.d.ts, typed-router.d.ts"
+    },
+    "workbench.iconTheme": "material-icon-theme",
+    "workbench.editor.pinnedTabsOnSeparateRow": true
 }

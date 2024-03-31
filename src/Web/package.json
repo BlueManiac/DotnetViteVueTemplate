@@ -16,6 +16,7 @@
     "unplugin-auto-import": "0.17.5",
     "unplugin-icons": "0.18.5",
     "unplugin-vue-components": "0.26.0",
+    "unplugin-vue-router": "0.8.5",
     "vite": "5.1.6",
     "vite-plugin-mkcert": "1.17.4",
     "vite-plugin-vue-inspector": "4.0.2"

@@ -2,12 +2,14 @@
   "compilerOptions": {
     "module": "ESNext",
     "target": "ES2017",
-    "moduleResolution": "Node",
+    "moduleResolution": "bundler",
     "types": [
       // Syntax highlighting for ex. import.meta.hot in vite
       "vite/client",
       // Syntax highlighting for core-js
-      "core-dts"
+      "core-dts",
+      // Syntax highlightning for routes
+      "unplugin-vue-router/client"
     ],
     "baseUrl": "./",
     "paths": {

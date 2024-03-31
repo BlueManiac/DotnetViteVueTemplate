@@ -2,6 +2,8 @@
 import { h, reactive, render, VNode } from 'vue'
 import { until } from '@vueuse/core'
 
+// Check https://github.com/vuejs/router/blob/main/packages/router/e2e/modal/index.ts
+
 export const useModal = (props: Object = {}, component: VNode = null) => {
   const state = reactive({
     visible: false
