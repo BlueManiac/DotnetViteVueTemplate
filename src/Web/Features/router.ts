@@ -17,7 +17,7 @@ export const Router = createRouter({
   linkActiveClass: 'active'
 })
 
-export const navigationRoutes = computed(() => [...createNavigationRoutes(Router.options.routes)])
+export const navigationRoutes = computed(() => Array.from(createNavigationRoutes(Router.options.routes)))
 
 export const title = computed(() => Router.currentRoute.value.meta?.title)
 

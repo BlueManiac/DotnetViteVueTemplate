@@ -18,10 +18,6 @@ export const routes: RouteRecordRaw[] = [
   },
   ...exampleRoutes,
   {
-    path: '/login',
-    component: () => import('./Auth/LoginView.vue'),
-  },
-  {
     path: '/:pathMatch(.*)*',
     component: () => import('/Components/Views/NotFound.vue'),
   }

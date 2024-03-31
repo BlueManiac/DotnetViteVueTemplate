@@ -42,7 +42,7 @@ export default ({ mode }): UserConfig => {
         }
       }),
       ViteComponents({
-        globs: ['./Components/**/*.vue', './Features/**/*.vue', '!./Features/**/Pages/**'],
+        globs: ['Components/**/*.vue', 'Features/**/*.vue', '!Features/**/Pages/**'],
         resolvers: [
           iconsResolver
         ],

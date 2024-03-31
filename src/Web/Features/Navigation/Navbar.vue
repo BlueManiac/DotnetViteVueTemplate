@@ -30,8 +30,8 @@
       <div class="navbar-nav float-end">
         <div class="nav-link">{{ userName }}</div>
         <div class="nav-item nav-link">
-          <router-link v-if="isLoggedIn" to="/login" @click="logout()">Logout</router-link>
-          <router-link v-else to="/login">Login</router-link>
+          <router-link v-if="isLoggedIn" to="/auth/login" @click="logout()">Logout</router-link>
+          <router-link v-else to="/auth/login">Login</router-link>
         </div>
         <color-theme-toggle />
       </div>
