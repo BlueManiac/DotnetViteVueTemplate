@@ -1,22 +1,44 @@
 {
+    // Paths
     "dotnet.defaultSolution": "src\\DotnetViteVueTemplate.sln",
+    "explorer.excludeGitIgnore": true,
+    "explorer.fileNesting.patterns": {
+        "vite.config.ts": "auto-imports.d.ts, components.d.ts, index.d.ts, typed-router.d.ts"
+    },
     "files.exclude": {
         "**/.sarif": true
     },
-    "explorer.excludeGitIgnore": true,
     "terminal.integrated.cwd": "src\\Web",
+    // Formatting
+    "editor.formatOnSave": true,
     "editor.suggest.insertMode": "replace",
-    "javascript.preferences.importModuleSpecifier": "shortest",
-    "html.format.wrapLineLength": 0,
     "[vue]": {
         "editor.defaultFormatter": "Vue.volar",
         "editor.tabSize": 2
     },
-    "editor.formatOnSave": true,
+    "css.format.spaceAroundSelectorSeparator": true,
+    "html.format.wrapLineLength": 0,
+    "javascript.preferences.importModuleSpecifier": "shortest",
     "typescript.format.semicolons": "remove",
-    "explorer.fileNesting.patterns": {
-        "vite.config.ts": "auto-imports.d.ts, components.d.ts, index.d.ts, typed-router.d.ts"
+    // Theme
+    "editor.fontFamily": "Cascadia Code, Consolas, 'Courier New', monospace",
+    "editor.fontLigatures": true,
+    "workbench.colorCustomizations": {
+        "activityBar.activeBackground": "#537a4a",
+        "activityBar.activeBorder": "#b6b6b6",
+        "activityBar.background": "#476d3d",
+        "activityBar.foreground": "#f0f0f0",
+        "activityBar.inactiveForeground": "#f0f0f0CC",
+        "activityBarBadge.background": "#7ac45e",
+        "activityBarBadge.foreground": "#2f4b29",
+        "titleBar.activeBackground": "#476d3d",
+        "titleBar.activeForeground": "#f0f0f0",
+        "titleBar.inactiveBackground": "#08220099",
+        "titleBar.inactiveForeground": "#f0f0f0CC",
     },
+    "workbench.colorTheme": "Default Dark Modern",
+    "workbench.editor.pinnedTabsOnSeparateRow": true,
     "workbench.iconTheme": "material-icon-theme",
-    "workbench.editor.pinnedTabsOnSeparateRow": true
+    "workbench.tree.indent": 16,
+    "workbench.tree.renderIndentGuides": "always",
 }

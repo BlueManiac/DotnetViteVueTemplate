@@ -52,7 +52,7 @@ import { userName } from '/Features/Auth/Profile'
 }
 
 .nav-underline .nav-link.active,
-.nav-underline .show>.nav-link {
+.nav-underline .show > .nav-link {
   font-weight: normal;
 }
 </style>

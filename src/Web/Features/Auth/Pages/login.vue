@@ -42,7 +42,7 @@ const submit = async () => {
 </script>
 
 <style scoped>
-form>* {
+form > * {
   margin-bottom: 1rem
 }
 </style>
