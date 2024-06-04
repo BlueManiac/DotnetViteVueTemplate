@@ -7,6 +7,7 @@ declare module 'vue-router' {
     id?: string
     parentId?: string
     fullPath?: string
+    fullscreen?: boolean
   }
 }
 

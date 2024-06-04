@@ -1,13 +1,15 @@
 ﻿<template>
-  <btn @click="send()" class="mb-3 me-1">Send</btn>
-  <btn @click="sender.Data('hi')" class="mb-3">Send using proxy</btn>
-  <br />
-  using data method<br />
-  {{ message }}
-  <br />
-  <br />
-  using proxy<br />
-  {{ message2 }}
+  <div>
+    <btn @click="send()" class="mb-3 me-1">Send</btn>
+    <btn @click="sender.Data('hi')" class="mb-3">Send using proxy</btn>
+    <br />
+    using data method<br />
+    {{ message }}
+    <br />
+    <br />
+    using proxy<br />
+    {{ message2 }}
+  </div>
 </template>
 
 <script setup lang="ts">
