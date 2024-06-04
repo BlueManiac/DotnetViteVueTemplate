@@ -43,7 +43,7 @@ const submit = async () => {
 
 definePage({
   meta: {
-    fullscreen: true
+    centered: true
   }
 })
 </script>

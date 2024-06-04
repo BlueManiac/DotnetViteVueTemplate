@@ -1,5 +1,6 @@
 import { RouteRecordRaw } from 'vue-router'
 import { exampleRoutes } from './Examples/routes'
+import { routes as autoRoutes } from 'vue-router/auto-routes'
 
 declare module 'vue-router' {
   interface RouteMeta {
@@ -7,7 +8,7 @@ declare module 'vue-router' {
     id?: string
     parentId?: string
     fullPath?: string
-    fullscreen?: boolean
+    centered?: boolean
   }
 }
 
@@ -18,6 +19,7 @@ export const routes: RouteRecordRaw[] = [
     meta: { title: 'Home' }
   },
   ...exampleRoutes,
+  ...autoRoutes,
   {
     path: '/:pathMatch(.*)*',
     component: () => import('/Components/Views/NotFound.vue'),

@@ -1,5 +1,5 @@
 ﻿<template>
-  <main :class="{ fullscreen: $route.meta?.fullscreen }" class="container-fluid vh-100">
+  <main :class="{ centered: $route.meta?.centered }" class="container-fluid vh-100">
     <Navbar class="page-navbar" />
     <Breadcrumb class="page-breadcrumb" />
     <RouterView v-slot="{ Component }">
@@ -41,7 +41,7 @@ main {
     grid-area: main;
   }
 
-  &.fullscreen {
+  &.centered {
     grid-template-areas: "main";
     grid-template-rows: 1fr;
     grid-template-columns: 1fr;

@@ -6,14 +6,7 @@ const routeMap = new Map<string, RouteRecordRaw>()
 export const Router = createRouter({
   scrollBehavior: () => ({ left: 0, top: 0 }),
   history: createWebHistory(),
-  extendRoutes(autoRoutes) {
-    const allRoutes = [...routes, ...autoRoutes]
-
-    console.log(autoRoutes)
-    addRouteMetadata(allRoutes)
-
-    return allRoutes
-  },
+  routes: addRouteMetadata(routes),
   linkActiveClass: 'active'
 })
 
@@ -58,6 +51,8 @@ function addRouteMetadata(routes: RouteRecordRaw[], parentRoute?: RouteRecordRaw
       addRouteMetadata(route.children, route)
     }
   }
+
+  return routes
 
   function createUniqueId() {
     return Math.random().toString(36).substring(2, 9)

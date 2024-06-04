@@ -1,26 +1,28 @@
 ﻿<template>
-  <div class="d-flex gap-1 align-items-center mb-2">
-    <btn @click="add()">Add</btn>
-    <textfield v-model.number="changeQuantity" type="number"></textfield>
-    <btn @click="remove()">Remove</btn>
+  <div>
+    <div class="d-flex gap-1 align-items-center mb-2">
+      <btn @click="add()">Add</btn>
+      <textfield v-model.number="changeQuantity" type="number"></textfield>
+      <btn @click="remove()">Remove</btn>
+    </div>
+    <range v-model.number="changeQuantity" min="1" max="10000" class="mt-3" />
+    Quantity: {{ items.length }}, Selected: {{ selected.length }} {{ selected[0] }}
+    <context-menu ref="contextMenuElement" />
+    <TableFilter v-model:parent="filterParent">
+      <div class="p-1 bg-success">{{ filterData }}</div>
+    </TableFilter>
+    <data-table class="table-sm" v-model="items" :columns="visibleColumns" v-model:selected="selected" v-model:sortField="sortField" v-model:sortOrder="sortOrder" @headerContextMenuClick="onHeaderContextMenu" @rowContextMenuClick="onRowContextMenu" @filterClick="onFilterClick">
+      <template #id="{ item, col }">
+        {{ item[col.field] }}
+      </template>
+      <template #color="{ item }">
+        <div class="px-2" :style="{ 'background-color': item.color, 'color': invertColor(item.color, true) }">{{ item.color }}</div>
+      </template>
+      <template #date="{ item, col }">
+        {{ item[col.field]?.toLocaleDateString('sv') }}
+      </template>
+    </data-table>
   </div>
-  <range v-model.number="changeQuantity" min="1" max="10000" class="mt-3" />
-  Quantity: {{ items.length }}, Selected: {{ selected.length }} {{ selected[0] }}
-  <context-menu ref="contextMenuElement" />
-  <TableFilter v-model:parent="filterParent">
-    <div class="p-1 bg-success">{{ filterData }}</div>
-  </TableFilter>
-  <data-table class="table-sm" v-model="items" :columns="visibleColumns" v-model:selected="selected" v-model:sortField="sortField" v-model:sortOrder="sortOrder" @headerContextMenuClick="onHeaderContextMenu" @rowContextMenuClick="onRowContextMenu" @filterClick="onFilterClick">
-    <template #id="{ item, col }">
-      {{ item[col.field] }}
-    </template>
-    <template #color="{ item }">
-      <div class="px-2" :style="{ 'background-color': item.color, 'color': invertColor(item.color, true) }">{{ item.color }}</div>
-    </template>
-    <template #date="{ item, col }">
-      {{ item[col.field]?.toLocaleDateString('sv') }}
-    </template>
-  </data-table>
 </template>
 
 <script setup lang="ts">
