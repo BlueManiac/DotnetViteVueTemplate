@@ -18,6 +18,7 @@ import { useFocus } from '@vueuse/core'
 import { useRouter } from 'vue-router'
 import { watch } from 'vue'
 import { login } from '../AuthenticationService'
+import { definePage } from 'vue-router/auto'
 
 const emailElement = ref<HTMLInputElement | null>()
 useFocus(emailElement, { initialValue: true })
@@ -39,6 +40,12 @@ const submit = async () => {
 
   router.push('/')
 }
+
+definePage({
+  meta: {
+    fullscreen: true
+  }
+})
 </script>
 
 <style scoped>
