@@ -46,15 +46,13 @@
 </template>
 
 <script setup lang="ts">
-import { useClick, useSelection, useSorting, useVirtualization } from './data-table'
-import { MaybeRefOrGetter, toValue, watch } from 'vue'
+import { Column, useClick, useSelection, useSorting, useVirtualization } from './data-table'
+import { toValue, watch } from 'vue'
 
 const { rowHeight = '33px', onFilterClick } = defineProps<{
   rowHeight?: string,
   onFilterClick?: Function
 }>()
-
-export type Column = any & { field: string, header?: MaybeRefOrGetter<string> }
 
 const columns = defineModel<Column[]>("columns")
 const items = defineModel<any[]>("modelValue")
@@ -63,7 +61,7 @@ const sortOrder = defineModel<number>("sortOrder")
 const selected = defineModel<any[]>("selected")
 
 const emit = defineEmits<{
-  rowClick: [item: any, column: Column, event: Event],
+  rowClick: [item: any, column: Column, event: MouseEvent],
   headerContextMenuClick: [column: Column, event: Event],
   rowContextMenuClick: [item: any, column: Column, event: Event],
   filterClick: [column: Column, event: MouseEvent, headerElement: HTMLElement]

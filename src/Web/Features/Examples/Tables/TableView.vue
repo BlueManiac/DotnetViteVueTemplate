@@ -30,8 +30,9 @@
 import { useLocalStorage } from '@vueuse/core'
 import { createPerson, invertColor } from './example-data'
 import TableFilter from './TableFilter.vue'
-import { Column } from '/Components/Tables/data-table.vue'
+import '/Components/Tables/data-table.vue'
 import { watchEffect } from 'vue'
+import { Column } from '/Components/Tables/data-table'
 
 const filter = ref('')
 

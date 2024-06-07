@@ -1,4 +1,6 @@
-﻿import { Ref, onBeforeUnmount, watch, watchEffect } from 'vue'
+﻿import { MaybeRefOrGetter, Ref, onBeforeUnmount, watch, watchEffect } from 'vue'
+
+export type Column = Record<string, unknown> & { field: string, header?: MaybeRefOrGetter<string> }
 
 export const useVirtualization = () => {
   const visibleIndexSet = ref(new Set<number>())
@@ -53,7 +55,7 @@ export const useSelection = (items: Ref<unknown[]>, selected: Ref<unknown[]>) =>
     }
   }
 
-  const selectAll = (checked) => {
+  const selectAll = (checked: boolean) => {
     if (checked && selectedSet.value.size == 0) {
       for (const item of items.value) {
         selectedSet.value.add(item)
@@ -89,11 +91,11 @@ export const useSelection = (items: Ref<unknown[]>, selected: Ref<unknown[]>) =>
   return { selectedSet, toggleSelected, selectAll, checkbox }
 }
 
-export const useSorting = (sortField: Ref<string>, sortOrder: Ref<number>, columns: Ref<any[]>, items: Ref<unknown[]>) => {
+export const useSorting = (sortField: Ref<string>, sortOrder: Ref<number>, columns: Ref<Column[]>, items: Ref<unknown[]>) => {
   sortField.value ??= columns[0]?.field
   sortOrder.value ??= 1
 
-  const sort = (column) => {
+  const sort = (column: Column) => {
     if (sortField.value == column.field) {
       sortOrder.value = sortOrder.value * -1
     }
@@ -132,8 +134,8 @@ export const useSorting = (sortField: Ref<string>, sortOrder: Ref<number>, colum
   return { sort }
 }
 
-export const useClick = (selectedSet: Ref<Set<any>>, emit) => {
-  const onRowClick = (data, column, event) => {
+export const useClick = (selectedSet: Ref<Set<unknown>>, emit) => {
+  const onRowClick = (item: any, column: Column, event: MouseEvent) => {
     // if the click was on the selection column, do nothing
     if (hasParentClass(event.target, 'selection-column')) {
       return
@@ -146,17 +148,17 @@ export const useClick = (selectedSet: Ref<Set<any>>, emit) => {
 
     // Support ctrl+click to select multiple rows
     if (event.ctrlKey) {
-      if (selectedSet.value.has(data))
-        selectedSet.value.delete(data)
+      if (selectedSet.value.has(item))
+        selectedSet.value.delete(item)
       else
-        selectedSet.value.add(data)
+        selectedSet.value.add(item)
 
       return
     }
 
-    emit('rowClick', data, column, event)
+    emit('rowClick', item, column, event)
 
-    function hasParentClass(element, className) {
+    function hasParentClass(element, className: string) {
       do {
         if (element.classList && element.classList.contains(className)) {
           return true
@@ -167,7 +169,7 @@ export const useClick = (selectedSet: Ref<Set<any>>, emit) => {
     }
   }
 
-  const onHeaderContextMenu = (column, event) => {
+  const onHeaderContextMenu = (column: Column, event: MouseEvent) => {
     if (event.ctrlKey) {
       return
     }
