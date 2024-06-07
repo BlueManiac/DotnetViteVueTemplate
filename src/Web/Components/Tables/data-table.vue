@@ -82,10 +82,16 @@ const { selectedSet, toggleSelected, selectAll, checkbox } = useSelection(items,
 const { sort } = useSorting(sortField, sortOrder, columns, items)
 const { onRowClick, onHeaderContextMenu, onRowContextMenu } = useClick(selectedSet, emit)
 
+// Detect HMR changes for memoization
+let hmrChange = 0
+import.meta.hot?.on('vite:beforeUpdate', () => {
+  hmrChange++
+})
+
 const memo = (item: unknown, index: number) => {
   const visible = visibleIndexSet.value.has(index)
 
-  return [visible, visible && item, selectedSet.value.has(item), columns.value]
+  return [visible, visible && item, selectedSet.value.has(item), columns.value, visible && hmrChange]
 }
 </script>
 
