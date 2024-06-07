@@ -1,7 +1,7 @@
 ﻿import { Ref, onBeforeUnmount, watch, watchEffect } from 'vue'
 
 export const useVirtualization = () => {
-  const showSet = ref(new Set<any>())
+  const visibleIndexSet = ref(new Set<number>())
   const isLoaded = ref(false)
 
   const observer = new IntersectionObserver((entries) => {
@@ -11,10 +11,10 @@ export const useVirtualization = () => {
       const index = elem.rowIndex - 1
 
       if (entry.isIntersecting) {
-        showSet.value.add(index)
+        visibleIndexSet.value.add(index)
       }
       else {
-        showSet.value.delete(index)
+        visibleIndexSet.value.delete(index)
       }
     }
 
@@ -35,21 +35,17 @@ export const useVirtualization = () => {
     observer.observe(element)
   }
 
-  const isVisible = (index: any) => {
-    return showSet.value.has(index)
-  }
-
   onBeforeUnmount(() => {
     observer.disconnect()
   })
 
-  return { observeElement, isVisible, isLoaded }
+  return { observeElement, visibleIndexSet, isLoaded }
 }
 
-export const useSelection = (items: Ref<any[]>, selected: Ref<any[]>) => {
-  const selectedSet = ref(new Set<number>())
+export const useSelection = (items: Ref<unknown[]>, selected: Ref<unknown[]>) => {
+  const selectedSet = ref(new Set<unknown>())
 
-  const toggleSelected = (item: any, checked: boolean) => {
+  const toggleSelected = (item: unknown, checked: boolean) => {
     if (checked) {
       selectedSet.value.add(item)
     } else {
@@ -79,6 +75,9 @@ export const useSelection = (items: Ref<any[]>, selected: Ref<any[]>) => {
   })
 
   watch(() => [selectedSet.value.size, items.value.length], () => {
+    if (!checkbox.value)
+      return
+
     checkbox.value.checked = selectedSet.value.size > 0
     checkbox.value.indeterminate = selectedSet.value.size > 0 && selectedSet.value.size != items.value.length
   })
@@ -90,7 +89,7 @@ export const useSelection = (items: Ref<any[]>, selected: Ref<any[]>) => {
   return { selectedSet, toggleSelected, selectAll, checkbox }
 }
 
-export const useSorting = (sortField: Ref<string>, sortOrder: Ref<number>, columns: Ref<any[]>, items: Ref<any[]>) => {
+export const useSorting = (sortField: Ref<string>, sortOrder: Ref<number>, columns: Ref<any[]>, items: Ref<unknown[]>) => {
   sortField.value ??= columns[0]?.field
   sortOrder.value ??= 1
 

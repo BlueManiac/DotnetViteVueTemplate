@@ -4,6 +4,7 @@
       <btn @click="add()">Add</btn>
       <textfield v-model.number="changeQuantity" type="number"></textfield>
       <btn @click="remove()">Remove</btn>
+      <input v-model="filter" class="form-control" placeholder="Filter" />
     </div>
     <range v-model.number="changeQuantity" min="1" max="10000" class="mt-3" />
     Quantity: {{ items.length }}, Selected: {{ selected.length }} {{ selected[0] }}
@@ -11,7 +12,7 @@
     <TableFilter v-model:parent="filterParent">
       <div class="p-1 bg-success">{{ filterData }}</div>
     </TableFilter>
-    <data-table class="table-sm" v-model="items" :columns="visibleColumns" v-model:selected="selected" v-model:sortField="sortField" v-model:sortOrder="sortOrder" @headerContextMenuClick="onHeaderContextMenu" @rowContextMenuClick="onRowContextMenu" @filterClick="onFilterClick">
+    <data-table class="table-sm" v-model="filteredItems" :columns="visibleColumns" v-model:selected="selected" v-model:sortField="sortField" v-model:sortOrder="sortOrder" @headerContextMenuClick="onHeaderContextMenu" @rowContextMenuClick="onRowContextMenu" @filterClick="onFilterClick">
       <template #id="{ item, col }">
         {{ item[col.field] }}
       </template>
@@ -30,6 +31,9 @@ import { useLocalStorage } from '@vueuse/core'
 import { createPerson, invertColor } from './example-data'
 import TableFilter from './TableFilter.vue'
 import { Column } from '/Components/Tables/data-table.vue'
+import { watchEffect } from 'vue'
+
+const filter = ref('')
 
 const columns = ref([
   { field: 'name', hidden: false },
@@ -40,6 +44,11 @@ const columns = ref([
 ])
 const visibleColumns = computed(() => columns.value.filter(x => !x.hidden))
 const items = ref([])
+const filteredItems = ref([])
+
+watchEffect(() => {
+  filteredItems.value = items.value.filter(x => x.name.toLowerCase().includes(filter.value.toLowerCase()))
+})
 
 const sortField = useLocalStorage('sortField', 'name')
 const sortOrder = useLocalStorage('sortOrder', 1)
@@ -62,7 +71,7 @@ const remove = (quantity?: number) => {
   items.value.splice(0, quantity)
 }
 
-add(1000)
+add(changeQuantity.value)
 
 const contextMenuElement = ref<Components["ContextMenu"]>()
 
@@ -89,7 +98,7 @@ const onRowContextMenu = (event, item, index) => {
       icon: MdiFileRemove,
       command: () => {
         if (!selected.value.includes(item)) {
-          items.value.splice(index, 1)
+          items.value = items.value.filter(x => x != item)
         }
         else {
           items.value = items.value.filter(x => !selected.value.includes(x))

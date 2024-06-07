@@ -27,9 +27,9 @@
       </tr>
     </thead>
     <tbody>
-      <template v-for="(item, index) of items" :key="index">
+      <template v-for="(item, index) of items" :key="index" v-memo="memo(item, index)">
         <tr :ref="el => observeElement(el as HTMLTableRowElement)" @contextmenu="onRowContextMenu($event, item, index)" :class="{ 'table-active': selectedSet.has(item) }">
-          <template v-if="isVisible(index)">
+          <template v-if="visibleIndexSet.has(index)">
             <td class="fs-4 lh-1 selection-column" @click="onRowClick(item, null, $event)">
               <input class="form-check-input mt-0" type="checkbox" :checked="selectedSet.has(item)" @input="toggleSelected(item, ($event.target as HTMLInputElement).checked)">
             </td>
@@ -79,10 +79,16 @@ watch(() => [items.value.length, columns.value], () => {
     : []
 }, { immediate: true })
 
-const { observeElement, isVisible, isLoaded } = useVirtualization()
+const { observeElement, visibleIndexSet, isLoaded } = useVirtualization()
 const { selectedSet, toggleSelected, selectAll, checkbox } = useSelection(items, selected)
 const { sort } = useSorting(sortField, sortOrder, columns, items)
 const { onRowClick, onHeaderContextMenu, onRowContextMenu } = useClick(selectedSet, emit)
+
+const memo = (item: unknown, index: number) => {
+  const visible = visibleIndexSet.value.has(index)
+
+  return [visible, visible && item, selectedSet.value.has(item), columns.value]
+}
 </script>
 
 <style scoped>
