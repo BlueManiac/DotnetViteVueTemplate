@@ -43,10 +43,15 @@ const columns = ref([
   { field: 'color' },
   { field: 'date' }
 ])
-const visibleColumns = computed(() => columns.value.filter(x => !x.hidden))
-const items = ref([])
-const filteredItems = ref([])
 
+const visibleColumns = ref([])
+watchEffect(() => {
+  visibleColumns.value = columns.value.filter(x => !x.hidden)
+})
+
+const items = ref([])
+
+const filteredItems = ref([])
 watchEffect(() => {
   filteredItems.value = items.value.filter(x => x.name.toLowerCase().includes(filter.value.toLowerCase()))
 })
