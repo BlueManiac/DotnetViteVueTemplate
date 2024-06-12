@@ -3,10 +3,11 @@ import AutoImport from 'unplugin-auto-import/vite'
 import IconsResolver from 'unplugin-icons/resolver'
 import Icons from 'unplugin-icons/vite'
 import ViteComponents from 'unplugin-vue-components/vite'
+import VueRouter from 'unplugin-vue-router/vite'
 import { UserConfig } from 'vite'
 import MkCert from 'vite-plugin-mkcert'
 import Inspector from 'vite-plugin-vue-inspector'
-import VueRouter from 'unplugin-vue-router/vite'
+import { viteRuntimeErrorOverlayPlugin } from './Util/Plugins/vite-runtime-error-plugin'
 
 export default ({ mode }): UserConfig => {
   const iconsResolver = IconsResolver({
@@ -66,7 +67,8 @@ export default ({ mode }): UserConfig => {
       MkCert(),
       Inspector({
         disableInspectorOnEditorOpen: true
-      })
+      }),
+      viteRuntimeErrorOverlayPlugin()
     ],
     server: {
       proxy: {
