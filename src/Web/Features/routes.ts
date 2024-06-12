@@ -1,6 +1,6 @@
 import { RouteRecordRaw } from 'vue-router'
-import { exampleRoutes } from './Examples/routes'
 import { routes as autoRoutes } from 'vue-router/auto-routes'
+import { exampleRoutes } from './Examples/routes'
 
 declare module 'vue-router' {
   interface RouteMeta {

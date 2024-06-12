@@ -15,6 +15,6 @@
   </div>
 </template>
 
-<script setup>
-import { themes, currentTheme, setTheme } from './color-schemes'
+<script setup lang="ts">
+import { currentTheme, setTheme, themes } from './color-schemes'
 </script>

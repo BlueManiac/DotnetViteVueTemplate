@@ -46,8 +46,8 @@
 </template>
 
 <script setup lang="ts">
-import { Column, useClick, useSelection, useSorting, useVirtualization } from './data-table'
 import { toValue, watch } from 'vue'
+import { Column, useClick, useSelection, useSorting, useVirtualization } from './data-table'
 
 const { rowHeight = '33px', onFilterClick } = defineProps<{
   rowHeight?: string,

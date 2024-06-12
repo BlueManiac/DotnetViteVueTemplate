@@ -1,25 +1,25 @@
 import { computedAsync } from "@vueuse/core"
-import { isLoggedIn } from "./AuthenticationService"
 import { api } from "../api"
+import { isLoggedIn } from "./AuthenticationService"
 
 type UserResponse = {
-    name: string
+  name: string
 }
 
 const user = ref<UserResponse>(null)
 
 const getUser = async () => {
-    user.value = await api.get<UserResponse>('/auth/user')
+  user.value = await api.get<UserResponse>('/auth/user')
 }
 
 export const userName = computedAsync(async () => {
-    if (!isLoggedIn.value) {
-        return null
-    }
+  if (!isLoggedIn.value) {
+    return null
+  }
 
-    if (!user.value) {
-        await getUser()
-    }
+  if (!user.value) {
+    await getUser()
+  }
 
-    return user.value.name
+  return user.value.name
 }, null, { lazy: true })

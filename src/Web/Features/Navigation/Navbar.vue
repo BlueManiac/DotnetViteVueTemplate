@@ -39,7 +39,7 @@
   </nav>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { isLoggedIn, logout } from '../Auth/AuthenticationService'
 import { applicationName } from '../info'
 import { navigationRoutes } from '../router'

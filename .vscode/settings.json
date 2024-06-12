@@ -13,15 +13,18 @@
     "editor.formatOnSave": true,
     "editor.suggest.insertMode": "replace",
     "[vue]": {
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit"
+        },
         "editor.defaultFormatter": "Vue.volar",
-        "editor.tabSize": 2
+        "editor.tabSize": 2,
     },
     "[typescript]": {
         "editor.codeActionsOnSave": {
             "source.organizeImports": "explicit"
         },
         "editor.tabSize": 2,
-        "editor.detectIndentation": false
+        "editor.detectIndentation": false,
     },
     "css.format.spaceAroundSelectorSeparator": true,
     "html.format.wrapLineLength": 0,

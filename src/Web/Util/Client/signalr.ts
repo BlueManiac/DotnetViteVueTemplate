@@ -1,5 +1,5 @@
-﻿import { tryOnScopeDispose, useEventListener } from '@vueuse/core'
-import { HubConnectionBuilder } from '@microsoft/signalr'
+﻿import { HubConnectionBuilder } from '@microsoft/signalr'
+import { tryOnScopeDispose, useEventListener } from '@vueuse/core'
 import { Ref, onMounted, ref } from 'vue'
 
 export type SignalrSender = { [key: string]: (...rest: unknown[]) => Promise<void> }

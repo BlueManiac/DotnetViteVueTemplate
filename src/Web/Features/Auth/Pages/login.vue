@@ -15,10 +15,10 @@
 
 <script setup lang="ts">
 import { useFocus } from '@vueuse/core'
-import { useRouter } from 'vue-router'
 import { watch } from 'vue'
-import { login } from '../AuthenticationService'
+import { useRouter } from 'vue-router'
 import { definePage } from 'vue-router/auto'
+import { login } from '../AuthenticationService'
 
 const emailElement = ref<HTMLInputElement | null>()
 useFocus(emailElement, { initialValue: true })

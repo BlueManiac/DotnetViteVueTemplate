@@ -1,6 +1,6 @@
-﻿import modal from "./modal.vue"
+﻿import { until } from '@vueuse/core'
 import { h, reactive, render, VNode } from 'vue'
-import { until } from '@vueuse/core'
+import modal from "./modal.vue"
 
 // Check https://github.com/vuejs/router/blob/main/packages/router/e2e/modal/index.ts
 

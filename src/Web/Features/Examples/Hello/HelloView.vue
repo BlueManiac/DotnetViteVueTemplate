@@ -23,8 +23,8 @@
   </div>
 </template>
 
-<script setup>
-import { rotation, speed, isActive, pause, resume, load } from './HelloData'
+<script setup lang="ts">
+import { isActive, load, pause, resume, rotation, speed } from './HelloData'
 
 const { hello } = await load()
 

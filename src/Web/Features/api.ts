@@ -1,7 +1,7 @@
 import { accessToken } from './Auth/AuthenticationService'
 import { apiUrl } from './info'
 import { useApi } from '/Util/Client/fetch'
-import { useSignalr, SignalrSender, SignalrReciever } from '/Util/Client/signalr'
+import { SignalrReciever, SignalrSender, useSignalr } from '/Util/Client/signalr'
 
 export const api = {
   url: apiUrl,

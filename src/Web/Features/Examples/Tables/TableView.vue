@@ -28,11 +28,11 @@
 
 <script setup lang="ts">
 import { useLocalStorage } from '@vueuse/core'
-import { createPerson, invertColor } from './example-data'
-import TableFilter from './TableFilter.vue'
-import '/Components/Tables/data-table.vue'
 import { watchEffect } from 'vue'
+import TableFilter from './TableFilter.vue'
+import { createPerson, invertColor } from './example-data'
 import { Column } from '/Components/Tables/data-table'
+import '/Components/Tables/data-table.vue'
 
 const filter = ref('')
 
