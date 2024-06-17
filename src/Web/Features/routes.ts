@@ -15,13 +15,13 @@ declare module 'vue-router' {
 export const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    component: () => import('./Home/HomeView.vue'),
+    component: import('./Home/HomeView.vue'),
     meta: { title: 'Home' }
   },
   ...exampleRoutes,
   ...autoRoutes,
   {
     path: '/:pathMatch(.*)*',
-    component: () => import('/Components/Views/NotFound.vue'),
+    component: import('/Components/Views/NotFound.vue'),
   }
 ]
