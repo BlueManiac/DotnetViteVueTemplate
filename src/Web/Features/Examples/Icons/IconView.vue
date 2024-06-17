@@ -2,7 +2,7 @@
   <div>
     <h1>
       Load icons using unplugin-vue-components:
-      <MdiArrowDown />
+      <IconMdiArrowDown />
     </h1>
     <h1>
       Or unplugin-auto-import:
@@ -13,7 +13,7 @@
 
 <script setup>
 const icons = [
-  MdiAlarm,
-  MdiAccountCowboyHat
+  IconMdiAlarm,
+  IconMdiAccountCowboyHat
 ]
 </script>

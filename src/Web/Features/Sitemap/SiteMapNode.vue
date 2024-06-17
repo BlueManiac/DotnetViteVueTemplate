@@ -9,13 +9,13 @@
   </span>
   <pre v-if="expanded">{{ route }}</pre>
   <ul>
-    <li v-for="route in route.children">
-      <SiteMapNode :route />
+    <li v-for="item in route.children">
+      <SiteMapNode :route="item" />
     </li>
   </ul>
 </template>
 
-<script setup>
+<script setup lang="ts">
 defineProps(['route'])
 
 const expanded = ref(false)

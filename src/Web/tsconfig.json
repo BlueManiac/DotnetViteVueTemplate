@@ -8,6 +8,8 @@
       "vite/client",
       // Syntax highlighting for core-js
       "core-dts",
+      // Icon component syntax highlighting
+      "unplugin-icons/types/vue",
       // Syntax highlightning for routes
       "unplugin-vue-router/client"
     ],
