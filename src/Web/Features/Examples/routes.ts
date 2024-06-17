@@ -1,24 +1,30 @@
 import { RouteRecordRaw } from 'vue-router'
+import ClientError from './Errors/ClientError.vue'
+import ServerError from './Errors/ServerError.vue'
+import IconView from './Icons/IconView.vue'
+import ModalsView from './Modals/ModalsView.vue'
+import RealTime from './RealTime/RealTime.vue'
+import TableView from './Tables/TableView.vue'
 
 export const exampleRoutes: RouteRecordRaw[] = [
   {
     path: '/realtime',
-    component: import('./RealTime/RealTime.vue'),
+    component: RealTime,
     meta: { title: 'Realtime' }
   },
   {
     path: '/icons',
-    component: import('./Icons/IconView.vue'),
+    component: IconView,
     meta: { title: 'Icons' }
   },
   {
     path: '/modals',
-    component: import('./Modals/ModalsView.vue'),
+    component: ModalsView,
     meta: { title: 'Modals' }
   },
   {
     path: '/tables',
-    component: import('./Tables/TableView.vue'),
+    component: TableView,
     meta: { title: 'Tables' }
   },
   {
@@ -27,12 +33,12 @@ export const exampleRoutes: RouteRecordRaw[] = [
     children: [
       {
         path: 'serverError',
-        component: import('./Errors/ServerError.vue'),
+        component: ServerError,
         meta: { title: 'Server exception' }
       },
       {
         path: 'clientError',
-        component: import('./Errors/ClientError.vue'),
+        component: ClientError,
         meta: { title: 'Client error' }
       }
     ]

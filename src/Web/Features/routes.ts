@@ -1,6 +1,8 @@
 import { RouteRecordRaw } from 'vue-router'
 import { routes as autoRoutes } from 'vue-router/auto-routes'
 import { exampleRoutes } from './Examples/routes'
+import HomeView from './Home/HomeView.vue'
+import NotFound from '/Components/Views/NotFound.vue'
 
 declare module 'vue-router' {
   interface RouteMeta {
@@ -15,13 +17,13 @@ declare module 'vue-router' {
 export const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    component: import('./Home/HomeView.vue'),
+    component: HomeView,
     meta: { title: 'Home' }
   },
   ...exampleRoutes,
   ...autoRoutes,
   {
     path: '/:pathMatch(.*)*',
-    component: import('/Components/Views/NotFound.vue'),
+    component: NotFound,
   }
 ]
