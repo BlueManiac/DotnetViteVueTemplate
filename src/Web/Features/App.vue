@@ -19,6 +19,25 @@
   </main>
 </template>
 
+<script setup lang="ts">
+import { onErrorCaptured } from 'vue'
+
+onErrorCaptured((error) => {
+  console.error(error)
+
+  // Handle error server side
+  if (import.meta.hot && error instanceof Error) {
+    import.meta.hot.send("vite-runtime-error-plugin:error", {
+      message: error.message,
+      stack: error.stack,
+    })
+  }
+
+  // stop error from propagating so hmr doesn't break for async components
+  return false
+})
+</script>
+
 <style scoped>
 main {
   display: grid;
