@@ -12,14 +12,14 @@
                 <span class="text-primary-emphasis pe-1">
                   {{ toValue(col.header) ?? col.field }}
                 </span>
-                <IconMdiSortAscending v-if="sortOrder == 1" />
-                <IconMdiSortDescending v-else />
+                <MdiSortAscending v-if="sortOrder == 1" />
+                <MdiSortDescending v-else />
               </template>
               <template v-else>
                 {{ toValue(col.header) ?? col.field }}
               </template>
               <div v-if="onFilterClick" class="ms-auto" @click.stop="emit('filterClick', col, $event, ($event.target as HTMLElement).closest('th'))">
-                <IconMdiFilterOutline />
+                <MdiFilterOutline />
               </div>
             </div>
           </th>

@@ -5,15 +5,15 @@ type Theme = { id: string, name: string, icon: any }
 export const themes: Theme[] = [{
   id: 'light',
   name: 'Light',
-  icon: IconMdiLightbulbOn
+  icon: MdiLightbulbOn
 }, {
   id: 'dark',
   name: 'Dark',
-  icon: IconMdiMoonWaningCrescent
+  icon: MdiMoonWaningCrescent
 }, {
   id: 'auto',
   name: 'Auto',
-  icon: IconMdiCircleHalfFull
+  icon: MdiCircleHalfFull
 }]
 
 export const currentTheme = shallowRef<Theme>(null)

@@ -11,7 +11,7 @@ import { viteRuntimeErrorOverlayPlugin } from './Util/Plugins/vite-runtime-error
 
 export default ({ mode }): UserConfig => {
   const iconsResolver = IconsResolver({
-    prefix: 'icon',
+    prefix: false,
     enabledCollections: ['carbon', 'mdi', 'svg-spinners'],
   })
 
