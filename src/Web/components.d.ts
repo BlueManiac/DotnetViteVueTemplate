@@ -11,7 +11,7 @@ declare module 'vue' {
     Breadcrumb: typeof import('./Features/Navigation/Breadcrumb.vue')['default']
     Btn: typeof import('./Components/btn.vue')['default']
     ClientError: typeof import('./Features/Examples/Errors/ClientError.vue')['default']
-    ColorThemeToggle: typeof import('./Components/ColorSchemes/color-theme-toggle.vue')['default']
+    ColorThemeToggle: typeof import('./Components/ColorThemes/color-theme-toggle.vue')['default']
     ConfirmModal: typeof import('./Features/Examples/Modals/ConfirmModal.vue')['default']
     ContextMenu: typeof import('./Components/context-menu.vue')['default']
     DataTable: typeof import('./Components/Tables/data-table.vue')['default']

@@ -5,7 +5,7 @@ import 'bootstrap'
 
 import '../Util/Client/array'
 
-import { setPreferredTheme } from '../Components/ColorSchemes/color-schemes'
+import { setPreferredTheme } from '../Components/ColorThemes/color-themes'
 import { applicationName } from './info'
 
 setPreferredTheme()
