@@ -17,7 +17,6 @@
 import { useFocus } from '@vueuse/core'
 import { watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { definePage } from 'vue-router/auto'
 import { login } from '../AuthenticationService'
 
 const emailElement = ref<HTMLInputElement | null>()
