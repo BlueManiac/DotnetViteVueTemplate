@@ -73,10 +73,11 @@ function addRouteMetadata(routes: RouteRecordRaw[], parentRoute?: RouteRecordRaw
   }
 }
 
-function* createNavigationRoutes(routes) {
-  for (let route of Router.options.routes) {
+function* createNavigationRoutes(routes: readonly RouteRecordRaw[]) {
+  for (let route of routes) {
     if (route.meta?.title)
       yield route
+
     if (!route.meta.fullPath && route.children) {
       for (let childRoute of route.children) {
         // Include root index pages

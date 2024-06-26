@@ -6,6 +6,8 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+
 const { rotation } = defineProps<{
   text: string,
   rotation: number | string

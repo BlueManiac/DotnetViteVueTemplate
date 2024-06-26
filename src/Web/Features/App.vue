@@ -45,7 +45,7 @@ main {
     "navbar"
     "breadcrumb"
     "main";
-  grid-template-rows: auto auto 1fr;
+  grid-auto-rows: 0fr;
   grid-template-columns: 1fr;
 
   .page-navbar {

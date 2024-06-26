@@ -17,8 +17,8 @@
               {{ route.meta.title }}
             </span>
             <ul class="dropdown-menu mt-0" aria-labelledby="navbarDropdown">
-              <template v-for="route in route.children">
-                <li v-if="route.meta.title"><router-link class="dropdown-item" :to="route.meta.fullPath">{{ route.meta.title }}</router-link></li>
+              <template v-for="item in route.children">
+                <li v-if="item.meta.title"><router-link class="dropdown-item" :to="item.meta.fullPath">{{ item.meta.title }}</router-link></li>
               </template>
             </ul>
           </li>

@@ -8,9 +8,9 @@
       "vite/client",
       // Syntax highlighting for core-js
       "core-dts",
-      // Icon component syntax highlighting
+      // Syntax highlighting for icon components 
       "unplugin-icons/types/vue",
-      // Syntax highlightning for routes
+      // Syntax highlighting for routes
       "unplugin-vue-router/client"
     ],
     "baseUrl": "./",
