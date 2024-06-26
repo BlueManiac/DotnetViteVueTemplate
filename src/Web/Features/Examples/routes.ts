@@ -8,24 +8,30 @@ import TableView from './Tables/TableView.vue'
 
 export const exampleRoutes: RouteRecordRaw[] = [
   {
-    path: '/realtime',
-    component: RealTime,
-    meta: { title: 'Realtime' }
-  },
-  {
-    path: '/icons',
-    component: IconView,
-    meta: { title: 'Icons' }
-  },
-  {
-    path: '/modals',
-    component: ModalsView,
-    meta: { title: 'Modals' }
-  },
-  {
-    path: '/tables',
-    component: TableView,
-    meta: { title: 'Tables' }
+    path: '/examples',
+    meta: { title: 'Examples' },
+    children: [
+      {
+        path: 'realtime',
+        component: RealTime,
+        meta: { title: 'Realtime' }
+      },
+      {
+        path: 'icons',
+        component: IconView,
+        meta: { title: 'Icons' }
+      },
+      {
+        path: 'modals',
+        component: ModalsView,
+        meta: { title: 'Modals' }
+      },
+      {
+        path: 'tables',
+        component: TableView,
+        meta: { title: 'Tables' }
+      },
+    ]
   },
   {
     path: '/errors',
