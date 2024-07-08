@@ -1,10 +1,12 @@
 ﻿<template>
   <div>
-    <div class="d-flex gap-1 align-items-center mb-2">
+    <div class="d-flex gap-2 align-items-center">
       <btn @click="add()">Add</btn>
-      <textfield v-model.number="changeQuantity" type="number"></textfield>
       <btn @click="remove()">Remove</btn>
-      <input v-model="filter" class="form-control" placeholder="Filter" />
+      <label>Quantity:</label>
+      <input-number v-model="changeQuantity"></input-number>
+      <input-text v-model="filter" placeholder="Filter" class="ms-auto" />
+      <btn @click="filter = ''">Clear</btn>
     </div>
     <range v-model.number="changeQuantity" min="1" max="10000" class="mt-3" />
     Quantity: {{ items.length }}, Selected: {{ selected.length }} {{ selected[0] }}

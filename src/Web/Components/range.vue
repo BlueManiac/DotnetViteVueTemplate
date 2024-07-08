@@ -1,7 +1,5 @@
 ﻿<template>
-  <div>
-    <input type="range" class="form-range" v-model="modelValue" :min :max>
-  </div>
+  <input type="range" class="form-range" v-model="modelValue" :min :max>
 </template>
 
 <script setup lang="ts">

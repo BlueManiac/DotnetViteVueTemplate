@@ -1,5 +1,7 @@
 <template>
-  <input type="datetime-local" v-model="date" class="form-control">
+  <div>
+    <input type="datetime-local" v-model="date" class="form-control">
+  </div>
 </template>
 
 <script setup lang="ts">
