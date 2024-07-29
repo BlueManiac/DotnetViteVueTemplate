@@ -1,7 +1,7 @@
 <template>
   <form class="col-lg-4 d-flex flex-column gap-2">
     <checkbox v-model="checked">Checkbox</checkbox>
-    <input-text>Hi</input-text>
+    <input-text>Text</input-text>
     <input-datetime v-model="date" />
     <input-datetime v-model="date2" />
     <input-date v-model="date3" />
@@ -15,11 +15,14 @@
       {{ file?.name }}
       <btn v-if="file" @click="file = null">Clear</btn>
     </div>
+    Selected Values: {{ dropdownValues }}
+    <dropdown placeholder="Select Options" :options="dropdownOptions" v-model="dropdownValues" />
   </form>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { Option } from '/Components/dropdown.vue'
 
 const checked = ref(false)
 const date = ref(new Date())
@@ -28,4 +31,11 @@ const date3 = ref(new Date())
 const numberValue = ref(null)
 const radioValue = ref("radio1")
 const file = ref<File>(null)
+
+const dropdownOptions = ref<Option[]>([
+  { label: 'Option 1', value: 'option1' },
+  { label: 'Option 2', value: 'option2' },
+  { label: 'Option 3', value: 'option3' }
+])
+const dropdownValues = ref([])
 </script>
