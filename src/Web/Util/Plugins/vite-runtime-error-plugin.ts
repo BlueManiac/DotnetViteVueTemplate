@@ -2,7 +2,8 @@ import { TraceMap, originalPositionFor } from '@jridgewell/trace-mapping'
 import { readFileSync } from 'node:fs'
 import { ErrorPayload, ModuleGraph, buildErrorMessage, type Plugin, type WebSocketClient } from "vite"
 
-// Taken from https://github.com/hi-ogawa/unocss-preset-antd/tree/main/packages/vite-runtime-error-overlay
+// Based on
+// https://github.com/hi-ogawa/unocss-preset-antd/tree/main/packages/vite-runtime-error-overlay
 
 // based on the idea in
 // https://github.com/vitejs/vite/pull/6274#issuecomment-1087749460
