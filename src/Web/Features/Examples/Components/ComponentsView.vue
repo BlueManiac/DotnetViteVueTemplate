@@ -1,7 +1,7 @@
 <template>
-  <form class="col-lg-4 d-flex flex-column gap-2">
+  <form class="col-lg-4 d-flex flex-column gap-2" v-validate>
     <checkbox v-model="checked">Checkbox</checkbox>
-    <input-text>Text</input-text>
+    <input-text required>Text</input-text>
     <input-datetime v-model="date" />
     <input-datetime v-model="date2" />
     <input-date v-model="date3" />
@@ -17,12 +17,14 @@
     </div>
     Selected Values: {{ dropdownValues }}
     <dropdown placeholder="Select Options" :options="dropdownOptions" v-model="dropdownValues" />
+    <btn type="submit">Submit</btn>
   </form>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Option } from '/Components/dropdown.vue'
+import { vValidate } from '/Components/Validation/v-validate'
 
 const checked = ref(false)
 const date = ref(new Date())
