@@ -16,6 +16,7 @@
         </suspense>
       </template>
     </RouterView>
+    <modal-target />
   </main>
 </template>
 

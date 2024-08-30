@@ -1,58 +1,69 @@
-﻿<template>
-  <teleport to="#app" v-if="state.visible">
-    <div class="modal fade" tabindex="-1" ref="wrapper">
-      <div class="modal-dialog" v-bind="$attrs">
-        <div class="modal-content">
-          <div class="modal-header">
-            <slot name="header" v-bind="props">
-              <slot name="title" v-bind="props">
-                <h5 class="modal-title">Modal title</h5>
-              </slot>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </slot>
-          </div>
-          <div class="modal-body">
-            <slot v-bind="props" />
-          </div>
-          <div class="modal-footer">
-            <slot name="footer" v-bind="props">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary">Save changes</button>
-            </slot>
-          </div>
-        </div>
+<template>
+  <dialog ref="el" class="modal-dialog" :class="{ [`modal-${size}`]: size }">
+    <div class="modal-content">
+      <div v-if="$slots.header" class="modal-header">
+        <slot name="header" />
+      </div>
+      <div class="modal-body">
+        <slot />
+      </div>
+      <div v-if="$slots.footer" class="modal-footer">
+        <slot name="footer" :close />
       </div>
     </div>
-  </teleport>
+  </dialog>
 </template>
 
 <script setup lang="ts">
-import { useEventListener } from '@vueuse/core'
-import { Modal } from 'bootstrap'
-import { watch } from 'vue'
+import { onClickOutside } from '@vueuse/core'
+import { defineExpose, ref, watch } from 'vue'
+import { ModalState } from '/Components/Modals/modal'
 
-const props = defineProps<{
-  state: any,
-  modal?: any
+const { modal = true, size = null } = defineProps<{
+  modal?: boolean,
+  size?: 'sm' | null | 'lg' | 'xl'
 }>()
 
-const wrapper = ref()
-const component = ref()
+const modelValue = defineModel<ModalState>({ default: { visible: false } })
 
-watch(() => wrapper.value, () => {
-  if (wrapper.value) {
-    component.value = new Modal(wrapper.value, {})
-    component.value.show()
+const el = ref<HTMLDialogElement>()
+
+const show = () => {
+  if (modal) {
+    el.value.showModal()
+  }
+  else {
+    el.value.show()
+  }
+  modelValue.value.visible = true
+}
+
+const close = () => {
+  el.value.close()
+  modelValue.value.visible = false
+}
+
+watch(() => modelValue.value?.visible, visible => {
+  if (visible) {
+    show()
+  }
+  else {
+    close()
   }
 })
 
-watch(() => props.state.visible, () => {
-  if (!props.state.visible) {
-    component.value?.hide()
-  }
+onClickOutside(el, () => {
+  close()
 })
 
-useEventListener(wrapper, 'hidden.bs.modal', () => {
-  props.state.visible = false
+defineExpose({
+  show,
+  close
 })
 </script>
+
+<style scoped>
+dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+</style>

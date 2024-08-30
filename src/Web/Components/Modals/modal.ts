@@ -1,59 +1,61 @@
-﻿import { until } from '@vueuse/core'
-import { h, reactive, render, VNode } from 'vue'
+﻿import { onClickOutside, until } from '@vueuse/core'
+import { Component, createVNode, nextTick, onUnmounted, reactive, VNode } from 'vue'
 import modal from "./modal.vue"
 
-// Check https://github.com/vuejs/router/blob/main/packages/router/e2e/modal/index.ts
+export {
+  modal
+}
 
-export const useModal = (props: Object = {}, component: VNode = null) => {
-  const state = reactive({
-    visible: false
-  })
+export const modals = ref<VNode[]>([])
 
-  const open = async () => {
-    state.visible = true
-    await until(() => state.visible).toBe(false)
-  }
-  const close = () => {
-    state.visible = false
+export class ModalState {
+  visible = false
+
+  show() {
+    this.visible = true
   }
 
-  return {
-    modal: h(component ?? modal, { ...props, state, modal: state }),
-    open,
-    close,
-    state,
-    toggle: async () => {
-      if (state.visible) {
-        close()
-      }
-      else {
-        await open()
-      }
-    }
+  close() {
+    this.visible = false
   }
 }
 
-export const showModal = async (component, props) => {
-  const response = {}
-  const emits = {}
+export const useDialog = () => {
+  const el = ref<HTMLDialogElement>()
 
-  if (component.emits) {
-    for (const emit of component.emits) {
-      const modelValue = emit.split(':')[1]
+  onClickOutside(el, () => {
+    el.value?.close()
+  })
 
-      emits['onUpdate:' + modelValue] = (value) => response[modelValue] = value
-    }
+  return el
+}
+
+export const useModal = (component: Component = null, props = {}) => {
+  const state = reactive(new ModalState())
+
+  if (component) {
+    const node = createVNode(component, { ...props, modelValue: state })
+
+    modals.value.push(node)
+
+    onUnmounted(() => {
+      modals.value = modals.value.filter(x => x !== node)
+    })
   }
 
-  const { modal, open } = useModal({ ...props, ...emits }, component)
+  return state
+}
 
-  const wrapper = document.createElement('div')
+export const showModal = async (component: Component, props = {}) => {
+  const state = reactive(new ModalState())
 
-  render(modal, wrapper)
+  const node = createVNode(component, { ...props, modelValue: state })
 
-  await open()
+  modals.value.push(node)
 
-  render(null, wrapper)
+  await nextTick()
 
-  return response
+  state.show()
+
+  await until(() => state.visible).toBe(false)
 }
