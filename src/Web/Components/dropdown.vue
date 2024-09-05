@@ -27,7 +27,7 @@ export interface Option {
 
 <script setup lang="ts">
 import { onClickOutside } from '@vueuse/core'
-import { defineProps, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 
 const { options } = defineProps<{
   placeholder: string,

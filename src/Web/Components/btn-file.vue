@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineModel, watch } from 'vue'
+import { watch } from 'vue'
 
 const modelValue = defineModel<File>()
 const fileElement = ref<HTMLInputElement>(null)

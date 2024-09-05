@@ -37,11 +37,7 @@ export default ({ mode }): UserConfig => {
           },
         }]
       }),
-      Vue({
-        script: {
-          propsDestructure: true
-        }
-      }),
+      Vue(),
       ViteComponents({
         globs: ['Components/**/*.vue', 'Features/**/*.vue', '!Features/**/Pages/**'],
         resolvers: [

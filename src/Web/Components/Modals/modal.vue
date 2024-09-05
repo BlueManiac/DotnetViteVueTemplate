@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 import { onClickOutside } from '@vueuse/core'
-import { defineExpose, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { ModalState } from '/Components/Modals/modal'
 
 const { modal = true, size = null } = defineProps<{

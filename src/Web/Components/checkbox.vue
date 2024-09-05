@@ -8,8 +8,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineModel } from 'vue'
-
 const modelValue = defineModel<boolean>()
 
 const id = Math.random().toString(36).substring(2, 12)
