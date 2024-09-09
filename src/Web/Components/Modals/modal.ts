@@ -1,5 +1,5 @@
 ﻿import { onClickOutside, until } from '@vueuse/core'
-import { Component, createVNode, nextTick, onUnmounted, reactive, VNode } from 'vue'
+import { Component, createVNode, nextTick, onUnmounted, reactive, toRef, unref, UnwrapRef, VNode } from 'vue'
 import modal from "./modal.vue"
 
 export {
@@ -8,8 +8,9 @@ export {
 
 export const modals = ref<VNode[]>([])
 
-export class ModalState {
+export class ModalState<TResult = unknown> {
   visible = false
+  state: TResult
 
   show() {
     this.visible = true
@@ -46,16 +47,24 @@ export const useModal = (component: Component = null, props = {}) => {
   return state
 }
 
-export const showModal = async (component: Component, props = {}) => {
-  const state = reactive(new ModalState())
+export const showModal = async <TResult = undefined>(component: Component, props = {}, state: TResult | null = undefined): Promise<UnwrapRef<TResult>> => {
+  const modalState = reactive(new ModalState<TResult>())
 
-  const node = createVNode(component, { ...props, modelValue: state })
+  if (state !== undefined) {
+    toRef(modalState, 'state').value = state
+  }
+
+  const node = createVNode(component, { ...props, modelValue: modalState })
 
   modals.value.push(node)
 
   await nextTick()
 
-  state.show()
+  modalState.show()
 
-  await until(() => state.visible).toBe(false)
+  await until(() => modalState.visible).toBe(false)
+
+  modals.value = modals.value.filter(x => x !== node)
+
+  return unref(modalState.state)
 }

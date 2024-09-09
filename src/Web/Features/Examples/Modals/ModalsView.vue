@@ -39,11 +39,17 @@
     <btn @click="customModal2.show()">Custom modal component with useModal(CustomModal)</btn>
 
     <btn @click="show()">Custom modal component with showModal(CustomModal)</btn>
+
+    <div>
+      <btn @click="confirm()">Show confirm dialog</btn>
+      Result: {{ confirmResult }}
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import ConfirmModal from './ConfirmModal.vue'
 import CustomModal from './CustomModal.vue'
 import { modal, showModal, useDialog, useModal } from '/Components/Modals/modal'
 
@@ -55,5 +61,10 @@ const customModal2 = useModal(CustomModal)
 
 const show = async () => {
   await showModal(CustomModal)
+}
+
+const confirmResult = ref<boolean | null>(null)
+const confirm = async () => {
+  confirmResult.value = await showModal<boolean>(ConfirmModal, { header: 'Confirm' })
 }
 </script>

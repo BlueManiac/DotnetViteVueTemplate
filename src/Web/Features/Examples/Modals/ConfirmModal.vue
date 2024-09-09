@@ -1,10 +1,10 @@
 ﻿<template>
-  <modal>
+  <modal v-model="modelValue">
     <template #header>
       {{ header }}
     </template>
     <p class="m-0">
-      Modal state: {{ modal }}
+      Modal state: {{ modelValue }}
     </p>
     <template #footer>
       <btn @click="set(true)">Yes</btn>
@@ -14,15 +14,16 @@
 </template>
 
 <script setup lang="ts">
-const { modal } = defineProps<{
-  header: string,
-  modal: any
+import { ModalState } from '/Components/Modals/modal'
+
+const { header } = defineProps<{
+  header: string
 }>()
-const confirmed = defineModel<boolean>('confirmed')
+
+const modelValue = defineModel<ModalState<boolean>>({ default: { visible: false } })
 
 const set = (result: boolean) => {
-  confirmed.value = result
-
-  modal.visible = false
+  modelValue.value.state = result
+  modelValue.value.close()
 }
 </script>
