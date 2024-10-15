@@ -3,15 +3,17 @@
     <div class="form-control" @click="isOpen = !isOpen">
       <span v-if="!selectedOptions.length">{{ placeholder }}</span>
       <span v-else>
-        <span class="badge text-bg-secondary me-1" v-for="item in selectedOptions" :key="item">{{ item }}</span>
+        <button type="button" class="badge text-bg-secondary border border-0 me-1" v-for="(value, index) in selectedOptions" :key="index" @click="selectedOptions.splice(index, 1)">
+          {{ options.find(x => x.value == value)?.label }}
+        </button>
       </span>
       <div class="dropdown-toggle float-end"></div>
     </div>
-    <div class="dropdown-menu w-100 p-0" :class="{ show: isOpen }" ref="menu">
-      <div v-for="(option, index) in options" :key="index" class="form-check m-0 d-flex">
-        <input class="form-check-input" type="checkbox" :id="'option-' + index" :value="option.value" v-model="selectedOptions" />
-        <label class="form-check-label d-block" :for="'option-' + index">
-          {{ option.label }}
+    <div class="dropdown-menu w-100 p-0 border-start border-end" :class="{ show: isOpen }" ref="menu">
+      <div v-for="(item, index) in options" :key="index" class="form-check m-0 d-flex gap-1">
+        <input class="form-check-input" type="checkbox" :id="'option-' + index" :value="item.value" v-model="selectedOptions" />
+        <label class="form-check-label flex-grow-1" :for="'option-' + index">
+          {{ item.label }}
         </label>
       </div>
     </div>
@@ -53,6 +55,10 @@ onClickOutside(menu, () => {
 
 <style scoped>
 .dropdown {
+  > .form-control {
+    transition: none;
+  }
+
   &.open > .form-control {
     border-bottom: 0;
     border-bottom-left-radius: 0;
