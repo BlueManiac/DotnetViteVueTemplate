@@ -120,7 +120,7 @@ export const useSorting = (sortField: Ref<string>, sortOrder: Ref<number>, colum
         if (!field2)
           return 1 * modifier
 
-        return field1.localeCompare(field2) * modifier
+        return field1.localeCompare(field2, undefined, { numeric: true, sensitivity: 'base' }) * modifier
       }
 
       return (Number(field1) - Number(field2)) * modifier
