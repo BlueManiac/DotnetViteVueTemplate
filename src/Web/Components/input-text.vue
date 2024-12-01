@@ -12,9 +12,11 @@ import { useFocus } from '@vueuse/core'
 import { useSlots } from 'vue'
 
 const {
+  placeholder,
   focus,
   type = 'text',
-  id = Math.random().toString(36).substring(2, 12)
+  id = Math.random().toString(36).substring(2, 12),
+  required
 } = defineProps<{
   placeholder?: string,
   focus?: boolean,

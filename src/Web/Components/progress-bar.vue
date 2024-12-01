@@ -8,7 +8,7 @@
 const { modelValue, min = 0, max = 100 } = defineProps<{
   modelValue: number,
   min?: number | string,
-  max: number | string,
+  max?: number | string,
 }>()
 
 const width = computed(() => modelValue / Number(max) * 100)

@@ -5,6 +5,7 @@
     <input-datetime v-model="date" />
     <input-datetime v-model="date2" />
     <input-date v-model="date3" />
+    <input-time v-model="time" required />
     <input-number v-model="numberValue" min="-3" max="5" />
     <radio v-model="radioValue" value="radio1">Radio 1</radio>
     <radio v-model="radioValue" value="radio2">Radio 2</radio>
@@ -30,6 +31,7 @@ const checked = ref(false)
 const date = ref(new Date())
 const date2 = ref("2024-06-25T16:14:36.186Z")
 const date3 = ref(new Date())
+const time = ref(null)
 const numberValue = ref(null)
 const radioValue = ref("radio1")
 const file = ref<File>(null)
@@ -37,7 +39,7 @@ const file = ref<File>(null)
 const dropdownOptions = ref<Option[]>([
   { label: 'Option 1', value: 'option1' },
   { label: 'Option 2', value: 'option2' },
-  { label: 'Option 3', value: 'option3' }
+  { label: 'Option 3', value: 'option3' },
 ])
 const dropdownValues = ref([])
 </script>
