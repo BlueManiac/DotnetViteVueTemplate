@@ -5,11 +5,11 @@
       <btn @click="remove()">Remove</btn>
       <label>Quantity:</label>
       <input-number v-model="changeQuantity"></input-number>
-      <input-text v-model="filter" placeholder="Filter" class="ms-auto" />
+      <input-text v-model="filterDebounced" placeholder="Filter" class="ms-auto" />
       <btn @click="filter = ''">Clear</btn>
     </div>
     <range v-model.number="changeQuantity" min="1" max="10000" class="mt-3" />
-    Quantity: {{ items.length }}, Selected: {{ selected.length }} {{ selected[0] }}
+    Quantity: {{ items.length }}, Selected: {{ selected.length }} {{ selected[0] }}, Filtered: {{ filteredItems.length }}
     <context-menu ref="contextMenuElement" />
     <TableFilter v-model:parent="filterParent">
       <div class="p-1 bg-success">{{ filterData }}</div>
@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { useLocalStorage } from '@vueuse/core'
+import { useDebounceFn, useLocalStorage } from '@vueuse/core'
 import { watchEffect } from 'vue'
 import TableFilter from './TableFilter.vue'
 import { createPerson, invertColor } from './example-data'
@@ -37,6 +37,10 @@ import { Column } from '/Components/Tables/data-table'
 import '/Components/Tables/data-table.vue'
 
 const filter = ref('')
+const filterDebounced = computed({
+  get: () => filter.value,
+  set: useDebounceFn(value => filter.value = value, 200)
+})
 
 const columns = ref([
   { field: 'name', hidden: false },
