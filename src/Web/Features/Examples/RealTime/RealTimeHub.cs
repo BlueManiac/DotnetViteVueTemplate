@@ -8,7 +8,7 @@ public class RealTimeHub : Hub<IRealTimeClient>
         await Clients.Caller.Message("Connected");
     }
 
-    public Task Data(string message)
+    public Task Test(string message)
     {
         return Clients.Caller.Message("Server received " + message + " " + DateTime.Now);
     }

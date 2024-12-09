@@ -1,7 +1,7 @@
 ﻿<template>
   <div>
     <btn @click="send()" class="mb-3 me-1">Send</btn>
-    <btn @click="sender.Data('hi')" class="mb-3">Send using proxy</btn>
+    <btn @click="sender.Test('hi')" class="mb-3">Send using proxy</btn>
     <br />
     using data method<br />
     {{ message }}
@@ -17,16 +17,16 @@ import { Ref } from 'vue'
 import { api } from '/Features/api'
 
 type RealtimeSender = {
-  Data(message: string): Promise<void>
+  Test(message: string): Promise<void>
 }
 type RealtimeReciever = {
   message: Ref<string>
 }
 
-const { connection, data, sender, receiver } = api.signalr<RealtimeSender, RealtimeReciever>('/api/realtime')
+const { connection, data, sender, receiver } = api.useSignalr<RealtimeSender, RealtimeReciever>('/api/realtime')
 
 const message = data<string>('message')
 const message2 = receiver.message
 
-const send = () => connection.send('Data', 'hi')
+const send = () => connection.send('Test', 'hi')
 </script>

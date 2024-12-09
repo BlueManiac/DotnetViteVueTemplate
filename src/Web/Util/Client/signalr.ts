@@ -1,26 +1,28 @@
-﻿import { HubConnectionBuilder } from '@microsoft/signalr'
+﻿import { HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr'
 import { tryOnScopeDispose, useEventListener } from '@vueuse/core'
 import { Ref, onMounted, ref } from 'vue'
 
 export type SignalrSender = { [key: string]: (...rest: unknown[]) => Promise<void> }
 export type SignalrReciever = { [key: string]: Ref<unknown> }
 
-export function useSignalr<TSender extends SignalrSender = SignalrSender, TReciever extends SignalrReciever = SignalrReciever>(url: string) {
+export function signalr<TSender extends SignalrSender = SignalrSender, TReciever extends SignalrReciever = SignalrReciever>(url: string) {
   const connection = new HubConnectionBuilder()
     .withUrl(url)
     .withAutomaticReconnect()
     .build()
 
-  onMounted(() => {
-    connection.start()
-  })
+  const start = async () => {
+    if (connection.state !== HubConnectionState.Disconnected)
+      return connection
 
-  const close = () => {
-    connection.stop()
+    await connection.start()
+
+    return connection
   }
 
-  useEventListener(window, 'beforeunload', () => close())
-  tryOnScopeDispose(close)
+  const stop = async () => {
+    await connection.stop()
+  }
 
   const data = function <T>(methodName: string) {
     const val = ref<T>()
@@ -46,5 +48,18 @@ export function useSignalr<TSender extends SignalrSender = SignalrSender, TRecie
     },
   }) as TReciever
 
-  return { connection, data, sender, receiver }
+  return { connection, data, sender, receiver, start, stop }
+}
+
+export function useSignalr<TSender extends SignalrSender = SignalrSender, TReciever extends SignalrReciever = SignalrReciever>(url: string) {
+  const data = signalr<TSender, TReciever>(url)
+
+  onMounted(() => {
+    data.start()
+  })
+
+  useEventListener(window, 'beforeunload', () => data.stop())
+  tryOnScopeDispose(data.stop)
+
+  return data
 }
