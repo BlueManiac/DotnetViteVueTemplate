@@ -45,34 +45,34 @@
   </table>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T">
 import { toValue, watch } from 'vue'
-import { Column, useClick, useSelection, useSorting, useVirtualization } from './data-table'
+import { TableColumn, useClick, useSelection, useSorting, useVirtualization } from './data-table'
 
 const { rowHeight = '33px', onFilterClick } = defineProps<{
   rowHeight?: string,
   onFilterClick?: Function
 }>()
 
-const columns = defineModel<Column[]>("columns")
-const items = defineModel<any[]>("modelValue")
+const columns = defineModel<TableColumn[]>("columns")
+const items = defineModel<T[]>("modelValue")
 const sortField = defineModel<string>("sortField")
 const sortOrder = defineModel<number>("sortOrder")
-const selected = defineModel<any[]>("selected")
+const selected = defineModel<T[]>("selected")
 
 const emit = defineEmits<{
-  rowClick: [item: any, column: Column, event: MouseEvent],
-  headerContextMenuClick: [column: Column, event: Event],
-  rowContextMenuClick: [item: any, column: Column, event: Event],
-  filterClick: [column: Column, event: MouseEvent, headerElement: HTMLElement]
+  rowClick: [item: T, column: TableColumn, event: MouseEvent],
+  headerContextMenuClick: [column: TableColumn, event: Event],
+  rowContextMenuClick: [item: T, column: TableColumn, event: Event],
+  filterClick: [column: TableColumn, event: MouseEvent, headerElement: HTMLElement]
 }>()
 
 // Retrive columns from items if not set
-watch(() => [items.value.length, columns.value], () => {
+watch(() => [items.value?.length, columns.value], () => {
   if (columns.value && columns.value.length > 0)
     return
 
-  columns.value = items.value.length > 0
+  columns.value = items.value?.length > 0
     ? Object.keys(items.value[0]).map(key => ({ field: key }))
     : []
 }, { immediate: true })
