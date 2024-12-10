@@ -6,7 +6,9 @@
       <template v-if="Component">
         <suspense timeout="30">
           <template #default>
-            <component :is="Component" class="page-main"></component>
+            <div class="page-main">
+              <component :is="Component" />
+            </div>
           </template>
           <template #fallback>
             <div class="page-main">
@@ -65,7 +67,12 @@ main {
     grid-template-areas: "main";
     grid-template-rows: 1fr;
     grid-template-columns: 1fr;
-    place-items: center;
+
+    .page-main {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
     .page-navbar,
     .page-breadcrumb {
