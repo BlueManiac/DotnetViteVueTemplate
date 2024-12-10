@@ -35,7 +35,12 @@ export default ({ mode }): UserConfig => {
             //console.log(basePath + ' -> ' + filePath)
             return filePath
           },
-        }]
+        }],
+        extendRoute(route) {
+          route.addToMeta({
+            filePath: route.component
+          })
+        },
       }),
       Vue(),
       ViteComponents({

@@ -1,11 +1,11 @@
 <template>
   <span @click="expanded = !expanded">
-    <router-link v-if="route.meta.fullPath" :to="route.name">{{ route.name }}</router-link>
+    <router-link v-if="route.meta.fullPath" :to="route.meta.fullPath">{{ route.name }}</router-link>
     <template v-else>{{ route.path }}</template>
     - <template v-for="(value, key) in route.meta">
-      <span class="text-warning" v-if="value">{{ key }}: {{ value }} - </span>
+      <span class="text-warning" v-if="value && key !== 'filePath'">{{ key }}: {{ value }} - </span>
     </template>
-    <span class="text-success">{{ route.component }}</span>
+    <a class="text-success" @click.stop="openInEditor()">{{ filePath }}</a>
   </span>
   <pre v-if="expanded">{{ route }}</pre>
   <ul>
@@ -16,7 +16,28 @@
 </template>
 
 <script setup lang="ts">
-defineProps(['route'])
+import { RouteRecordRaw } from 'vue-router'
+
+const { route } = defineProps<{ route: RouteRecordRaw }>()
 
 const expanded = ref(false)
+
+const filePath = computed(() => {
+  if (typeof route.component == 'object')
+    return (<any>route?.component)?.__file
+
+  return route.meta.filePath
+})
+
+const openInEditor = async () => {
+  const path = `/__open-in-editor?file=${encodeURIComponent(filePath.value)}`
+
+  await fetch(new URL(path, import.meta.url))
+}
 </script>
+
+<style scoped>
+a {
+  cursor: pointer;
+}
+</style>

@@ -9,20 +9,20 @@
     "update": "pnpm dlx npm-check-updates --packageManager pnpm --upgrade && pnpm install"
   },
   "devDependencies": {
-    "@iconify/json": "2.2.278",
+    "@iconify/json": "2.2.281",
     "@vitejs/plugin-vue": "5.2.1",
     "core-dts": "0.0.3",
     "lightningcss": "1.28.2",
     "unplugin-auto-import": "0.18.6",
-    "unplugin-icons": "0.20.2",
+    "unplugin-icons": "0.21.0",
     "unplugin-vue-components": "0.27.5",
-    "unplugin-vue-router": "0.10.8",
-    "vite": "6.0.1",
+    "unplugin-vue-router": "0.10.9",
+    "vite": "6.0.3",
     "vite-plugin-mkcert": "1.17.6",
     "vite-plugin-vue-inspector": "5.3.1"
   },
   "dependencies": {
-    "@faker-js/faker": "9.2.0",
+    "@faker-js/faker": "9.3.0",
     "@jridgewell/trace-mapping": "0.3.25",
     "@microsoft/signalr": "8.0.7",
     "@vueuse/core": "12.0.0",

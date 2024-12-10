@@ -27,7 +27,7 @@ const refresh = async () => {
   }
 }
 
-let refreshTimeout: NodeJS.Timeout
+let refreshTimeout: number
 
 const startBackgroundRefresh = () => {
   if (refreshTimeout) {
