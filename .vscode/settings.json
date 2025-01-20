@@ -51,4 +51,6 @@
     "workbench.iconTheme": "material-icon-theme",
     "workbench.tree.indent": 16,
     "workbench.tree.renderIndentGuides": "always",
+    // For vue goto functionality
+    "editor.gotoLocation.multipleDefinitions": "goto"
 }
