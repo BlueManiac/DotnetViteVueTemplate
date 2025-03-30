@@ -13,5 +13,5 @@
 		<Exec Command="pnpm install" />
 		<Exec Command="npm run build -- --emptyOutDir true --outDir $(PublishDir)wwwroot" />
 	</Target>
-
+	
 </Project>
