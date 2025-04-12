@@ -1,6 +1,7 @@
 <template>
   <form class="col-lg-4 d-flex flex-column gap-2" v-validate>
     <checkbox v-model="checked">Checkbox</checkbox>
+    <input-switch v-model="checked">Switch</input-switch>
     <input-text required>Text</input-text>
     <input-datetime v-model="date" />
     <input-datetime v-model="date2" />
