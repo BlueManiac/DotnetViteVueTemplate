@@ -27,12 +27,13 @@ export default ({ mode }): UserConfig => {
           filePatterns: '**/Pages/*',
           path(file: string) {
             const prefix = 'Features'
-            // remove the everything before Features
             const basePath = file.slice(file.lastIndexOf(prefix))
-            // remove Features/ and Pages/ everything before Features
-            let filePath = basePath.slice(prefix.length + 1).replace('Pages/', '').toLocaleLowerCase()
+            const filePath = basePath
+              .slice(prefix.length + 1)
+              .replace('Pages/', '')
+              .replace('/index.vue', '')
+              .toLocaleLowerCase()
 
-            //console.log(basePath + ' -> ' + filePath)
             return filePath
           },
         }],
@@ -41,6 +42,7 @@ export default ({ mode }): UserConfig => {
             filePath: route.component
           })
         },
+        logs: true
       }),
       Vue(),
       ViteComponents({
