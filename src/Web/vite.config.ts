@@ -71,7 +71,9 @@ export default ({ mode }): UserConfig => {
       Inspector({
         disableInspectorOnEditorOpen: true
       }),
-      viteRuntimeErrorOverlayPlugin()
+      viteRuntimeErrorOverlayPlugin({
+        includeServerStack: false
+      })
     ],
     server: {
       proxy: {

@@ -17,7 +17,8 @@ import { ErrorPayload, ModuleGraph, buildErrorMessage, type Plugin, type WebSock
 const packageName = "vite-runtime-error-plugin"
 
 export function viteRuntimeErrorOverlayPlugin(options?: {
-  filter?: (error: Error) => boolean
+  filter?: (error: Error) => boolean,
+  includeServerStack?: boolean
 }): Plugin {
   return {
     name: packageName,
@@ -59,7 +60,7 @@ export function viteRuntimeErrorOverlayPlugin(options?: {
 
         const msg = buildErrorMessage(err, [
           `Client error: ${err.message}`,
-        ])
+        ], options.includeServerStack)
 
         server.config.logger.error(msg, {
           clear: true,

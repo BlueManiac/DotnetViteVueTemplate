@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineModel, onBeforeUnmount, onMounted, provide } from 'vue'
+import { onBeforeUnmount, onMounted, provide } from 'vue'
 import { TabDataWithId, TabProvider } from './tabs'
 
 const tabs = defineModel<TabDataWithId[]>('tabs', {
