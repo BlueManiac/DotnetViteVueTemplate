@@ -11,7 +11,9 @@
       // Syntax highlighting for icon components 
       "unplugin-icons/types/vue",
       // Syntax highlighting for routes
-      "unplugin-vue-router/client"
+      "unplugin-vue-router/client",
+      // Vue types
+      "vue"
     ],
     "baseUrl": "./",
     "paths": {
