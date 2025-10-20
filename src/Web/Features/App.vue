@@ -18,15 +18,24 @@
         </suspense>
       </template>
     </RouterView>
+    <notifications />
     <modal-target />
   </main>
 </template>
 
 <script setup lang="ts">
 import { onErrorCaptured } from 'vue'
+import { notifyError } from '../Components/Notifications/notifications'
+import { HttpError } from '/Util/Client/fetch'
 
 onErrorCaptured((error) => {
   console.error(error)
+
+  if (error instanceof HttpError) {
+    notifyError(error, error, error.problemDetails)
+
+    return false
+  }
 
   // Handle error server side
   if (import.meta.hot && error instanceof Error) {
