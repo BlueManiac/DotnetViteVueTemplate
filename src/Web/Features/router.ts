@@ -1,4 +1,4 @@
-﻿import { createRouter, createWebHistory, RouteLocationNormalizedLoaded, RouteRecordRaw } from 'vue-router/auto'
+﻿import { createRouter, createWebHistory, RouteLocationNormalizedLoaded, RouteRecordRaw } from 'vue-router'
 import { routes } from './routes'
 
 const routeMap = new Map<string, RouteRecordRaw>()
