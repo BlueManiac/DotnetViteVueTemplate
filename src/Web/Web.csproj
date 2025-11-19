@@ -5,6 +5,7 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<TypeScriptCompileBlocked>True</TypeScriptCompileBlocked>
+		<DefaultItemExcludes>$(DefaultItemExcludes);**/*.ts;**/*.vue;**/*.css</DefaultItemExcludes>
 	</PropertyGroup>
 
 	<Target Name="Spa" AfterTargets="Publish">
