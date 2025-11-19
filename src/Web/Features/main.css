@@ -39,3 +39,8 @@ dialog {
     background-color: rgba(0, 0, 0, 0.5);
   }
 }
+
+/* Workaround for dotnet compile error overlay staying visible when there are no errors */
+#dotnet-compile-error:empty {
+  display: none;
+}
