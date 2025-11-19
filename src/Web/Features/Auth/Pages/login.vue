@@ -17,9 +17,9 @@
 import { useFocus } from '@vueuse/core'
 import { inject, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { AuthenticationService, login } from '../AuthenticationService'
+import { AuthService } from '../AuthService'
 
-const authenticationService = inject(AuthenticationService)!
+const authService = inject(AuthService)!
 
 const emailElement = ref<HTMLInputElement | null>()
 useFocus(emailElement, { initialValue: true })
@@ -37,8 +37,7 @@ const valid = computed(() => {
 
 const router = useRouter()
 const submit = async () => {
-  await authenticationService.login(email.value, password.value)
-  await login(email.value, password.value)
+  await authService.login(email.value, password.value)
 
   router.push('/')
 }

@@ -13,8 +13,10 @@
 </template>
 
 <script setup lang="ts">
-import { Ref } from 'vue'
-import { api } from '/Features/api'
+import { inject, Ref } from 'vue'
+import { ApiService } from '../../ApiService'
+
+const api = inject(ApiService)!
 
 type RealtimeSender = {
   Test(message: string): Promise<void>

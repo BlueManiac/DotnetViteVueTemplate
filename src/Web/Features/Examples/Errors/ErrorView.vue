@@ -6,7 +6,10 @@
 </template>
 
 <script setup>
-import { api } from '/Features/api'
+import { inject } from 'vue'
+import { ApiService } from '../../ApiService'
+
+const api = inject(ApiService)
 
 const clientError = () => {
   throw new Error('client error')

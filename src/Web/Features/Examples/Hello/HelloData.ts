@@ -1,15 +1,30 @@
 ﻿import { useIntervalFn, useStorage } from '@vueuse/core'
-import { api } from '/Features/api'
+import { inject } from 'vue'
+import { ApiService } from '../../ApiService'
 
-export const rotation = ref(0)
-export const speed = useStorage('speed', 1)
+export const useHelloData = () => {
+  const api = inject(ApiService)
 
-export const { isActive, pause, resume } = useIntervalFn(() => {
-  rotation.value = (rotation.value + speed.value) % 360
-}, 50)
+  const rotation = ref(0)
+  const speed = useStorage('speed', 1)
+
+  const { isActive, pause, resume } = useIntervalFn(() => {
+    rotation.value = (rotation.value + speed.value) % 360
+  }, 50)
+
+  const isLoading = ref(false)
+
+  const load = () => api.get<Hello>('/api/hello', { isLoading })
+
+  return {
+    rotation,
+    speed,
+    isActive,
+    pause,
+    resume,
+    isLoading,
+    load
+  }
+}
 
 export type Hello = { hello: string }
-
-export const isLoading = ref(false)
-
-export const load = () => api.get<Hello>('/api/hello', { isLoading })

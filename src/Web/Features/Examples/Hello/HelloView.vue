@@ -24,7 +24,9 @@
 </template>
 
 <script setup lang="ts">
-import { isActive, load, pause, resume, rotation, speed } from './HelloData'
+import { useHelloData } from './HelloData'
+
+const { rotation, speed, isActive, pause, resume, load } = useHelloData()
 
 const { hello } = await load()
 

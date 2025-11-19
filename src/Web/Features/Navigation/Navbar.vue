@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar navbar-expand-md">
     <router-link class="navbar-brand" to="/">
-      {{ applicationName }}
+      {{ config.applicationName }}
     </router-link>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -28,9 +28,9 @@
         </template>
       </ul>
       <div class="navbar-nav float-end">
-        <div class="nav-link">{{ userName }}</div>
+        <div class="nav-link">{{ profile.userName }}</div>
         <div class="nav-item nav-link">
-          <router-link v-if="isLoggedIn" to="/auth/login" @click="logout()">Logout</router-link>
+          <router-link v-if="profile.isLoggedIn" to="/auth/login" @click="logout()">Logout</router-link>
           <router-link v-else to="/auth/login">Login</router-link>
         </div>
         <color-theme-toggle />
@@ -40,10 +40,17 @@
 </template>
 
 <script setup lang="ts">
-import { isLoggedIn, logout } from '../Auth/AuthenticationService'
-import { applicationName } from '../info'
+import { inject } from 'vue'
+import { AppConfig } from '../AppConfig'
+import { AuthService } from '../Auth/AuthService'
+import { Profile } from '../Auth/Profile'
 import { navigationRoutes } from '../router'
-import { userName } from '/Features/Auth/Profile'
+
+const config = inject(AppConfig)!
+const authService = inject(AuthService)
+const profile = inject(Profile)
+
+const logout = () => authService.logout()
 </script>
 
 <style scoped>

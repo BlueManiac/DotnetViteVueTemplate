@@ -5,7 +5,8 @@ using System.Security.Claims;
 using Web.Util.Modules;
 
 namespace Web.Features.Auth;
-public class AuthenticationModule : IModule
+
+public class AuthModule : IModule
 {
     public static void AddServices(WebApplicationBuilder builder)
     {

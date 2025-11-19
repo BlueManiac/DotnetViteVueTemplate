@@ -15,7 +15,7 @@ builder.Services.Configure<HostOptions>(options =>
 });
 
 builder.AddModule<RealTimeModule>();
-builder.AddModule<AuthenticationModule>();
+builder.AddModule<AuthModule>();
 
 if (builder.Environment.IsDevelopment())
 {

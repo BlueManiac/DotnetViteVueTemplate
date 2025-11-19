@@ -5,11 +5,12 @@ import 'bootstrap'
 
 import '../Util/Client/array'
 
-import { setPreferredTheme } from '../Components/ColorThemes/color-themes'
-import { applicationName } from './info'
-
 import { useTitle } from '@vueuse/core'
-import { AuthenticationService } from './Auth/AuthenticationService'
+import { setPreferredTheme } from '../Components/ColorThemes/color-themes'
+import { ApiService } from './ApiService'
+import { AppConfig } from './AppConfig'
+import { AuthService } from './Auth/AuthService'
+import { Profile } from './Auth/Profile'
 
 setPreferredTheme()
 
@@ -17,15 +18,20 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import { Router, title } from './router'
 
+const config = new AppConfig()
+
 const app = createApp(App)
   .use(Router)
-  .provide(AuthenticationService)
+  .provide(AppConfig, config)
+  .provide(Profile)
+  .provide(AuthService)
+  .provide(ApiService)
 
 app.mount('#app')
 
 useTitle(() => title.value
-  ? title.value + " - " + applicationName
-  : applicationName
+  ? title.value + " - " + config.applicationName
+  : config.applicationName
 )
 
 if (import.meta.env.DEV) {
