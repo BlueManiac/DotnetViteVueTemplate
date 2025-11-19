@@ -1,4 +1,5 @@
 import Vue from '@vitejs/plugin-vue'
+import path from "node:path"
 import AutoImport from 'unplugin-auto-import/vite'
 import IconsResolver from 'unplugin-icons/resolver'
 import Icons from 'unplugin-icons/vite'
@@ -19,7 +20,7 @@ export default ({ mode }): UserConfig => {
     resolve: {
       alias: {
         'vue-original': 'vue',
-        'vue': 'Util/Client/di.ts',
+        'vue': path.resolve(__dirname, 'Util/Client/di.ts'),
       }
     },
     plugins: [
@@ -48,7 +49,7 @@ export default ({ mode }): UserConfig => {
             filePath: route.component
           })
         },
-        logs: true
+        logs: false
       }),
       Vue(),
       ViteComponents({

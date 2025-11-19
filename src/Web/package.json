@@ -10,6 +10,7 @@
   },
   "devDependencies": {
     "@iconify/json": "2.2.408",
+    "@types/node": "24.10.1",
     "@vitejs/plugin-vue": "6.0.2",
     "core-dts": "0.0.3",
     "lightningcss": "1.30.2",
