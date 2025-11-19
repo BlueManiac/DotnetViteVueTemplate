@@ -16,6 +16,12 @@ export default ({ mode }): UserConfig => {
   })
 
   return {
+    resolve: {
+      alias: {
+        'vue-original': 'vue',
+        'vue': 'Util/Client/di.ts',
+      }
+    },
     plugins: [
       VueRouter({
         dts: 'typed-router.d.ts',

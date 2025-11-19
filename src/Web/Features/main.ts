@@ -8,6 +8,9 @@ import '../Util/Client/array'
 import { setPreferredTheme } from '../Components/ColorThemes/color-themes'
 import { applicationName } from './info'
 
+import { useTitle } from '@vueuse/core'
+import { AuthenticationService } from './Auth/AuthenticationService'
+
 setPreferredTheme()
 
 import { createApp } from 'vue'
@@ -16,10 +19,9 @@ import { Router, title } from './router'
 
 const app = createApp(App)
   .use(Router)
+  .provide(AuthenticationService)
 
 app.mount('#app')
-
-import { useTitle } from '@vueuse/core'
 
 useTitle(() => title.value
   ? title.value + " - " + applicationName

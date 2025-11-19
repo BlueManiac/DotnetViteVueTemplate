@@ -9,6 +9,12 @@ interface AccessTokenResponse {
   date?: number
 }
 
+export class AuthenticationService {
+  async login(username: string, password: string) {
+    console.log('AuthenticationService.login')
+  }
+}
+
 const loginResponse = useLocalStorage<AccessTokenResponse>('auth-login', {})
 
 export const isLoggedIn = computed(() => loginResponse.value.accessToken && Date.now() < loginResponse.value.date + loginResponse.value.expiresIn * 1000)
