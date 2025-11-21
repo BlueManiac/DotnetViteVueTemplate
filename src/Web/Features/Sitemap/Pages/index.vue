@@ -9,7 +9,8 @@
 <script setup lang="ts">
 definePage({
   meta: {
-    title: 'Sitemap'
+    title: 'Sitemap',
+    auth: false
   }
 })
 </script>

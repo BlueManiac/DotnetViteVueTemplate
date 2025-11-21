@@ -11,6 +11,7 @@ declare module 'vue-router' {
     parentId?: string
     fullPath?: string
     centered?: boolean
+    auth?: boolean
   }
 }
 
@@ -25,5 +26,6 @@ export const routes: RouteRecordRaw[] = [
   {
     path: '/:pathMatch(.*)*',
     component: NotFound,
+    meta: { auth: false }
   }
 ]

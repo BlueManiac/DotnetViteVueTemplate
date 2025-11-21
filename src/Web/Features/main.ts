@@ -16,14 +16,17 @@ setPreferredTheme()
 
 import { createApp } from 'vue'
 import App from './App.vue'
-import { Router, title } from './router'
+import { Router, setupAuthGuard, title } from './router'
 
 const config = new AppConfig()
+const profile = new Profile()
+
+setupAuthGuard(profile)
 
 const app = createApp(App)
   .use(Router)
   .provide(AppConfig, config)
-  .provide(Profile)
+  .provide(Profile, profile)
   .provide(AuthService)
   .provide(ApiService)
 

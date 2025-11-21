@@ -44,7 +44,8 @@ const submit = async () => {
 
 definePage({
   meta: {
-    centered: true
+    centered: true,
+    auth: false
   }
 })
 </script>

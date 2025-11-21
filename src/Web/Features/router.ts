@@ -1,4 +1,5 @@
 ﻿import { createRouter, createWebHistory, RouteLocationNormalizedLoaded, RouteRecordRaw } from 'vue-router'
+import { Profile } from './Auth/Profile'
 import { routes } from './routes'
 
 const routeMap = new Map<string, RouteRecordRaw>()
@@ -9,6 +10,18 @@ export const Router = createRouter({
   routes: addRouteMetadata(routes),
   linkActiveClass: 'active'
 })
+
+export function setupAuthGuard(profile: Profile) {
+  Router.beforeEach((to, from, next) => {
+    const requiresAuth = to.meta.auth !== false // default is true
+
+    if (requiresAuth && !profile.isLoggedIn.value) {
+      next({ path: '/auth/login', query: { redirect: to.fullPath } })
+    } else {
+      next()
+    }
+  })
+}
 
 export const navigationRoutes = computed(() => Array.from(createNavigationRoutes(Router.options.routes)))
 
