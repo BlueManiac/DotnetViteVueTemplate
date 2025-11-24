@@ -1,5 +1,3 @@
-using Web.Features.Auth;
-using Web.Features.Examples.RealTime;
 using Web.Util.Modules;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,8 +12,7 @@ builder.Services.Configure<HostOptions>(options =>
     options.ServicesStopConcurrently = true;
 });
 
-builder.AddModule<RealTimeModule>();
-builder.AddModule<AuthModule>();
+builder.AddModules();
 
 if (builder.Environment.IsDevelopment())
 {

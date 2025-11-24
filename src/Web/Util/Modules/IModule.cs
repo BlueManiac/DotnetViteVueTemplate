@@ -1,6 +1,7 @@
 ﻿namespace Web.Util.Modules;
+
 public interface IModule
 {
-    static abstract void AddServices(WebApplicationBuilder builder);
-    static abstract void MapRoutes(WebApplication app);
+    static virtual void AddServices(WebApplicationBuilder builder) { }
+    static virtual void MapRoutes(WebApplication app) { }
 }

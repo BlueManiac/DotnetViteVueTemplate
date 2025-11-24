@@ -48,11 +48,13 @@ const api = inject('apiService')
 ```csharp
 public class MyFeatureModule : IModule
 {
+    // Optional: Only implement if you need to register services
     public static void AddServices(WebApplicationBuilder builder)
     {
         builder.Services.AddScoped<MyService>();
     }
 
+    // Optional: Only implement if you need to map routes
     public static void MapRoutes(WebApplication app)
     {
         var group = app.MapGroup("/api/myfeature");
@@ -60,6 +62,8 @@ public class MyFeatureModule : IModule
     }
 }
 ```
+
+**Modules are auto-discovered** - All classes implementing `IModule` are automatically registered via `builder.AddModules()` and `app.MapModules()` in `Program.cs`. No manual registration required.
 
 **File**: [`src/Web/Util/Modules/IModule.cs`](../src/Web/Util/Modules/IModule.cs)
 
