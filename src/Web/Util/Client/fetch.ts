@@ -140,10 +140,11 @@ export const useApi = ({ apiUrl, intercept = x => x }: { apiUrl: string, interce
       return await parseResponse<T>(response)
     },
     post: async <T>(url: RequestInfo | URL, body?: any, init?: RequestInitExtended) => {
+      const isFormData = body instanceof FormData
       const response = await fetch(apiUrl + url, await intercept({
         method: 'POST',
-        body: JSON.stringify(body),
-        headers: {
+        body: isFormData ? body : JSON.stringify(body),
+        headers: isFormData ? {} : {
           'Content-Type': 'application/json'
         },
         ...init
