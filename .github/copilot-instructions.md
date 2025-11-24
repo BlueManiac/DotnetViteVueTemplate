@@ -239,6 +239,13 @@ try {
 - **Return** Problem Details for errors
 - **Keep** modules self-contained
 
+#### Comments
+- **Only** add comments for non-obvious code - complex logic, workarounds, or business rules
+- **Don't** comment self-explanatory code - well-named variables/functions are preferred
+- **Do** document "why" over "what" - explain intent and reasoning, not mechanics
+- **Use** XML doc comments (`///`) for public APIs in C#
+- **Use** JSDoc comments (`/** */`) for exported TypeScript functions/classes when needed
+
 ### Auto-Imports
 
 These are globally available (no imports needed):
