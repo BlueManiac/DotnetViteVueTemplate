@@ -6,7 +6,7 @@ A modern full-stack web application template combining ASP.NET Core with Vue 3 a
 
 ## Features
 
-- **Modern Stack**: .NET 9, Vue 3 (Composition API), Vite 7, TypeScript
+- **Modern Stack**: .NET 10, Vue 3 (Composition API), Vite 7, TypeScript
 - **Custom DI System**: Type-safe dependency injection wrapping Vue's provide/inject
 - **Vertical Slice Architecture**: Self-contained feature modules with IModule pattern
 - **File-Based Routing**: Auto-registered routes with type safety via unplugin-vue-router
@@ -19,7 +19,7 @@ A modern full-stack web application template combining ASP.NET Core with Vue 3 a
 
 ### Prerequisites
 
-- [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
 - [Node.js](https://nodejs.org/)
 - [pnpm](https://pnpm.io/) - Install via `npm install -g pnpm`
 
@@ -78,7 +78,7 @@ The application will start with hot module replacement enabled. Changes to Vue f
 ## Technology Stack
 
 ### Backend
-- **[.NET 9](https://dotnet.microsoft.com/download/dotnet/9.0)** - Modern web framework
+- **[.NET 10](https://dotnet.microsoft.com/download/dotnet/10.0)** - Modern web framework
 - **[SignalR](https://docs.microsoft.com/aspnet/core/signalr/)** - Real-time communication
 - **[ASP.NET Core Identity](https://docs.microsoft.com/aspnet/core/security/authentication/identity)** - Authentication
 

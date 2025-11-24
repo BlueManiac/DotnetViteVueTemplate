@@ -10,7 +10,7 @@ For comprehensive information, refer to:
 ## Quick Reference
 
 ### Technology Stack
-- Backend: .NET 9, ASP.NET Core, SignalR
+- Backend: .NET 10, ASP.NET Core, SignalR
 - Frontend: Vue 3 (Composition API only), Vite 7, TypeScript
 - UI: Bootstrap 5, custom form components
 - Build: pnpm workspace, unplugin ecosystem
