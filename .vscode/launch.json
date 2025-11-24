@@ -5,7 +5,7 @@
             "name": "Run",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "watch all",
+            "preLaunchTask": "watch",
             "program": "cmd.exe",
             "args": [
                 "/c"

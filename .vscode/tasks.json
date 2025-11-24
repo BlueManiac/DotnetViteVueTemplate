@@ -64,7 +64,7 @@
             }
         },
         {
-            "label": "watch all",
+            "label": "watch",
             "problemMatcher": [],
             "dependsOn": [
                 "watch frontend",

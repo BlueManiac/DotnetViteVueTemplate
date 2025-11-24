@@ -29,7 +29,7 @@ A modern full-stack web application template combining ASP.NET Core with Vue 3 a
 
 Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac) and run **Tasks: Run Task**, then choose:
 
-- **watch all** - Starts both ASP.NET and Vite dev servers
+- **watch** - Starts both ASP.NET and Vite dev servers
 - **watch backend** - ASP.NET Core with hot reload only
 - **watch frontend** - Vite dev server only
 - **build** - Build the project
