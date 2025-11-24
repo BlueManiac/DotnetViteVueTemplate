@@ -13,13 +13,16 @@ public class HealthModule : IModule
         var group = app.MapGroup("/health");
 
         group
-            .MapGet("/ready", async context =>
+            .MapMethods("/ready", ["GET", "HEAD"], async context =>
             {
                 context.Response.Headers.ContentType = "text/event-stream";
                 context.Response.Headers.CacheControl = "no-cache";
 
-                await context.Response.WriteAsync("data: true\n\n");
-                await context.Response.Body.FlushAsync();
+                if (context.Request.Method == "GET")
+                {
+                    await context.Response.WriteAsync("data: true\n\n");
+                    await context.Response.Body.FlushAsync();
+                }
             })
             .AllowAnonymous();
     }

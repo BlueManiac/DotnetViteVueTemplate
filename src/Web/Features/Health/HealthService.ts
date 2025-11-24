@@ -4,20 +4,15 @@ import { AppConfig } from '../AppConfig'
 export class HealthService {
   backendReady = computedAsync(
     async () => {
-      const eventSource = new EventSource(`${this.config.apiUrl}/health/ready`)
+      const controller = new AbortController()
+      const timeout = setTimeout(() => controller.abort(), 10000)
 
-      await new Promise<void>((resolve, reject) => {
-        const timeout = setTimeout(() => {
-          eventSource.close()
-          reject(new Error('Backend ready timeout'))
-        }, 10000)
-
-        eventSource.addEventListener('message', () => {
-          clearTimeout(timeout)
-          eventSource.close()
-          resolve()
-        })
+      await fetch(`${this.config.apiUrl}/health/ready`, {
+        method: 'HEAD',
+        signal: controller.signal
       })
+
+      clearTimeout(timeout)
 
       return true
     },
