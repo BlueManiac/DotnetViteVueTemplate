@@ -236,7 +236,11 @@ try {
 These are globally available (no imports needed):
 - **Vue APIs**: `ref`, `computed` (other Vue APIs like `watch`, `onMounted` must be imported)
 - **Components**: All from `Components/` and `Features/*/` (excluding `Pages/`)
-- **Icons**: `<IconCarbonHome />`, `<IconMdiAccount />`, etc.
+- **Icons**: Use icon names **without** the `Icon` prefix
+  - ✅ Correct: `<CarbonHome />`, `<MdiAccount />`, `<CarbonCloudUpload />`
+  - ❌ Wrong: `<IconCarbonHome />`, `<IconMdiAccount />`, `<IconCarbonCloudUpload />`
+  - Icons are from [Iconify](https://icon-sets.iconify.design/) via unplugin-icons
+  - Common sets: `Mdi*` (Material Design Icons), `Carbon*` (IBM Carbon)
 
 ### Common Pitfalls
 
