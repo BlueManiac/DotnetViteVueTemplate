@@ -70,6 +70,37 @@
                 "watch frontend",
                 "watch backend"
             ]
+        },
+        {
+            "label": "update",
+            "problemMatcher": [],
+            "dependsOn": [
+                "update backend",
+                "update frontend"
+            ]
+        },
+        {
+            "label": "update backend",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "outdated",
+                "${workspaceFolder}/src/Web/Web.csproj"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "update frontend",
+            "type": "shell",
+            "command": "pnpm",
+            "args": [
+                "run",
+                "update"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/src/Web"
+            },
+            "problemMatcher": []
         }
     ]
 }

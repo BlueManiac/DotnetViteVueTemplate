@@ -34,6 +34,9 @@ Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac) and run **Tasks: Run Task**, then
 - **watch frontend** - Vite dev server only
 - **build** - Build the project
 - **publish** - Build and publish for production
+- **update** - Update both .NET and npm dependencies
+- **update backend** - Update .NET dependencies only
+- **update frontend** - Update npm dependencies only
 
 **Manual Commands**
 
@@ -48,14 +51,18 @@ Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac) and run **Tasks: Run Task**, then
    pnpm install
    ```
 
-3. **Run the application**
+3. **Trust the development certificate** (first-time setup)
+   ```powershell
+   dotnet dev-certs https --trust
+   ```
+
+4. **Run the application**
    
    Start the backend (ASP.NET Core):
    ```powershell
    cd src/Web
    dotnet run
    ```
-   Accept the development certificate if prompted.
    
    In a separate terminal, start the frontend (Vite):
    ```powershell
@@ -63,8 +70,8 @@ Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac) and run **Tasks: Run Task**, then
    pnpm run dev
    ```
 
-4. **Open in browser**
-   - Navigate to `https://localhost:7126`
+5. **Open in browser**
+   - Navigate to [https://localhost:7126](https://localhost:7126)
 
 The application will start with hot module replacement enabled. Changes to Vue files will update instantly, and ASP.NET Core changes will trigger a browser refresh.
 
