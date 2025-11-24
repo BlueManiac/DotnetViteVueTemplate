@@ -44,6 +44,8 @@ const api = inject('apiService')
 ```
 
 **File**: [`src/Web/Util/Client/di.ts`](../src/Web/Util/Client/di.ts)
+
+#### 2. Module System
 **DO** implement `IModule` for all features:
 ```csharp
 public class MyFeatureModule : IModule
@@ -102,8 +104,7 @@ Routes are auto-generated from:
 definePage({
   meta: {
     auth: false,
-    title: 'Login',
-    center: true
+    centered: true
   }
 })
 ```
@@ -150,7 +151,7 @@ watch(receiver.messageReceived, (msg) => console.log(msg))
 #### 7. Modal System
 **DO** use `showModal` for imperative modals:
 ```typescript
-import { showModal } from '@/Components/Modals/modal'
+import { showModal } from '/Components/Modals/modal'
 
 const result = await showModal(ConfirmModal, {
   title: 'Confirm',
@@ -254,7 +255,7 @@ try {
 
 These are globally available (no imports needed):
 - **Vue APIs**: `ref`, `computed` (other Vue APIs like `watch`, `onMounted` must be imported)
-- **Components**: All from `Components/` and `Features/*/Components/`
+- **Components**: All from `Components/` and `Features/*/` (excluding `Pages/`)
 - **Icons**: `<IconCarbonHome />`, `<IconMdiAccount />`, etc.
 
 Configured in: [`src/Web/vite.config.ts`](../src/Web/vite.config.ts)
