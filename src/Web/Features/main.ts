@@ -11,6 +11,7 @@ import { ApiService } from './ApiService'
 import { AppConfig } from './AppConfig'
 import { AuthService } from './Auth/AuthService'
 import { Profile } from './Auth/Profile'
+import { HealthService } from './Health/HealthService'
 
 setPreferredTheme()
 
@@ -20,6 +21,7 @@ import { Router, setupAuthGuard, title } from './router'
 
 const config = new AppConfig()
 const profile = new Profile()
+const health = new HealthService(config)
 
 setupAuthGuard(profile)
 
@@ -27,6 +29,7 @@ const app = createApp(App)
   .use(Router)
   .provide(AppConfig, config)
   .provide(Profile, profile)
+  .provide(HealthService, health)
   .provide(AuthService)
   .provide(ApiService)
 

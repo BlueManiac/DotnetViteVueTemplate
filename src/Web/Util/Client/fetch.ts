@@ -125,14 +125,14 @@ const parseResponse = async<T>(response: Response) => {
   return response.text() as T
 }
 
-type RequestInterceptor = (init: RequestInitExtended) => RequestInitExtended
+type RequestInterceptor = (init: RequestInitExtended) => RequestInitExtended | Promise<RequestInitExtended>
 
 export const useApi = ({ apiUrl, intercept = x => x }: { apiUrl: string, intercept?: RequestInterceptor }) => {
   return {
     url: apiUrl,
-    fetch: (url: RequestInfo | URL, init: RequestInitExtended = {}) => fetch(apiUrl + url, intercept(init)),
+    fetch: async (url: RequestInfo | URL, init: RequestInitExtended = {}) => fetch(apiUrl + url, await intercept(init)),
     get: async <T>(url: RequestInfo | URL, init?: RequestInitExtended) => {
-      const response = await fetch(apiUrl + url, intercept({
+      const response = await fetch(apiUrl + url, await intercept({
         method: 'GET',
         ...init
       }))
@@ -140,7 +140,7 @@ export const useApi = ({ apiUrl, intercept = x => x }: { apiUrl: string, interce
       return await parseResponse<T>(response)
     },
     post: async <T>(url: RequestInfo | URL, body?: any, init?: RequestInitExtended) => {
-      const response = await fetch(apiUrl + url, intercept({
+      const response = await fetch(apiUrl + url, await intercept({
         method: 'POST',
         body: JSON.stringify(body),
         headers: {
@@ -152,7 +152,7 @@ export const useApi = ({ apiUrl, intercept = x => x }: { apiUrl: string, interce
       return await parseResponse<T>(response)
     },
     put: async <T>(url: RequestInfo | URL, body?: any, init?: RequestInitExtended) => {
-      const response = await fetch(apiUrl + url, intercept({
+      const response = await fetch(apiUrl + url, await intercept({
         method: 'PUT',
         body: JSON.stringify(body),
         headers: {
@@ -164,7 +164,7 @@ export const useApi = ({ apiUrl, intercept = x => x }: { apiUrl: string, interce
       return await parseResponse<T>(response)
     },
     delete: async <T>(url: RequestInfo | URL, body?: any, init?: RequestInitExtended) => {
-      const response = await fetch(apiUrl + url, intercept({
+      const response = await fetch(apiUrl + url, await intercept({
         method: 'DELETE',
         body: JSON.stringify(body),
         headers: {
