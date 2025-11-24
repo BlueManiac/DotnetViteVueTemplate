@@ -249,7 +249,7 @@ try {
 ### Auto-Imports
 
 These are globally available (no imports needed):
-- **Vue APIs**: `ref`, `computed`, `watch`, `watchEffect`, `onMounted`, etc.
+- **Vue APIs**: `ref`, `computed` (other Vue APIs like `watch`, `onMounted` must be imported)
 - **Components**: All from `Components/` and `Features/*/Components/`
 - **Icons**: `<IconCarbonHome />`, `<IconMdiAccount />`, etc.
 

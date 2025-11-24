@@ -20,9 +20,9 @@ const {
 }>()
 
 const value = defineModel<number>()
-const target = ref()
+const inputElement = ref()
 
 if (focus) {
-  useFocus(target, { initialValue: true })
+  useFocus(inputElement, { initialValue: true })
 }
 </script>
