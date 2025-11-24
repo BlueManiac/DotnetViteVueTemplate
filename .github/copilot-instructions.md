@@ -43,8 +43,6 @@ const profile = inject(Profile)!
 const api = inject('apiService')
 ```
 
-**File**: [`src/Web/Util/Client/di.ts`](../src/Web/Util/Client/di.ts)
-
 #### 2. Module System
 **DO** implement `IModule` for all features:
 ```csharp
@@ -66,8 +64,6 @@ public class MyFeatureModule : IModule
 ```
 
 **Modules are auto-discovered** - All classes implementing `IModule` are automatically registered via `builder.AddModules()` and `app.MapModules()` in `Program.cs`. No manual registration required.
-
-**File**: [`src/Web/Util/Modules/IModule.cs`](../src/Web/Util/Modules/IModule.cs)
 
 #### 3. Component Conventions
 **DO** use kebab-case for component files and elements:
@@ -92,8 +88,6 @@ const value = defineModel<string>()
 </script>
 ```
 
-**Location**: [`src/Web/Components/`](../src/Web/Components/)
-
 #### 4. File-Based Routing
 Routes are auto-generated from:
 - `Features/*/Pages/*.vue` → Flattened routes (e.g., `/auth/login`)
@@ -109,8 +103,6 @@ definePage({
 })
 ```
 
-**Files**: [`src/Web/Features/router.ts`](../src/Web/Features/router.ts), [`src/Web/vite.config.ts`](../src/Web/vite.config.ts)
-
 #### 5. API Service Pattern
 **DO** use `ApiService` for all HTTP calls:
 ```typescript
@@ -124,8 +116,6 @@ await api.post('/api/users', { name: 'John' })
 const loading = ref(false)
 const data = await api.get('/api/data', { loading })
 ```
-
-**File**: [`src/Web/Features/ApiService.ts`](../src/Web/Features/ApiService.ts)
 
 #### 6. SignalR Integration
 **DO** use `api.useSignalr` with typed sender/receiver:
@@ -146,8 +136,6 @@ await sender.SendMessage('Hello')
 watch(receiver.messageReceived, (msg) => console.log(msg))
 ```
 
-**File**: [`src/Web/Util/Client/signalr.ts`](../src/Web/Util/Client/signalr.ts)
-
 #### 7. Modal System
 **DO** use `showModal` for imperative modals:
 ```typescript
@@ -162,8 +150,6 @@ if (result?.confirmed) {
   // User confirmed
 }
 ```
-
-**Files**: [`src/Web/Components/Modals/`](../src/Web/Components/Modals/)
 
 #### 8. Notifications
 **DO** use `NotificationService` for displaying notifications:
@@ -182,8 +168,6 @@ try {
 
 **Note**: Uncaught errors automatically bubble up to `onErrorCaptured` in `App.vue` and are handled globally via `NotificationService`, so try/catch is not required everywhere.
 
-**File**: [`src/Web/Components/Notifications/notifications.ts`](../src/Web/Components/Notifications/notifications.ts)
-
 #### 9. Form Validation
 **DO** use `v-validate` directive on forms:
 ```vue
@@ -193,8 +177,6 @@ try {
   <btn type="submit">Submit</btn>
 </form>
 ```
-
-**File**: [`src/Web/Components/Validation/v-validate.ts`](../src/Web/Components/Validation/v-validate.ts)
 
 #### 10. Data Tables
 **DO** use `data-table` for large datasets:
@@ -209,8 +191,6 @@ try {
   </template>
 </data-table>
 ```
-
-**Files**: [`src/Web/Components/Tables/`](../src/Web/Components/Tables/)
 
 ### Naming Conventions
 
@@ -232,7 +212,7 @@ try {
 
 #### Components
 - **Use** Bootstrap 5 classes for styling
-- **Wrap** native inputs with custom components (see [`Components/`](../src/Web/Components/))
+- **Wrap** native inputs with custom components
 - **Emit** events for parent communication
 - **Use** slots for flexible content
 - **Use** scoped CSS (`<style scoped>`) for component-specific styles
@@ -257,8 +237,6 @@ These are globally available (no imports needed):
 - **Vue APIs**: `ref`, `computed` (other Vue APIs like `watch`, `onMounted` must be imported)
 - **Components**: All from `Components/` and `Features/*/` (excluding `Pages/`)
 - **Icons**: `<IconCarbonHome />`, `<IconMdiAccount />`, etc.
-
-Configured in: [`src/Web/vite.config.ts`](../src/Web/vite.config.ts)
 
 ### Common Pitfalls
 
@@ -309,16 +287,7 @@ app.provide(StateService)
 
 ### Examples
 
-Working examples are in [`src/Web/Features/Examples/`](../src/Web/Features/Examples/):
-- **Components**: Form components showcase
-- **Icons**: Icon usage patterns
-- **Modals**: Modal system examples
-- **Tables**: Data table with virtual scrolling
-- **Tabs**: Tab system examples
-- **Real-Time**: SignalR chat implementation
-- **Errors**: Error handling patterns
-
-Reference these when implementing new features.
+Working examples in `src/Web/Features/Examples/` include components, icons, modals, tables, tabs, real-time (SignalR), and error handling patterns.
 
 ### Verifying Changes
 
