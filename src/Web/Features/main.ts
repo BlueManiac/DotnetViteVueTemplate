@@ -7,6 +7,7 @@ import '../Util/Client/array'
 
 import { useTitle } from '@vueuse/core'
 import { setPreferredTheme } from '../Components/ColorThemes/color-themes'
+import { NotificationService } from '../Components/Notifications/notifications'
 import { ApiService } from './ApiService'
 import { AppConfig } from './AppConfig'
 import { AuthService } from './Auth/AuthService'
@@ -30,6 +31,7 @@ const app = createApp(App)
   .provide(AppConfig, config)
   .provide(Profile, profile)
   .provide(HealthService, health)
+  .provide(NotificationService)
   .provide(AuthService)
   .provide(ApiService)
 

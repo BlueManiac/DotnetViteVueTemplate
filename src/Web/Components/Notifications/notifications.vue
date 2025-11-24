@@ -4,7 +4,7 @@
       <div v-for="item in notifications" :key="item.id" class="alert fade show" role="alert" :class="variantClass(item)">
         <div class="d-flex justify-content-between gap-3">
           <strong>{{ item.title || label(item) }}</strong>
-          <button type="button" class="btn-close" aria-label="Close" @click="dismissNotification(item.id)"></button>
+          <button type="button" class="btn-close" aria-label="Close" @click="notificationService.dismiss(item.id)"></button>
         </div>
         <div v-if="item.detail" class="mt-1">{{ item.detail }}</div>
         <div v-if="item.status || item.method || item.url" class="mt-1 small text-muted d-flex flex-wrap gap-2">
@@ -37,8 +37,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { dismissNotification, NotificationEntry, notifications } from './notifications'
+import { inject, ref } from 'vue'
+import { NotificationEntry, NotificationService } from './notifications'
+
+const notificationService = inject(NotificationService)!
+const notifications = notificationService.notifications
 
 const label = (item: NotificationEntry) => {
   switch (item.type) {

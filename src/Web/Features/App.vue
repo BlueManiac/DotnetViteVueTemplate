@@ -24,15 +24,17 @@
 </template>
 
 <script setup lang="ts">
-import { onErrorCaptured } from 'vue'
-import { notifyError } from '../Components/Notifications/notifications'
+import { inject, onErrorCaptured } from 'vue'
+import { NotificationService } from '../Components/Notifications/notifications'
 import { HttpError } from '/Util/Client/fetch'
+
+const notificationService = inject(NotificationService)!
 
 onErrorCaptured((error) => {
   console.error(error)
 
   if (error instanceof HttpError) {
-    notifyError(error, error, error.problemDetails)
+    notificationService.notifyError(error, error, error.problemDetails)
 
     return false
   }

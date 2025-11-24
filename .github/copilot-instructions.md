@@ -161,23 +161,23 @@ if (result?.confirmed) {
 **Files**: [`src/Web/Components/Modals/`](../src/Web/Components/Modals/)
 
 #### 8. Notifications
-**DO** use `notify` and `notifyError`:
+**DO** use `NotificationService` for displaying notifications:
 ```typescript
-import { notify, notifyError } from '@/Components/Notifications/notifications'
+const notifications = inject(NotificationService)!
 
-notify({ type: 'success', title: 'Saved' })
+notifications.notify({ type: 'success', title: 'Saved' })
 
 // Manual error handling (optional - errors bubble up to main.ts by default)
 try {
   await api.post('/endpoint', data)
 } catch (error) {
-  notifyError(error)
+  notifications.notifyError(error)
 }
 ```
 
-**Note**: Uncaught errors automatically bubble up to `onErrorCaptured` in `main.ts` and are handled globally, so try/catch is not required everywhere.
+**Note**: Uncaught errors automatically bubble up to `onErrorCaptured` in `App.vue` and are handled globally via `NotificationService`, so try/catch is not required everywhere.
 
-**Files**: [`src/Web/Components/Notifications/`](../src/Web/Components/Notifications/)
+**File**: [`src/Web/Components/Notifications/notifications.ts`](../src/Web/Components/Notifications/notifications.ts)
 
 #### 9. Form Validation
 **DO** use `v-validate` directive on forms:
