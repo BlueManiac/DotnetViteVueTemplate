@@ -320,6 +320,39 @@ Working examples are in [`src/Web/Features/Examples/`](../src/Web/Features/Examp
 
 Reference these when implementing new features.
 
+### Verifying Changes
+
+When making changes to the project, you can verify them by checking the running development servers:
+
+**Check Frontend (Vite) Output:**
+```typescript
+// Use get_task_output tool
+get_task_output({
+  id: "shell: watch frontend",
+  workspaceFolder: "<workspace-root>"
+})
+```
+
+**Check Backend (ASP.NET Core) Output:**
+```typescript
+// Use get_task_output tool
+get_task_output({
+  id: "process: watch backend",
+  workspaceFolder: "<workspace-root>"
+})
+```
+
+The task outputs will show:
+- **Frontend**: Vite HMR updates, compilation errors, dependency optimization, client-side runtime errors
+- **Backend**: Application startup info, API endpoint registrations, runtime errors
+
+Use these outputs to confirm that:
+- Changes are being detected and recompiled
+- No compilation or runtime errors occurred
+- The development servers are still running properly
+
+**Note**: Only check the relevant task output - if changes were made only to frontend files (Vue, TypeScript, CSS), check the frontend task; if changes were made only to backend files (C#), check the backend task.
+
 ### Resources
 
 - [Vue 3 Docs](https://vuejs.org/) - Official Vue documentation
