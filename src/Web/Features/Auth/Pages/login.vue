@@ -11,18 +11,19 @@
     </div>
     <button class="w-100 btn btn-lg btn-primary" type="submit" :disabled="!valid">Sign in</button>
 
-    <google-signin-btn class="w-100" />
+    <google-signin-btn class="w-100" :redirect="route.query.redirect as string" />
   </form>
 </template>
 
 <script setup lang="ts">
 import { useFocus } from '@vueuse/core'
 import { inject, watch } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { AuthService, useAuthCallback } from '../AuthService'
 
 const authService = inject(AuthService)!
 const router = useRouter()
+const route = useRoute()
 
 const emailElement = ref<HTMLInputElement | null>()
 useFocus(emailElement, { initialValue: true })
@@ -40,12 +41,16 @@ const valid = computed(() => {
 
 const submit = async () => {
   await authService.login(email.value, password.value)
-
-  router.push('/')
+  handleRedirect()
 }
 
-// Handle authentication callback with tokens in URL query parameters
-useAuthCallback()
+const handleRedirect = () => {
+  const redirect = route.query.redirect as string
+  const redirectPath = redirect && redirect.startsWith('/') ? redirect : '/'
+  router.push(redirectPath)
+}
+
+useAuthCallback(handleRedirect)
 
 definePage({
   meta: {

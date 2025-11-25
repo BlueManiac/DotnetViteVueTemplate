@@ -1,5 +1,5 @@
 import { inject, watchEffect } from "vue"
-import { useRoute, useRouter } from "vue-router"
+import { useRoute } from "vue-router"
 import { ApiService } from "../ApiService"
 import { Profile } from "./Profile"
 
@@ -86,9 +86,8 @@ export class AuthService {
  * Composable to handle authentication callback with tokens in URL query parameters.
  * Works with any authentication method that redirects back with accessToken, expiresIn, refreshToken, and tokenType.
  */
-export function useAuthCallback() {
+export function useAuthCallback(onSuccess?: () => void) {
   const authService = inject(AuthService)!
-  const router = useRouter()
   const route = useRoute()
 
   const { accessToken, expiresIn, refreshToken, tokenType } = route.query as Record<keyof AccessTokenResponse, string>
@@ -101,6 +100,6 @@ export function useAuthCallback() {
       tokenType: tokenType || 'Bearer'
     })
 
-    router.push('/')
+    onSuccess?.()
   }
 }

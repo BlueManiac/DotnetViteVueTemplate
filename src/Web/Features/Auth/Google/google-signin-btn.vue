@@ -9,7 +9,19 @@
 import { inject } from 'vue'
 import { AppConfig } from '/Features/AppConfig'
 
+const { redirect } = defineProps<{
+  redirect?: string
+}>()
+
 const config = inject(AppConfig)!
 
-const loginUrl = computed(() => `${config.apiUrl}/auth/google-login`)
+const loginUrl = computed(() => {
+  const url = new URL(`${config.apiUrl}/auth/google-login`, window.location.origin)
+
+  if (redirect) {
+    url.searchParams.set('redirect', redirect)
+  }
+
+  return url.toString()
+})
 </script>

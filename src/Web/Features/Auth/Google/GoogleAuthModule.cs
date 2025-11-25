@@ -41,13 +41,21 @@ public class GoogleAuthModule : IModule
     {
         var group = app.MapGroup("auth");
 
-        group.MapGet("/google-login", () =>
+        group.MapGet("/google-login", (HttpContext context) =>
         {
+            var properties = new AuthenticationProperties
+            {
+                RedirectUri = "/auth/google-callback-handler"
+            };
+
+            var redirect = context.Request.Query["redirect"].ToString();
+            if (!string.IsNullOrEmpty(redirect))
+            {
+                properties.Items["redirect"] = redirect;
+            }
+
             return TypedResults.Challenge(
-                properties: new AuthenticationProperties
-                {
-                    RedirectUri = "/auth/google-callback-handler"
-                },
+                properties: properties,
                 authenticationSchemes: [GoogleDefaults.AuthenticationScheme]
             );
         })
@@ -99,6 +107,11 @@ public class GoogleAuthModule : IModule
                 ["expiresIn"] = ((long)bearerTokenOptions.BearerTokenExpiration.TotalSeconds).ToString(),
                 ["refreshToken"] = refreshToken
             };
+
+            if (authenticateResult.Properties?.Items.TryGetValue("redirect", out var redirect) == true)
+            {
+                queryParams["redirect"] = redirect;
+            }
 
             var redirectUrl = QueryHelpers.AddQueryString($"{frontendUrl}/auth/login", queryParams);
 
