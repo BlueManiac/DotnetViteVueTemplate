@@ -315,6 +315,8 @@ get_task_output({
 })
 ```
 
+**Important**: When checking task outputs, only check the last 50 lines to avoid excessive context usage. Task outputs can be very long, and the most recent information is usually sufficient to verify changes.
+
 The task outputs will show:
 - **Frontend**: Vite HMR updates, compilation errors, dependency optimization, client-side runtime errors
 - **Backend**: Application startup info, API endpoint registrations, runtime errors
