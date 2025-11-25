@@ -1,9 +1,17 @@
 import { inject, watchEffect } from "vue"
+import { useRoute, useRouter } from "vue-router"
 import { ApiService } from "../ApiService"
-import { AccessTokenResponse, Profile } from "./Profile"
+import { Profile } from "./Profile"
 
 type UserResponse = {
   name: string
+}
+
+export interface AccessTokenResponse {
+  accessToken: string
+  refreshToken: string
+  expiresIn: number
+  tokenType: string
 }
 
 export class AuthService {
@@ -31,10 +39,7 @@ export class AuthService {
 
   async login(username: string, password: string) {
     const response = await this.api.post<AccessTokenResponse>('/auth/login', { username, password })
-    this.profile.setLoginResponse({
-      ...response,
-      date: Date.now()
-    })
+    this.profile.setAuthTokens(response)
   }
 
   async logout() {
@@ -43,11 +48,8 @@ export class AuthService {
 
   private async refresh() {
     try {
-      const response = await this.api.post<AccessTokenResponse>('/auth/refresh', { refreshToken: this.profile.loginResponse.value.refreshToken })
-      this.profile.setLoginResponse({
-        ...response,
-        date: Date.now()
-      })
+      const response = await this.api.post<AccessTokenResponse>('/auth/refresh', { refreshToken: this.profile.refreshToken.value })
+      this.profile.setAuthTokens(response)
     }
     catch {
       this.profile.clear()
@@ -56,10 +58,10 @@ export class AuthService {
   }
 
   private getRefreshDelay() {
-    const elapsedTime = Date.now() - this.profile.loginResponse.value.date
+    const timeUntilExpiry = this.profile.expiresAt.value - Date.now()
 
     // Refresh the token 5 seconds before it expires
-    return this.profile.loginResponse.value.expiresIn * 1000 - elapsedTime - 5000
+    return Math.max(0, timeUntilExpiry - 5000)
   }
 
   private startBackgroundRefresh() {
@@ -77,5 +79,28 @@ export class AuthService {
         this.startBackgroundRefresh()
       }
     }, this.getRefreshDelay())
+  }
+}
+
+/**
+ * Composable to handle authentication callback with tokens in URL query parameters.
+ * Works with any authentication method that redirects back with accessToken, expiresIn, refreshToken, and tokenType.
+ */
+export function useAuthCallback() {
+  const authService = inject(AuthService)!
+  const router = useRouter()
+  const route = useRoute()
+
+  const { accessToken, expiresIn, refreshToken, tokenType } = route.query as Record<keyof AccessTokenResponse, string>
+
+  if (accessToken && expiresIn && refreshToken) {
+    authService.profile.setAuthTokens({
+      accessToken,
+      expiresIn: parseInt(expiresIn),
+      refreshToken,
+      tokenType: tokenType || 'Bearer'
+    })
+
+    router.push('/')
   }
 }

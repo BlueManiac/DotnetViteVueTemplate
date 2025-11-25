@@ -10,6 +10,8 @@
       <label>Password</label>
     </div>
     <button class="w-100 btn btn-lg btn-primary" type="submit" :disabled="!valid">Sign in</button>
+
+    <google-signin-btn class="w-100" />
   </form>
 </template>
 
@@ -17,9 +19,10 @@
 import { useFocus } from '@vueuse/core'
 import { inject, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { AuthService } from '../AuthService'
+import { AuthService, useAuthCallback } from '../AuthService'
 
 const authService = inject(AuthService)!
+const router = useRouter()
 
 const emailElement = ref<HTMLInputElement | null>()
 useFocus(emailElement, { initialValue: true })
@@ -35,12 +38,14 @@ const valid = computed(() => {
   return validEmail.value && password.value
 })
 
-const router = useRouter()
 const submit = async () => {
   await authService.login(email.value, password.value)
 
   router.push('/')
 }
+
+// Handle authentication callback with tokens in URL query parameters
+useAuthCallback()
 
 definePage({
   meta: {

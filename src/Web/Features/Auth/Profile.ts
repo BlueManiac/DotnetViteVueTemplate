@@ -1,37 +1,45 @@
 import { useLocalStorage } from "@vueuse/core"
+import { AccessTokenResponse } from "./AuthService"
 
-type UserResponse = {
+type UserData = {
   name: string
 }
 
-export interface AccessTokenResponse {
+type AuthData = {
   accessToken?: string
   refreshToken?: string
-  expiresIn?: number
+  expiresAt?: number
   tokenType?: string
-  date?: number
 }
 
 export class Profile {
-  user = ref<UserResponse | null>(null)
-  loginResponse = useLocalStorage<AccessTokenResponse>('auth-login', {})
+  user = ref<UserData | null>(null)
 
-  expiresAt = computed(() => this.loginResponse.value.date + this.loginResponse.value.expiresIn * 1000)
-  isLoggedIn = computed(() => this.loginResponse.value.accessToken && Date.now() < this.expiresAt.value)
+  private authData = useLocalStorage<AuthData>('auth-data', {})
 
-  accessToken = computed(() => this.loginResponse.value.accessToken)
+  expiresAt = computed(() => this.authData.value.expiresAt ?? 0)
+  isLoggedIn = computed(() => this.authData.value.accessToken && Date.now() < this.expiresAt.value)
+
+  accessToken = computed(() => this.authData.value.accessToken)
+  refreshToken = computed(() => this.authData.value.refreshToken)
+
   userName = computed(() => this.user.value?.name ?? null)
 
-  setUser(user: UserResponse | null) {
+  setUser(user: UserData | null) {
     this.user.value = user
   }
 
-  setLoginResponse(response: AccessTokenResponse) {
-    this.loginResponse.value = response
+  setAuthTokens(response: AccessTokenResponse) {
+    this.authData.value = {
+      accessToken: response.accessToken,
+      refreshToken: response.refreshToken,
+      expiresAt: Date.now() + response.expiresIn * 1000,
+      tokenType: response.tokenType
+    }
   }
 
   clear() {
     this.user.value = null
-    this.loginResponse.value = {}
+    this.authData.value = {}
   }
 }
