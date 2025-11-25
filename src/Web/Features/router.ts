@@ -1,4 +1,5 @@
-﻿import { createRouter, createWebHistory, RouteLocationNormalizedLoaded, RouteRecordRaw } from 'vue-router'
+﻿import { watch } from 'vue'
+import { createRouter, createWebHistory, RouteLocationNormalizedLoaded, RouteRecordRaw } from 'vue-router'
 import { Profile } from './Auth/Profile'
 import { routes } from './routes'
 
@@ -19,6 +20,17 @@ export function setupAuthGuard(profile: Profile) {
       next({ path: '/auth/login', query: { redirect: to.fullPath } })
     } else {
       next()
+    }
+  })
+
+  // Redirect to login if user is logged out (e.g., logout in another tab)
+  watch(profile.isLoggedIn, (isLoggedIn) => {
+    if (!isLoggedIn) {
+      const currentRoute = Router.currentRoute.value
+      const requiresAuth = currentRoute.meta.auth !== false
+      if (requiresAuth) {
+        Router.push({ path: '/auth/login', query: { redirect: currentRoute.fullPath } })
+      }
     }
   })
 }
