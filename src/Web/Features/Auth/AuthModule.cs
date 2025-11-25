@@ -11,12 +11,25 @@ public class AuthModule : IModule
     public static void AddServices(WebApplicationBuilder builder)
     {
         builder.Services
-            .AddAuthentication()
+            .AddAuthentication(options =>
+            {
+                // Set Bearer Token as the default scheme for API authentication
+                options.DefaultScheme = BearerTokenDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = BearerTokenDefaults.AuthenticationScheme;
+            })
             .AddBearerToken(BearerTokenDefaults.AuthenticationScheme, options =>
             {
                 options.BearerTokenExpiration = TimeSpan.FromMinutes(60);
                 options.RefreshTokenExpiration = TimeSpan.FromMinutes(60);
             });
+
+        builder.Services.AddAuthorization(options =>
+        {
+            // Require authentication by default for all endpoints
+            options.FallbackPolicy = new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .Build();
+        });
     }
 
     public record LoginRequest(string UserName, string Password);
@@ -30,12 +43,19 @@ public class AuthModule : IModule
 
         group.MapPost("/login", (LoginRequest request) =>
         {
+            var claims = new List<Claim>
+            {
+                new(ClaimTypes.Email, request.UserName),
+                new(ClaimTypes.Name, request.UserName)
+            };
+
             var claimsPrincipal = new ClaimsPrincipal(
-                new ClaimsIdentity([new Claim(ClaimTypes.Name, request.UserName)], BearerTokenDefaults.AuthenticationScheme)
+                new ClaimsIdentity(claims, BearerTokenDefaults.AuthenticationScheme)
             );
 
             return TypedResults.SignIn(claimsPrincipal);
-        });
+        })
+        .AllowAnonymous();
 
         group.MapPost("/refresh", (RefreshRequest refreshRequest, IOptionsMonitor<BearerTokenOptions> optionsMonitor, TimeProvider timeProvider) =>
         {
@@ -48,7 +68,8 @@ public class AuthModule : IModule
             }
 
             return TypedResults.SignIn(refreshTicket.Principal);
-        });
+        })
+        .AllowAnonymous();
 
         group.MapGet("/user", (ClaimsPrincipal user) =>
         {
@@ -58,7 +79,6 @@ public class AuthModule : IModule
             }
 
             return TypedResults.Ok(new UserResponse(user.Identity.Name));
-        })
-        .RequireAuthorization();
+        });
     }
 }
