@@ -214,6 +214,7 @@ try {
 #### Components
 - **Order** component sections as: `<template>`, `<script>`, `<style>`
 - **Use** Bootstrap 5 classes for styling
+- **Always** use theme-aware Bootstrap classes (e.g., `bg-body`, `text-body`, `border`) instead of hardcoded colors (e.g., `bg-white`, `text-black`)
 - **Wrap** native inputs with custom components
 - **Emit** events for parent communication
 - **Use** slots for flexible content

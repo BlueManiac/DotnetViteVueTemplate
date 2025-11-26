@@ -26,10 +26,10 @@ const {
 }>()
 
 const value = defineModel<unknown>()
-const target = ref()
+const inputElement = ref()
 const slots = useSlots()
 
 if (focus) {
-  useFocus(target, { initialValue: true })
+  useFocus(inputElement, { initialValue: true })
 }
 </script>

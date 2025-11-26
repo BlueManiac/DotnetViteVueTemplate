@@ -11,10 +11,8 @@
     <range v-model.number="changeQuantity" min="1" max="10000" class="mt-3" />
     Quantity: {{ items.length }}, Selected: {{ selected.length }} {{ selected[0] }}, Filtered: {{ filteredItems.length }}
     <context-menu ref="contextMenuElement" />
-    <TableFilter v-model:parent="filterParent">
-      <div class="p-1 bg-success">{{ filterData }}</div>
-    </TableFilter>
-    <data-table class="table-sm" v-model="filteredItems" :columns="visibleColumns" v-model:selected="selected" v-model:sortField="sortField" v-model:sortOrder="sortOrder" @headerContextMenuClick="onHeaderContextMenu" @rowContextMenuClick="onRowContextMenu" @filterClick="onFilterClick">
+    <TableFilter v-model:parent="filterParent" v-model:column="filterColumn" v-model:filterValue="columnFilterValue" />
+    <data-table class="table-sm" v-model="filteredItems" :columns="visibleColumns" v-model:selected="selected" v-model:sortField="sortField" v-model:sortOrder="sortOrder" :activeFilterColumn="activeFilterColumn" @headerContextMenuClick="onHeaderContextMenu" @rowContextMenuClick="onRowContextMenu" @filterClick="onFilterClick">
       <template #id="{ item, col }">
         {{ item[col.field] }}
       </template>
@@ -30,7 +28,7 @@
 
 <script setup lang="ts">
 import { useDebounceFn, useLocalStorage } from '@vueuse/core'
-import { watchEffect } from 'vue'
+import { watch, watchEffect } from 'vue'
 import TableFilter from './TableFilter.vue'
 import { createPerson, invertColor } from './example-data'
 import { TableColumn } from '/Components/Tables/data-table'
@@ -57,19 +55,51 @@ watchEffect(() => {
 
 const items = ref([])
 
+// Column filter state
+const filterParent = ref<HTMLElement>()
+const filterColumn = ref<TableColumn | null>(null)
+const columnFilterValue = ref<string>("")
+
+// Only show active filter icon when there's actually a filter value
+const activeFilterColumn = computed(() => {
+  return columnFilterValue.value ? filterColumn.value : null
+})
+
+// Clear filterColumn when filter value is cleared
+watch(columnFilterValue, (newValue) => {
+  if (!newValue) {
+    filterColumn.value = null
+  }
+})
+
 const filteredItems = ref([])
 watchEffect(() => {
   const searchTerm = filter.value.toLowerCase()
-  if (!searchTerm) {
-    filteredItems.value = items.value
+  const columnFilter = columnFilterValue.value?.toLowerCase()
+
+  let result = items.value
+
+  // Apply global search filter
+  if (searchTerm) {
+    result = result.filter(item => {
+      return Object.values(item).some(value => {
+        if (value == null) return false
+        return String(value).toLowerCase().includes(searchTerm)
+      })
+    })
   }
 
-  filteredItems.value = items.value.filter(item => {
-    return Object.values(item).some(value => {
+  // Apply column-specific filter
+  if (columnFilter && filterColumn.value) {
+    const field = filterColumn.value.field
+    result = result.filter(item => {
+      const value = item[field]
       if (value == null) return false
-      return String(value).toLowerCase().includes(searchTerm)
+      return String(value).toLowerCase().includes(columnFilter)
     })
-  })
+  }
+
+  filteredItems.value = result
 })
 
 const sortField = useLocalStorage('sortField', 'name')
@@ -130,11 +160,8 @@ const onRowContextMenu = (event, item, index) => {
   ])
 }
 
-const filterParent = ref<HTMLElement>()
-const filterData = ref<TableColumn | null>(null)
-
 const onFilterClick = (col: TableColumn, event: MouseEvent, columnElement: HTMLElement) => {
   filterParent.value = columnElement
-  filterData.value = col
+  filterColumn.value = col
 }
 </script>

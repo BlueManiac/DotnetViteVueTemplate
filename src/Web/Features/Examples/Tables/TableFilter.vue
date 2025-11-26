@@ -1,34 +1,62 @@
 <template>
-    <div v-if="visible" class="position-absolute" :style ref="root">
-        <slot></slot>
+    <div v-if="visible" class="position-absolute bg-body border shadow-sm rounded" :style="style" ref="root">
+        <div class="p-2">
+            <input-text v-model="localFilterValue" placeholder="Filter..." @keydown.enter="applyFilter" :focus="!!column" class="mb-2" />
+            <div class="d-flex gap-1">
+                <btn @click="applyFilter" class="btn-sm">Apply</btn>
+                <btn @click="clearFilter" class="btn-sm">Clear</btn>
+            </div>
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
 import { onClickOutside } from '@vueuse/core'
-import { StyleValue } from 'vue'
-
-export type FilterModel = { top?: number, left?: number, visible?: boolean, width?: number }
+import { StyleValue, watch } from 'vue'
+import { TableColumn } from '/Components/Tables/data-table'
 
 const parentElement = defineModel<HTMLElement>("parent")
+const column = defineModel<TableColumn>("column")
+const filterValue = defineModel<string>("filterValue")
+
+const localFilterValue = ref("")
+
+// Update local value when column changes
+watch(column, (newCol) => {
+    if (newCol) {
+        localFilterValue.value = filterValue.value || ""
+    }
+}, { immediate: true })
 
 const visible = computed(() => !!parentElement.value)
 const style = computed<StyleValue>(() => {
+    if (!parentElement.value) return {}
+
     const { bottom, left, width } = parentElement.value.getBoundingClientRect()
 
     return {
         top: bottom + "px",
         left: left + "px",
-        minWidth: width + "px"
+        minWidth: width + "px",
+        zIndex: 1000
     }
 })
 
 const root = ref<HTMLElement>()
-onClickOutside(root, () => parentElement.value = null)
+onClickOutside(root, () => {
+    parentElement.value = null
+})
+
+const applyFilter = () => {
+    filterValue.value = localFilterValue.value
+    parentElement.value = null
+}
+
+const clearFilter = () => {
+    localFilterValue.value = ""
+    filterValue.value = ""
+    parentElement.value = null
+}
 </script>
 
-<style scoped>
-:host {
-    background-color: red;
-}
-</style>
+<style scoped></style>

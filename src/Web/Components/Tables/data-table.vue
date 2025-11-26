@@ -19,7 +19,8 @@
                 {{ toValue(col.header) ?? col.field }}
               </template>
               <div v-if="onFilterClick" class="ms-auto" @click.stop="emit('filterClick', col, $event, ($event.target as HTMLElement).closest('th'))">
-                <MdiFilterOutline />
+                <MdiFilter v-if="activeFilterColumn?.field === col.field" class="text-primary" />
+                <MdiFilterOutline v-else />
               </div>
             </div>
           </th>
@@ -49,9 +50,10 @@
 import { toValue, watch } from 'vue'
 import { TableColumn, useClick, useSelection, useSorting, useVirtualization } from './data-table'
 
-const { rowHeight = '33px', onFilterClick } = defineProps<{
+const { rowHeight = '33px', onFilterClick, activeFilterColumn } = defineProps<{
   rowHeight?: string,
-  onFilterClick?: Function
+  onFilterClick?: Function,
+  activeFilterColumn?: TableColumn | null
 }>()
 
 const columns = defineModel<TableColumn[]>("columns")
