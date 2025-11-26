@@ -209,8 +209,10 @@ try {
 - **Never** use Options API
 - **Always** type props, emits, and refs
 - **Prefer** `ref` and `computed` over `reactive`
+- **Prefer** [VueUse](https://vueuse.org/) composables for common functionality (e.g., `useStorage`, `useEventListener`, `useDebounce`)
 
 #### Components
+- **Order** component sections as: `<template>`, `<script>`, `<style>`
 - **Use** Bootstrap 5 classes for styling
 - **Wrap** native inputs with custom components
 - **Emit** events for parent communication
