@@ -46,7 +46,7 @@ import { AuthService } from '../Auth/AuthService'
 import { Profile } from '../Auth/Profile'
 import { navigationRoutes } from '../router'
 
-const config = inject(AppConfig)!
+const config = inject(AppConfig)
 const authService = inject(AuthService)
 const profile = inject(Profile)
 

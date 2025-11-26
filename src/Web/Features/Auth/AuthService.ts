@@ -15,8 +15,8 @@ export interface AccessTokenResponse {
 }
 
 export class AuthService {
-  api = inject(ApiService)!
-  profile = inject(Profile)!
+  api = inject(ApiService)
+  profile = inject(Profile)
 
   private refreshTimeout?: ReturnType<typeof setTimeout>
 
@@ -87,7 +87,7 @@ export class AuthService {
  * Works with any authentication method that redirects back with accessToken, expiresIn, refreshToken, and tokenType.
  */
 export function useAuthCallback(onSuccess?: () => void) {
-  const authService = inject(AuthService)!
+  const authService = inject(AuthService)
   const route = useRoute()
 
   const { accessToken, expiresIn, refreshToken, tokenType } = route.query as Record<keyof AccessTokenResponse, string>

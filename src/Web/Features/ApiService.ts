@@ -8,8 +8,8 @@ import { signalr, SignalrReciever, SignalrSender, useSignalr } from '/Util/Clien
 
 export class ApiService {
   private profile = inject(Profile)
-  private config = inject(AppConfig)!
-  private health = inject(HealthService)!
+  private config = inject(AppConfig)
+  private health = inject(HealthService)
 
   private api = useApi({
     apiUrl: this.config.apiUrl,

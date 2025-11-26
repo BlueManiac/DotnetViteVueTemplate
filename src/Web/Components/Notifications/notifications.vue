@@ -40,7 +40,7 @@
 import { inject, ref } from 'vue'
 import { NotificationEntry, NotificationService } from './notifications'
 
-const notificationService = inject(NotificationService)!
+const notificationService = inject(NotificationService)
 const notifications = notificationService.notifications
 
 const label = (item: NotificationEntry) => {

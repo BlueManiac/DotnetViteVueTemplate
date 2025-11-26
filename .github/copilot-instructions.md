@@ -36,8 +36,8 @@ src/Web/
 **DO** use class-based injection instead of string keys:
 ```typescript
 // ✅ Correct
-const api = inject(ApiService)!
-const profile = inject(Profile)!
+const api = inject(ApiService)
+const profile = inject(Profile)
 
 // ❌ Wrong
 const api = inject('apiService')
@@ -106,7 +106,7 @@ definePage({
 #### 5. API Service Pattern
 **DO** use `ApiService` for all HTTP calls:
 ```typescript
-const api = inject(ApiService)!
+const api = inject(ApiService)
 
 // Type-safe responses
 const users = await api.get<User[]>('/api/users')
@@ -120,7 +120,7 @@ const data = await api.get('/api/data', { loading })
 #### 6. SignalR Integration
 **DO** use `api.useSignalr` with typed sender/receiver:
 ```typescript
-const api = inject(ApiService)!
+const api = inject(ApiService)
 
 type Sender = {
   SendMessage(msg: string): Promise<void>
@@ -154,7 +154,7 @@ if (result?.confirmed) {
 #### 8. Notifications
 **DO** use `NotificationService` for displaying notifications:
 ```typescript
-const notifications = inject(NotificationService)!
+const notifications = inject(NotificationService)
 
 notifications.notify({ type: 'success', title: 'Saved' })
 
@@ -271,7 +271,7 @@ import { provide } from 'vue-original'
 ```typescript
 // Correct - always use the custom DI-enabled 'vue' import
 import { provide } from 'vue'
-const api = inject(ApiService)!
+const api = inject(ApiService)
 ```
 
 ❌ **Don't** create global state stores:

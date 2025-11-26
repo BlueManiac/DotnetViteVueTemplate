@@ -13,7 +13,7 @@ const { redirect } = defineProps<{
   redirect?: string
 }>()
 
-const config = inject(AppConfig)!
+const config = inject(AppConfig)
 
 const loginUrl = computed(() => {
   const url = new URL(`${config.apiUrl}/auth/google-login`, window.location.origin)

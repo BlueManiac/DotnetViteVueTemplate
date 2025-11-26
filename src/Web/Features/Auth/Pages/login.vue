@@ -21,7 +21,7 @@ import { inject, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { AuthService, useAuthCallback } from '../AuthService'
 
-const authService = inject(AuthService)!
+const authService = inject(AuthService)
 const router = useRouter()
 const route = useRoute()
 
