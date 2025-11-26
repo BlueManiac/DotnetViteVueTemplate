@@ -1,5 +1,5 @@
 <template>
-  <form class="col-lg-3" @submit.prevent="submit()">
+  <form class="col-lg-5 col-xl-3" @submit.prevent="submit()">
     <h3 class="fw-normal">Please sign in</h3>
     <div class="form-floating">
       <input type="email" v-model="email" class="form-control" placeholder="name@example.com" ref="emailElement" required autocomplete="off">

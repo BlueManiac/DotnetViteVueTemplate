@@ -1,7 +1,7 @@
 ﻿<template>
-  <main :class="{ centered: $route.meta?.centered }" class="container-fluid vh-100">
-    <Navbar class="page-navbar" />
-    <Breadcrumb class="page-breadcrumb" />
+  <main :class="{ centered: isCentered }" class="container-fluid vh-100">
+    <Navbar v-if="!isCentered" class="page-navbar" />
+    <Breadcrumb v-if="!isCentered" class="page-breadcrumb" />
     <RouterView v-slot="{ Component }">
       <template v-if="Component">
         <suspense timeout="30">
@@ -25,10 +25,14 @@
 
 <script setup lang="ts">
 import { inject, onErrorCaptured } from 'vue'
+import { useRoute } from 'vue-router'
 import { NotificationService } from '../Components/Notifications/notifications'
 import { HttpError } from '/Util/Client/fetch'
 
-const notificationService = inject(NotificationService)!
+const route = useRoute()
+const notificationService = inject(NotificationService)
+
+const isCentered = computed(() => route.meta?.centered === true)
 
 onErrorCaptured((error) => {
   console.error(error)

@@ -35,6 +35,9 @@ const app = createApp(App)
   .provide(AuthService)
   .provide(ApiService)
 
+// Wait for router to resolve initial route before mounting
+await Router.isReady()
+
 app.mount('#app')
 
 useTitle(() => title.value
