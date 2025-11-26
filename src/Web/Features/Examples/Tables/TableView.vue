@@ -33,7 +33,7 @@ import { useDebounceFn, useLocalStorage } from '@vueuse/core'
 import { watchEffect } from 'vue'
 import TableFilter from './TableFilter.vue'
 import { createPerson, invertColor } from './example-data'
-import { Column } from '/Components/Tables/data-table'
+import { TableColumn } from '/Components/Tables/data-table'
 import '/Components/Tables/data-table.vue'
 
 const filter = ref('')
@@ -59,7 +59,17 @@ const items = ref([])
 
 const filteredItems = ref([])
 watchEffect(() => {
-  filteredItems.value = items.value.filter(x => x.name.toLowerCase().includes(filter.value.toLowerCase()))
+  const searchTerm = filter.value.toLowerCase()
+  if (!searchTerm) {
+    filteredItems.value = items.value
+  }
+
+  filteredItems.value = items.value.filter(item => {
+    return Object.values(item).some(value => {
+      if (value == null) return false
+      return String(value).toLowerCase().includes(searchTerm)
+    })
+  })
 })
 
 const sortField = useLocalStorage('sortField', 'name')
@@ -121,9 +131,9 @@ const onRowContextMenu = (event, item, index) => {
 }
 
 const filterParent = ref<HTMLElement>()
-const filterData = ref(null)
+const filterData = ref<TableColumn | null>(null)
 
-const onFilterClick = (col: Column, event: MouseEvent, columnElement: HTMLElement) => {
+const onFilterClick = (col: TableColumn, event: MouseEvent, columnElement: HTMLElement) => {
   filterParent.value = columnElement
   filterData.value = col
 }
