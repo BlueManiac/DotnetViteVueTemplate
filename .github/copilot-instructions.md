@@ -349,6 +349,12 @@ This project includes Playwright MCP server for browser automation and testing. 
 
 **Frontend URL**: The Vite dev server runs at `https://localhost:5043/`, not the backend URL (`https://localhost:7126`). Always use the frontend URL when testing the UI.
 
+**Authentication**: Most routes require authentication by default (unless `auth: false` is set in route metadata). For new browser sessions, you'll need to log in first before accessing protected pages. The login page is at `https://localhost:5043/auth/login`. If you navigate to a protected route, you'll be automatically redirected to the login page.
+
+**Test Credentials**: Use the following credentials for testing (when using browser automation):
+- Email: `ai-tester@example.com`
+- Password: `Test123!`
+
 ### Resources
 
 - [Vue 3 Docs](https://vuejs.org/) - Official Vue documentation
