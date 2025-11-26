@@ -21,7 +21,6 @@ A modern full-stack web application template combining ASP.NET Core with Vue 3 a
 
 - [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
 - [Node.js](https://nodejs.org/)
-- [pnpm](https://pnpm.io/) - Install via `npm install -g pnpm`
 
 ### Running the Application
 
@@ -48,7 +47,7 @@ Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac) and run **Tasks: Run Task**, then
 
 2. **Install dependencies**
    ```powershell
-   pnpm install
+   npm install
    ```
 
 3. **Trust the development certificate** (first-time setup)
@@ -67,7 +66,7 @@ Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac) and run **Tasks: Run Task**, then
    In a separate terminal, start the frontend (Vite):
    ```powershell
    cd src/Web
-   pnpm run dev
+   npm run dev
    ```
 
 5. **Open in browser**
@@ -129,7 +128,7 @@ DotnetViteVueTemplate/
 │       └── package.json              # Frontend dependencies
 ├── .github/
 │   └── copilot-instructions.md       # GitHub Copilot context
-└── pnpm-workspace.yaml               # pnpm workspace configuration
+└── package.json                      # npm workspace configuration
 ```
 
 ## Development Guide
@@ -164,7 +163,7 @@ dotnet publish -c Release
 ```
 
 The build process will:
-1. Install frontend dependencies via pnpm
+1. Install frontend dependencies via npm
 2. Build frontend assets with Vite
 3. Output static files to `wwwroot/`
 4. Create a self-contained deployment package

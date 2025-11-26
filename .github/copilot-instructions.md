@@ -13,7 +13,7 @@ For comprehensive information, refer to:
 - Backend: .NET 10, ASP.NET Core, SignalR
 - Frontend: Vue 3 (Composition API only), Vite 7, TypeScript
 - UI: Bootstrap 5, custom form components
-- Build: pnpm workspace, unplugin ecosystem
+- Build: npm workspace, unplugin ecosystem
 
 ### Project Structure
 
@@ -318,12 +318,12 @@ Working examples in `src/Web/Features/Examples/` include components, icons, moda
 - When checking if a watch task is running, use `get_task_output` - if the output shows the server is listening/ready, it's running; if it shows termination messages, it's not running and can be restarted
 
 **DO NOT** attempt to:
-- Run `pnpm run dev` or similar dev server commands
+- Run `npm run dev` or similar dev server commands
 - Start additional dev servers
-- Use `run_in_terminal` tool except when absolutely necessary (e.g., installing packages with `pnpm add <package>`)
+- Use `run_in_terminal` tool except when absolutely necessary (e.g., installing packages with `npm install <package>`)
 
 **Installing packages**:
-- You CAN use `pnpm install <package>` or `pnpm add <package>` to install new packages
+- You CAN use `npm install <package>` to install new packages
 - The running frontend watch task should automatically detect the changes and update
 
 ### Verifying Changes
