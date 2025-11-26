@@ -32,10 +32,10 @@ export class ApiService {
   delete = this.api.delete
 
   signalr<TSender extends SignalrSender, TReciever extends SignalrReciever>(url: string) {
-    return signalr<TSender, TReciever>(this.config.apiUrl + url)
+    return signalr<TSender, TReciever>(this.config.apiUrl + url, () => this.profile?.accessToken?.value)
   }
 
   useSignalr<TSender extends SignalrSender, TReciever extends SignalrReciever>(url: string) {
-    return useSignalr<TSender, TReciever>(this.config.apiUrl + url)
+    return useSignalr<TSender, TReciever>(this.config.apiUrl + url, () => this.profile?.accessToken?.value)
   }
 }

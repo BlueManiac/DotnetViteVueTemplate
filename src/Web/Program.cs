@@ -34,6 +34,7 @@ if (builder.Environment.IsDevelopment())
     app.UseCors();
 }
 
+app.UseDefaultFiles();
 app.UseStaticFiles(new StaticFileOptions()
 {
     OnPrepareResponse = context => context.Context.Response.GetTypedHeaders().CacheControl = new()
@@ -44,7 +45,11 @@ app.UseStaticFiles(new StaticFileOptions()
 });
 app.UseRouting();
 
-app.MapModules();
+app.UseAuthorization();
+
+var api = app.MapGroup("/api").RequireAuthorization();
+
+app.MapModules(api);
 
 app.MapFallbackToFile("index.html");
 app.Run();

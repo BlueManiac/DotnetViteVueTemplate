@@ -4,9 +4,9 @@ namespace Web.Features.Health;
 
 public class HealthModule : IModule
 {
-    public static void MapRoutes(WebApplication app)
+    public static void MapRoutes(IEndpointRouteBuilder routes)
     {
-        var group = app.MapGroup("/health");
+        var group = routes.MapGroup("/health");
 
         group
             .MapMethods("/ready", ["GET", "HEAD"], async context =>

@@ -4,8 +4,8 @@ namespace Web.Features.Examples.Hello;
 
 public class HelloModule : IModule
 {
-    public static void MapRoutes(WebApplication app)
+    public static void MapRoutes(IEndpointRouteBuilder routes)
     {
-        app.MapGet("/api/hello", () => new { Hello = "Hello World!" });
+        routes.MapGet("/hello", () => new { Hello = "Hello World!" });
     }
 }

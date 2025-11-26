@@ -5,9 +5,11 @@ import { Ref, onMounted, ref } from 'vue'
 export type SignalrSender = { [key: string]: (...rest: unknown[]) => Promise<void> }
 export type SignalrReciever = { [key: string]: Ref<unknown> }
 
-export function signalr<TSender extends SignalrSender = SignalrSender, TReciever extends SignalrReciever = SignalrReciever>(url: string) {
+export function signalr<TSender extends SignalrSender = SignalrSender, TReciever extends SignalrReciever = SignalrReciever>(url: string, accessToken?: () => string | undefined) {
   const connection = new HubConnectionBuilder()
-    .withUrl(url)
+    .withUrl(url, {
+      accessTokenFactory: () => accessToken?.() ?? ''
+    })
     .withAutomaticReconnect()
     .build()
 
@@ -51,8 +53,8 @@ export function signalr<TSender extends SignalrSender = SignalrSender, TReciever
   return { connection, data, sender, receiver, start, stop }
 }
 
-export function useSignalr<TSender extends SignalrSender = SignalrSender, TReciever extends SignalrReciever = SignalrReciever>(url: string) {
-  const data = signalr<TSender, TReciever>(url)
+export function useSignalr<TSender extends SignalrSender = SignalrSender, TReciever extends SignalrReciever = SignalrReciever>(url: string, accessToken?: () => string | undefined) {
+  const data = signalr<TSender, TReciever>(url, accessToken)
 
   onMounted(() => {
     data.start()

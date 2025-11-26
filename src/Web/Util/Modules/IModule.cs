@@ -3,5 +3,5 @@
 public interface IModule
 {
     static virtual void AddServices(WebApplicationBuilder builder) { }
-    static virtual void MapRoutes(WebApplication app) { }
+    static virtual void MapRoutes(IEndpointRouteBuilder routes) { }
 }

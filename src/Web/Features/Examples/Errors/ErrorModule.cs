@@ -4,9 +4,9 @@ namespace Web.Features.Examples.Errors;
 
 public class ErrorModule : IModule
 {
-    public static void MapRoutes(WebApplication app)
+    public static void MapRoutes(IEndpointRouteBuilder routes)
     {
-        app.MapGet("/error", () =>
+        routes.MapGet("/error", () =>
         {
             throw new Exception("Server error");
         });

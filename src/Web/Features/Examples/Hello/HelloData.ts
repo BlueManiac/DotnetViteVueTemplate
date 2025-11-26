@@ -14,7 +14,7 @@ export const useHelloData = () => {
 
   const isLoading = ref(false)
 
-  const load = () => api.get<Hello>('/api/hello', { isLoading })
+  const load = () => api.get<Hello>('/hello', { isLoading })
 
   return {
     rotation,

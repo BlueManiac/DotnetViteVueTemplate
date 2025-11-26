@@ -25,7 +25,7 @@ type RealtimeReciever = {
   message: Ref<string>
 }
 
-const { connection, data, sender, receiver } = api.useSignalr<RealtimeSender, RealtimeReciever>('/api/realtime')
+const { connection, data, sender, receiver } = api.useSignalr<RealtimeSender, RealtimeReciever>('/realtime')
 
 const message = data<string>('message')
 const message2 = receiver.message

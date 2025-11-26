@@ -36,9 +36,9 @@ const app = createApp(App)
   .provide(ApiService)
 
 // Wait for router to resolve initial route before mounting
-await Router.isReady()
-
-app.mount('#app')
+Router.isReady().then(() => {
+  app.mount('#app')
+})
 
 useTitle(() => title.value
   ? title.value + " - " + config.applicationName
@@ -51,6 +51,6 @@ if (import.meta.env.DEV) {
   })
 
   const script = document.createElement('script')
-  script.src = `${import.meta.env.VITE_API_URL}/_framework/aspnetcore-browser-refresh.js`
+  script.src = `${import.meta.env.VITE_BACKEND_URL}/_framework/aspnetcore-browser-refresh.js`
   document.body.appendChild(script)
 }

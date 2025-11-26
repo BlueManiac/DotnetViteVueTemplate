@@ -4,8 +4,8 @@ namespace Web.Features.Examples.RealTime;
 
 public class RealTimeModule : IModule
 {
-    public static void MapRoutes(WebApplication app)
+    public static void MapRoutes(IEndpointRouteBuilder routes)
     {
-        app.MapHub<RealTimeHub>("/api/realTime");
+        routes.MapHub<RealTimeHub>("/realTime");
     }
 }

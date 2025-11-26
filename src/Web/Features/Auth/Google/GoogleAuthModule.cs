@@ -32,20 +32,20 @@ public class GoogleAuthModule : IModule
             {
                 options.ClientId = clientId;
                 options.ClientSecret = clientSecret;
-                options.CallbackPath = "/auth/google-callback";
+                options.CallbackPath = "/api/auth/google-callback";
                 options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             });
     }
 
-    public static void MapRoutes(WebApplication app)
+    public static void MapRoutes(IEndpointRouteBuilder routes)
     {
-        var group = app.MapGroup("auth");
+        var group = routes.MapGroup("/auth");
 
         group.MapGet("/google-login", (HttpContext context) =>
         {
             var properties = new AuthenticationProperties
             {
-                RedirectUri = "/auth/google-callback-handler"
+                RedirectUri = "/api/auth/google-callback-handler"
             };
 
             var redirect = context.Request.Query["redirect"].ToString();

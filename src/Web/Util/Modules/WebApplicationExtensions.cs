@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 
 namespace Web.Util.Modules;
+
 public static class WebApplicationExtensions
 {
     public static WebApplicationBuilder AddModule<TModule>(this WebApplicationBuilder builder) where TModule : IModule
@@ -10,9 +11,9 @@ public static class WebApplicationExtensions
         return builder;
     }
 
-    public static WebApplication MapModule<TModule>(this WebApplication app) where TModule : IModule
+    public static WebApplication MapModule<TModule>(this WebApplication app, IEndpointRouteBuilder? routes = null) where TModule : IModule
     {
-        TModule.MapRoutes(app);
+        TModule.MapRoutes(routes ?? app);
 
         return app;
     }
@@ -34,7 +35,7 @@ public static class WebApplicationExtensions
         return builder;
     }
 
-    public static WebApplication MapModules(this WebApplication app, Assembly? assembly = null)
+    public static WebApplication MapModules(this WebApplication app, IEndpointRouteBuilder routes, Assembly? assembly = null)
     {
         assembly ??= Assembly.GetExecutingAssembly();
 
@@ -45,7 +46,7 @@ public static class WebApplicationExtensions
 
             var method = type?.GetMethod(nameof(IModule.MapRoutes), BindingFlags.Static | BindingFlags.Public);
 
-            method?.Invoke(null, [app]);
+            method?.Invoke(null, [routes]);
         }
 
         return app;

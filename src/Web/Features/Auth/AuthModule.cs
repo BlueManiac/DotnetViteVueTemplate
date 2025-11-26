@@ -21,25 +21,34 @@ public class AuthModule : IModule
             {
                 options.BearerTokenExpiration = TimeSpan.FromMinutes(60);
                 options.RefreshTokenExpiration = TimeSpan.FromMinutes(60);
+
+                // Allow SignalR to pass tokens via query string
+                options.Events = new()
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+                        var path = context.HttpContext.Request.Path;
+
+                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/api"))
+                        {
+                            context.Token = accessToken;
+                        }
+
+                        return Task.CompletedTask;
+                    }
+                };
             });
 
-        builder.Services.AddAuthorization(options =>
-        {
-            // Require authentication by default for all endpoints
-            options.FallbackPolicy = new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder()
-                .RequireAuthenticatedUser()
-                .Build();
-        });
+        builder.Services.AddAuthorization();
     }
 
     public record LoginRequest(string UserName, string Password);
     public record UserResponse(string Name);
 
-    public static void MapRoutes(WebApplication app)
+    public static void MapRoutes(IEndpointRouteBuilder routes)
     {
-        app.UseAuthorization();
-
-        var group = app.MapGroup("auth");
+        var group = routes.MapGroup("/auth");
 
         group.MapPost("/login", (LoginRequest request) =>
         {

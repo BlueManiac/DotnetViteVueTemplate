@@ -86,7 +86,7 @@ export default ({ mode }): UserConfig => {
       proxy: {
         ...(mode === 'development' && {
           '/api': {
-            target: 'https://localhost:7126',
+            target: 'https://localhost:7126/api',
             changeOrigin: true,
             secure: false
           }
