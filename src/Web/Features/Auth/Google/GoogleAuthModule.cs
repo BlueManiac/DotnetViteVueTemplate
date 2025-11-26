@@ -5,19 +5,24 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
+using Web.Features.Auth;
 using Web.Util.Modules;
 
 namespace Web.Features.Auth.Google;
 
 public class GoogleAuthModule : IModule
 {
+    private static bool TryGetGoogleAuthConfig(IConfiguration configuration, out string clientId, out string clientSecret)
+    {
+        clientId = configuration["Authentication:Google:ClientId"] ?? string.Empty;
+        clientSecret = configuration["Authentication:Google:ClientSecret"] ?? string.Empty;
+
+        return !string.IsNullOrEmpty(clientId) && !string.IsNullOrEmpty(clientSecret);
+    }
+
     public static void AddServices(WebApplicationBuilder builder)
     {
-        var clientId = builder.Configuration["Authentication:Google:ClientId"];
-        var clientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
-
-        // Only configure Google authentication if credentials are provided
-        if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(clientSecret))
+        if (!TryGetGoogleAuthConfig(builder.Configuration, out var clientId, out var clientSecret))
         {
             return;
         }
@@ -39,6 +44,17 @@ public class GoogleAuthModule : IModule
 
     public static void MapRoutes(IEndpointRouteBuilder routes)
     {
+        var configuration = routes.ServiceProvider.GetRequiredService<IConfiguration>();
+
+        if (!TryGetGoogleAuthConfig(configuration, out _, out _))
+        {
+            return;
+        }
+
+        // Register Google as an available auth provider
+        var providers = routes.ServiceProvider.GetRequiredService<AuthProviders>();
+        providers.Register("google");
+
         var group = routes.MapGroup("/auth");
 
         group.MapGet("/google-login", (HttpContext context) =>

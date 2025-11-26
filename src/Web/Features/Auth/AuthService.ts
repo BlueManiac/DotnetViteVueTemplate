@@ -1,3 +1,4 @@
+import { computedAsync } from "@vueuse/core"
 import { inject, watchEffect } from "vue"
 import { useRoute } from "vue-router"
 import { ApiService } from "../ApiService"
@@ -17,6 +18,11 @@ export interface AccessTokenResponse {
 export class AuthService {
   api = inject(ApiService)
   profile = inject(Profile)
+
+  providers = computedAsync(async () => {
+    const response = await this.api.get<{ providers: string[] }>('/auth/providers')
+    return response.providers
+  }, [], { lazy: true })
 
   private refreshTimeout?: ReturnType<typeof setTimeout>
 

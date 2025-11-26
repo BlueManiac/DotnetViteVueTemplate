@@ -11,13 +11,13 @@ public class AuthModule : IModule
     public static void AddServices(WebApplicationBuilder builder)
     {
         builder.Services
-            .AddAuthentication(options =>
+            .AddAuthentication(static options =>
             {
                 // Set Bearer Token as the default scheme for API authentication
                 options.DefaultScheme = BearerTokenDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = BearerTokenDefaults.AuthenticationScheme;
             })
-            .AddBearerToken(BearerTokenDefaults.AuthenticationScheme, options =>
+            .AddBearerToken(BearerTokenDefaults.AuthenticationScheme, static options =>
             {
                 options.BearerTokenExpiration = TimeSpan.FromMinutes(60);
                 options.RefreshTokenExpiration = TimeSpan.FromMinutes(60);
@@ -25,7 +25,7 @@ public class AuthModule : IModule
                 // Allow SignalR to pass tokens via query string
                 options.Events = new()
                 {
-                    OnMessageReceived = context =>
+                    OnMessageReceived = static context =>
                     {
                         var accessToken = context.Request.Query["access_token"];
                         var path = context.HttpContext.Request.Path;
@@ -41,6 +41,7 @@ public class AuthModule : IModule
             });
 
         builder.Services.AddAuthorization();
+        builder.Services.AddSingleton<AuthProviders>();
     }
 
     public record LoginRequest(string UserName, string Password);
@@ -50,7 +51,7 @@ public class AuthModule : IModule
     {
         var group = routes.MapGroup("/auth");
 
-        group.MapPost("/login", (LoginRequest request) =>
+        group.MapPost("/login", static (LoginRequest request) =>
         {
             var claims = new List<Claim>
             {
@@ -66,7 +67,7 @@ public class AuthModule : IModule
         })
         .AllowAnonymous();
 
-        group.MapPost("/refresh", (RefreshRequest refreshRequest, IOptionsMonitor<BearerTokenOptions> optionsMonitor, TimeProvider timeProvider) =>
+        group.MapPost("/refresh", static (RefreshRequest refreshRequest, IOptionsMonitor<BearerTokenOptions> optionsMonitor, TimeProvider timeProvider) =>
         {
             var identityBearerOptions = optionsMonitor.Get(BearerTokenDefaults.AuthenticationScheme);
             var refreshTicket = identityBearerOptions.RefreshTokenProtector.Unprotect(refreshRequest.RefreshToken);
@@ -80,7 +81,13 @@ public class AuthModule : IModule
         })
         .AllowAnonymous();
 
-        group.MapGet("/user", (ClaimsPrincipal user) =>
+        group.MapGet("/providers", static (AuthProviders providers) =>
+        {
+            return TypedResults.Ok(new { providers = providers.Providers });
+        })
+        .AllowAnonymous();
+
+        group.MapGet("/user", static (ClaimsPrincipal user) =>
         {
             if (user.Identity?.Name is null)
             {
