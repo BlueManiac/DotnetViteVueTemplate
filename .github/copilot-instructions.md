@@ -295,38 +295,47 @@ app.provide(StateService)
 
 Working examples in `src/Web/Features/Examples/` include components, icons, modals, tables, tabs, real-time (SignalR), and error handling patterns.
 
+### Running Commands
+
+**DO** use the VS Code tasks for all operations:
+- **Build/Run**: Use `run_task` tool with exact task IDs from workspace context (e.g., `"process: build backend"`, `"shell: watch frontend"`)
+- **Check output**: Use `get_task_output` tool to view running task output
+- **Verify changes**: Check task outputs to see compilation results and errors
+
+**Available tasks** (see workspace tasks in context for exact IDs):
+- `watch` - Run both frontend and backend dev servers
+- `watch frontend` (ID: `"shell: watch frontend"`) - Vite dev server only
+  - Output shows: Vite HMR updates, compilation errors, dependency optimization, client-side runtime errors
+- `watch backend` (ID: `"process: watch backend"`) - ASP.NET Core with hot reload
+  - Output shows: Application startup info, API endpoint registrations, runtime errors
+- `build backend` (ID: `"process: build backend"`) - Build the project
+- `publish` (ID: `"process: publish"`) - Build and publish for production
+- `update` / `update frontend` / `update backend` - Update dependencies
+
+**Managing tasks**:
+- If a task fails or is not running, you can start it using `run_task` tool
+- Tasks cannot be programmatically stopped - they must be manually terminated through VS Code's UI
+- When checking if a watch task is running, use `get_task_output` - if the output shows the server is listening/ready, it's running; if it shows termination messages, it's not running and can be restarted
+
+**DO NOT** attempt to:
+- Run `pnpm run dev` or similar dev server commands
+- Start additional dev servers
+- Use `run_in_terminal` tool except when absolutely necessary (e.g., installing packages with `pnpm add <package>`)
+
+**Installing packages**:
+- You CAN use `pnpm install <package>` or `pnpm add <package>` to install new packages
+- The running frontend watch task should automatically detect the changes and update
+
 ### Verifying Changes
 
-When making changes to the project, you can verify them by checking the running development servers:
-
-**Check Frontend (Vite) Output:**
-```typescript
-// Use get_task_output tool
-get_task_output({
-  id: "shell: watch frontend",
-  workspaceFolder: "<workspace-root>"
-})
-```
-
-**Check Backend (ASP.NET Core) Output:**
-```typescript
-// Use get_task_output tool
-get_task_output({
-  id: "process: watch backend",
-  workspaceFolder: "<workspace-root>"
-})
-```
+When making changes to the project, you can verify them by checking the watch frontend/backend tasks using `get_task_output` tool.
 
 **Important**: When checking task outputs, only check the last 50 lines to avoid excessive context usage. Task outputs can be very long, and the most recent information is usually sufficient to verify changes.
-
-The task outputs will show:
-- **Frontend**: Vite HMR updates, compilation errors, dependency optimization, client-side runtime errors
-- **Backend**: Application startup info, API endpoint registrations, runtime errors
 
 Use these outputs to confirm that:
 - Changes are being detected and recompiled
 - No compilation or runtime errors occurred
-- The development servers are still running properly
+- The dev servers are still running properly
 
 **Note**: Only check the relevant task output - if changes were made only to frontend files (Vue, TypeScript, CSS), check the frontend task; if changes were made only to backend files (C#), check the backend task.
 

@@ -7,7 +7,7 @@
     },
     "tasks": [
         {
-            "label": "build",
+            "label": "build backend",
             "command": "dotnet",
             "type": "process",
             "args": [
@@ -45,7 +45,8 @@
             "presentation": {
                 "reveal": "always",
                 "panel": "new",
-                "group": "watch"
+                "group": "watch",
+                "close": true
             }
         },
         {
@@ -53,14 +54,14 @@
             "type": "shell",
             "command": "powershell",
             "args": [
-                "-NoExit",
                 "${workspaceFolder}/src/Web/Properties/npmrun.ps1"
             ],
             "problemMatcher": [],
             "presentation": {
                 "reveal": "always",
                 "panel": "new",
-                "group": "watch"
+                "group": "watch",
+                "close": true
             }
         },
         {
