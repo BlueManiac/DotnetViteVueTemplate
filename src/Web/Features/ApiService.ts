@@ -14,7 +14,9 @@ export class ApiService {
   private api = useApi({
     apiUrl: this.config.apiUrl,
     intercept: async request => {
-      await until(this.health.backendReady).toBe(true)
+      if (import.meta.env.DEV) {
+        await until(this.health.backendReady).toBe(true)
+      }
 
       const accessToken = this.profile?.accessToken
       if (accessToken?.value && (!request.headers || !request.headers['Authorization'])) {
