@@ -339,6 +339,16 @@ Use these outputs to confirm that:
 
 **Note**: Only check the relevant task output - if changes were made only to frontend files (Vue, TypeScript, CSS), check the frontend task; if changes were made only to backend files (C#), check the backend task.
 
+### Playwright Browser Automation
+
+This project includes Playwright MCP server for browser automation and testing. You can use browser automation tools to:
+- Navigate to pages and take snapshots
+- Interact with UI elements (click, type, fill forms)
+- Take screenshots
+- Test the application UI
+
+**Frontend URL**: The Vite dev server runs at `https://localhost:5043/`, not the backend URL (`https://localhost:7126`). Always use the frontend URL when testing the UI.
+
 ### Resources
 
 - [Vue 3 Docs](https://vuejs.org/) - Official Vue documentation

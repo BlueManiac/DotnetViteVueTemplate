@@ -74,6 +74,17 @@ Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac) and run **Tasks: Run Task**, then
 
 The application will start with hot module replacement enabled. Changes to Vue files will update instantly, and ASP.NET Core changes will trigger a browser refresh.
 
+### Browser Automation (Optional)
+
+This project includes Playwright MCP server for browser automation and testing. To use it:
+
+1. **Install Playwright browsers**
+   ```powershell
+   npm run install-playwright
+   ```
+
+2. Use browser automation tools through GitHub Copilot to navigate, interact with UI elements, take screenshots, and test the application.
+
 ## Technology Stack
 
 ### Backend

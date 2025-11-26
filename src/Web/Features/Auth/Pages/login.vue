@@ -1,12 +1,11 @@
 <template>
   <form class="col-lg-5 col-xl-3" @submit.prevent="submit()">
-    <h3 class="fw-normal">Please sign in</h3>
     <div class="form-floating">
-      <input type="email" v-model="email" class="form-control" placeholder="name@example.com" ref="emailElement" required autocomplete="off">
+      <input type="email" v-model="email" class="form-control" placeholder="name@example.com" ref="emailElement" required autocomplete="email">
       <label>Email address</label>
     </div>
     <div class="form-floating">
-      <input type="password" v-model="password" class="form-control" placeholder="Password" required>
+      <input type="password" v-model="password" class="form-control" placeholder="Password" required autocomplete="current-password">
       <label>Password</label>
     </div>
     <button class="w-100 btn btn-lg btn-primary" type="submit" :disabled="!valid">Sign in</button>
