@@ -342,7 +342,18 @@ Use these outputs to confirm that:
 
 ### Playwright Browser Automation
 
-This project includes Playwright MCP server for browser automation and testing. You can use browser automation tools to:
+This project includes Playwright MCP server for browser automation and testing. 
+
+**When to use browser automation**:
+- ✅ Testing complex user interactions or workflows
+- ✅ Verifying visual changes or layout issues
+- ✅ Testing real-time features (SignalR, WebSockets)
+- ✅ End-to-end testing of multi-step processes
+- ❌ Simple code changes (styling, logic fixes, adding props)
+- ❌ Changes that can be verified by reading code or checking HMR output
+- ❌ Minor UI tweaks where the result is obvious from the code
+
+**Browser automation capabilities**:
 - Navigate to pages and take snapshots
 - Interact with UI elements (click, type, fill forms)
 - Take screenshots
