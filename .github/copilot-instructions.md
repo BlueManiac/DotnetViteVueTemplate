@@ -309,13 +309,14 @@ Working examples in `src/Web/Features/Examples/` include components, icons, moda
   - Output shows: Vite HMR updates, compilation errors, dependency optimization, client-side runtime errors
 - `watch backend` (ID: `"process: watch backend"`) - ASP.NET Core with hot reload
   - Output shows: Application startup info, API endpoint registrations, runtime errors
+- `stop backend` (ID: `"stop backend"`) - Stop the running dotnet watch process without restarting
+- `restart backend` (ID: `"restart backend"`) - Restart the backend dev server
 - `build backend` (ID: `"process: build backend"`) - Build the project
 - `publish` (ID: `"process: publish"`) - Build and publish for production
 - `update` / `update frontend` / `update backend` - Update dependencies
 
 **Managing tasks**:
 - If a task fails or is not running, you can start it using `run_task` tool
-- Tasks cannot be programmatically stopped - they must be manually terminated through VS Code's UI
 - When checking if a watch task is running, use `get_task_output` - if the output shows the server is listening/ready, it's running; if it shows termination messages, it's not running and can be restarted
 
 **DO NOT** attempt to:
@@ -339,6 +340,8 @@ Use these outputs to confirm that:
 - The dev servers are still running properly
 
 **Note**: Only check the relevant task output - if changes were made only to frontend files (Vue, TypeScript, CSS), check the frontend task; if changes were made only to backend files (C#), check the backend task.
+
+**Note**: When adding/modifying API endpoints or making structural backend changes, use `restart backend` task to ensure changes are picked up, as .NET hot reload does not reliably handle route registrations.
 
 ### Playwright Browser Automation
 

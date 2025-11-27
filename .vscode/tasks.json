@@ -39,7 +39,7 @@
                 "watch",
                 "run",
                 "--project",
-                "${workspaceFolder}/src/Web/Web.csproj"
+                "${workspaceFolder}\\src\\Web\\Web.csproj"
             ],
             "problemMatcher": "$msCompile",
             "presentation": {
@@ -102,6 +102,30 @@
                 "cwd": "${workspaceFolder}/src/Web"
             },
             "problemMatcher": []
+        },
+        {
+            "label": "stop backend",
+            "type": "process",
+            "command": "powershell",
+            "args": [
+                "-NoProfile",
+                "-Command",
+                "$proc = Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -like \"*dotnet.exe* watch run --project ${workspaceFolder}\\src\\Web\\Web.csproj\" }; if ($proc) { Stop-Process -Id $proc.ProcessId -Force }"
+            ],
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "close": true
+            }
+        },
+        {
+            "label": "restart backend",
+            "problemMatcher": [],
+            "dependsOn": [
+                "stop backend",
+                "watch backend"
+            ],
+            "dependsOrder": "sequence"
         }
     ]
 }
