@@ -3,6 +3,9 @@
     "module": "ESNext",
     "target": "ES2021",
     "moduleResolution": "bundler",
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
     "types": [
       // Syntax highlighting for ex. import.meta.hot in vite
       "vite/client",

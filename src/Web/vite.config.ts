@@ -10,7 +10,7 @@ import MkCert from 'vite-plugin-mkcert'
 import Inspector from 'vite-plugin-vue-inspector'
 import { viteRuntimeErrorOverlayPlugin } from './Util/Plugins/vite-runtime-error-plugin'
 
-export default ({ mode }): UserConfig => {
+export default ({ mode }: { mode: string }): UserConfig => {
   const iconsResolver = IconsResolver({
     prefix: false,
     enabledCollections: ['carbon', 'mdi', 'svg-spinners'],
