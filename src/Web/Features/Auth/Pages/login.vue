@@ -1,5 +1,6 @@
 <template>
   <form class="col-lg-5 col-xl-3" @submit.prevent="submit()">
+    <h1 class="text-center mb-4">{{ config.applicationName }}</h1>
     <div class="form-floating">
       <input type="email" v-model="email" class="form-control" placeholder="name@example.com" ref="emailElement" required autocomplete="email">
       <label>Email address</label>
@@ -18,8 +19,10 @@
 import { useFocus } from '@vueuse/core'
 import { inject, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { AppConfig } from '../../AppConfig'
 import { AuthService, useAuthCallback } from '../AuthService'
 
+const config = inject(AppConfig)
 const authService = inject(AuthService)
 const router = useRouter()
 const route = useRoute()
