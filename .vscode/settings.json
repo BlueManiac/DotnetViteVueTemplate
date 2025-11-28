@@ -1,12 +1,16 @@
 {
     // Paths
     "dotnet.defaultSolution": "src\\DotnetViteVueTemplate.sln",
-    "explorer.excludeGitIgnore": true,
     "explorer.fileNesting.patterns": {
         "vite.config.ts": "auto-imports.d.ts, components.d.ts, index.d.ts, typed-router.d.ts"
     },
     "files.exclude": {
-        "**/.sarif": true
+        "**/dist": true,
+        "**/node_modules": true,
+        "**/package-lock.json": true,
+        "**/.playwright-mcp": true,
+        "**/bin": true,
+        "**/obj": true
     },
     "terminal.integrated.cwd": "src\\Web",
     // Formatting

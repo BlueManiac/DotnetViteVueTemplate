@@ -2,6 +2,8 @@ using Web.Util.Modules;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
+
 builder.Services.AddResponseCompression(options => options.EnableForHttps = true);
 builder.Services.AddProblemDetails();
 builder.Services.AddSignalR();

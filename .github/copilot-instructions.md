@@ -296,6 +296,11 @@ app.provide(StateService)
 
 Working examples in `src/Web/Features/Examples/` include components, icons, modals, tables, tabs, real-time (SignalR), and error handling patterns.
 
+### Files Not to Access
+
+**DO NOT** read or access these files - they contain sensitive credentials and private configuration:
+- `appsettings.Local.json`
+
 ### Running Commands
 
 **DO** use the VS Code tasks for all operations:
