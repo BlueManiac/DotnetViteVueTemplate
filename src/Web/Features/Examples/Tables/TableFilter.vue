@@ -44,18 +44,18 @@ const style = computed<StyleValue>(() => {
 
 const root = ref<HTMLElement>()
 onClickOutside(root, () => {
-    parentElement.value = null
+    parentElement.value = undefined
 })
 
 const applyFilter = () => {
     filterValue.value = localFilterValue.value
-    parentElement.value = null
+    parentElement.value = undefined
 }
 
 const clearFilter = () => {
     localFilterValue.value = ""
     filterValue.value = ""
-    parentElement.value = null
+    parentElement.value = undefined
 }
 </script>
 

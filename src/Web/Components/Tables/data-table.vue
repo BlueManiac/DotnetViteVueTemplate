@@ -18,7 +18,7 @@
               <template v-else>
                 {{ toValue(col.header) ?? col.field }}
               </template>
-              <div v-if="onFilterClick" class="ms-auto" @click.stop="emit('filterClick', col, $event, ($event.target as HTMLElement).closest('th'))">
+              <div v-if="onFilterClick" class="ms-auto" @click.stop="emit('filterClick', col, $event, ($event.target as HTMLElement).closest('th')!)">
                 <MdiFilter v-if="activeFilterColumn?.field === col.field" class="text-primary" />
                 <MdiFilterOutline v-else />
               </div>
@@ -31,7 +31,7 @@
       <template v-for="(item, index) of items" :key="index" v-memo="memo(item, index)">
         <tr :ref="el => observeElement(el as HTMLTableRowElement)" @contextmenu="onRowContextMenu($event, item, index)" :class="{ 'table-active': selectedSet.has(item) }">
           <template v-if="visibleIndexSet.has(index)">
-            <td class="fs-4 lh-1 selection-column" @click="onRowClick(item, null, $event)">
+            <td class="fs-4 lh-1 selection-column" @click="onRowClick(item, undefined, $event)">
               <input class="form-check-input mt-0" type="checkbox" :checked="selectedSet.has(item)" @input="toggleSelected(item, ($event.target as HTMLInputElement).checked)">
             </td>
             <td v-for="col of columns" :key="col.field" @click="onRowClick(item, col, $event)">
@@ -46,7 +46,7 @@
   </table>
 </template>
 
-<script setup lang="ts" generic="T">
+<script setup lang="ts" generic="T extends Record<string, any>">
 import { toValue, watch } from 'vue'
 import { TableColumn, useClick, useSelection, useSorting, useVirtualization } from './data-table'
 
@@ -56,16 +56,20 @@ const { rowHeight = '33px', onFilterClick, activeFilterColumn } = defineProps<{
   activeFilterColumn?: TableColumn | null
 }>()
 
-const columns = defineModel<TableColumn[]>("columns")
-const items = defineModel<T[]>("modelValue")
-const sortField = defineModel<string>("sortField")
-const sortOrder = defineModel<number>("sortOrder")
-const selected = defineModel<T[]>("selected")
+defineSlots<{
+  [K in keyof T]?: (props: { item: T, col: TableColumn }) => any
+}>()
+
+const columns = defineModel<TableColumn[]>("columns", { default: () => [] })
+const items = defineModel<T[]>("modelValue", { default: () => [] })
+const sortField = defineModel<string>("sortField", { default: '' })
+const sortOrder = defineModel<number>("sortOrder", { default: 1 })
+const selected = defineModel<T[]>("selected", { default: () => [] })
 
 const emit = defineEmits<{
   rowClick: [item: T, column: TableColumn, event: MouseEvent],
-  headerContextMenuClick: [column: TableColumn, event: Event],
-  rowContextMenuClick: [item: T, column: TableColumn, event: Event],
+  headerContextMenuClick: [column: TableColumn, event: MouseEvent],
+  rowContextMenuClick: [item: T, column: TableColumn, event: MouseEvent],
   filterClick: [column: TableColumn, event: MouseEvent, headerElement: HTMLElement]
 }>()
 
@@ -90,7 +94,7 @@ import.meta.hot?.on('vite:beforeUpdate', () => {
   hmrChange++
 })
 
-const memo = (item: unknown, index: number) => {
+const memo = (item: T, index: number) => {
   const visible = visibleIndexSet.value.has(index)
 
   return [visible, visible && item, selectedSet.value.has(item), columns.value, visible && hmrChange]

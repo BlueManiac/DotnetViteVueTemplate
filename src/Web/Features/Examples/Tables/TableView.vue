@@ -30,7 +30,7 @@
 import { useDebounceFn, useLocalStorage } from '@vueuse/core'
 import { watch, watchEffect } from 'vue'
 import TableFilter from './TableFilter.vue'
-import { createPerson, invertColor } from './example-data'
+import { createPerson, invertColor, Person } from './example-data'
 import { TableColumn } from '/Components/Tables/data-table'
 import '/Components/Tables/data-table.vue'
 
@@ -48,16 +48,16 @@ const columns = ref([
   { field: 'date' }
 ])
 
-const visibleColumns = ref([])
+const visibleColumns = ref<TableColumn[]>([])
 watchEffect(() => {
   visibleColumns.value = columns.value.filter(x => !x.hidden)
 })
 
-const items = ref([])
+const items = ref<Person[]>([])
 
 // Column filter state
 const filterParent = ref<HTMLElement>()
-const filterColumn = ref<TableColumn | null>(null)
+const filterColumn = ref<TableColumn>()
 const columnFilterValue = ref<string>("")
 
 // Only show active filter icon when there's actually a filter value
@@ -68,11 +68,11 @@ const activeFilterColumn = computed(() => {
 // Clear filterColumn when filter value is cleared
 watch(columnFilterValue, (newValue) => {
   if (!newValue) {
-    filterColumn.value = null
+    filterColumn.value = undefined
   }
 })
 
-const filteredItems = ref([])
+const filteredItems = ref<Person[]>([])
 watchEffect(() => {
   const searchTerm = filter.value.toLowerCase()
   const columnFilter = columnFilterValue.value?.toLowerCase()
@@ -105,7 +105,7 @@ watchEffect(() => {
 const sortField = useLocalStorage('sortField', 'name')
 const sortOrder = useLocalStorage('sortOrder', 1)
 
-const selected = ref([])
+const selected = ref<Person[]>([])
 
 const changeQuantity = useLocalStorage<number>('changeQuantity', 1)
 const add = (quantity?: number) => {
@@ -127,12 +127,12 @@ add(changeQuantity.value)
 
 const contextMenuElement = ref<Components["ContextMenu"]>()
 
-const onHeaderContextMenu = (col, event) => {
-  contextMenuElement.value.show(event, [
+const onHeaderContextMenu = (column: TableColumn, event: MouseEvent) => {
+  contextMenuElement.value?.show(event, [
     {
       name: 'Hide',
       icon: MdiFileHidden,
-      command: () => col.hidden = true
+      command: () => column.hidden = true
     },
     {
       name: 'Restore',
@@ -143,8 +143,8 @@ const onHeaderContextMenu = (col, event) => {
   ])
 }
 
-const onRowContextMenu = (event, item, index) => {
-  contextMenuElement.value.show(event, [
+const onRowContextMenu = (item: Person, column: TableColumn, event: MouseEvent) => {
+  contextMenuElement.value?.show(event, [
     {
       name: 'Remove',
       icon: MdiFileRemove,

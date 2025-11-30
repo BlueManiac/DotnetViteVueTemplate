@@ -1,4 +1,4 @@
-﻿import { MaybeRefOrGetter, Ref, onBeforeUnmount, watch, watchEffect } from 'vue'
+﻿import { MaybeRefOrGetter, Ref, onBeforeUnmount, shallowRef, watch, watchEffect } from 'vue'
 
 export type TableColumn = Record<string, unknown> & { field: string, header?: MaybeRefOrGetter<string> }
 
@@ -44,15 +44,17 @@ export const useVirtualization = () => {
   return { observeElement, visibleIndexSet, isLoaded }
 }
 
-export const useSelection = (items: Ref<unknown[]>, selected: Ref<unknown[]>) => {
-  const selectedSet = ref(new Set<unknown>())
+export const useSelection = <T>(items: Ref<T[]>, selected: Ref<T[]>) => {
+  const selectedSet = shallowRef(new Set<T>())
 
-  const toggleSelected = (item: unknown, checked: boolean) => {
+  const toggleSelected = (item: T, checked: boolean) => {
     if (checked) {
       selectedSet.value.add(item)
     } else {
       selectedSet.value.delete(item)
     }
+    // Trigger reactivity for shallowRef
+    selectedSet.value = new Set(selectedSet.value)
   }
 
   const selectAll = (checked: boolean) => {
@@ -64,6 +66,8 @@ export const useSelection = (items: Ref<unknown[]>, selected: Ref<unknown[]>) =>
     else {
       selectedSet.value.clear()
     }
+    // Trigger reactivity for shallowRef
+    selectedSet.value = new Set(selectedSet.value)
   }
 
   const checkbox = ref<HTMLInputElement>()
@@ -91,7 +95,7 @@ export const useSelection = (items: Ref<unknown[]>, selected: Ref<unknown[]>) =>
   return { selectedSet, toggleSelected, selectAll, checkbox }
 }
 
-export const useSorting = (sortField: Ref<string>, sortOrder: Ref<number>, columns: Ref<TableColumn[]>, items: Ref<unknown[]>) => {
+export const useSorting = <T extends Record<string, any>>(sortField: Ref<string>, sortOrder: Ref<number>, columns: Ref<TableColumn[]>, items: Ref<T[]>) => {
   sortField.value ??= columns[0]?.field
   sortOrder.value ??= 1
 
@@ -106,7 +110,7 @@ export const useSorting = (sortField: Ref<string>, sortOrder: Ref<number>, colum
   }
 
   const compareFunction = (field: string, modifier: number) => {
-    return (a: unknown, b: unknown) => {
+    return (a: T, b: T) => {
       const field1 = a[field]
       const field2 = b[field]
 
@@ -120,7 +124,7 @@ export const useSorting = (sortField: Ref<string>, sortOrder: Ref<number>, colum
         if (!field2)
           return 1 * modifier
 
-        return field1.localeCompare(field2, undefined, { numeric: true, sensitivity: 'base' }) * modifier
+        return (field1 as string).localeCompare(field2 as string, undefined, { numeric: true, sensitivity: 'base' }) * modifier
       }
 
       return (Number(field1) - Number(field2)) * modifier
@@ -134,8 +138,8 @@ export const useSorting = (sortField: Ref<string>, sortOrder: Ref<number>, colum
   return { sort }
 }
 
-export const useClick = (selectedSet: Ref<Set<unknown>>, emit) => {
-  const onRowClick = (item: any, column: TableColumn, event: MouseEvent) => {
+export const useClick = <T>(selectedSet: Ref<Set<T>>, emit: any) => {
+  const onRowClick = (item: T, column: TableColumn | undefined, event: MouseEvent) => {
     // if the click was on the selection column, do nothing
     if (hasParentClass(event.target, 'selection-column')) {
       return
@@ -177,12 +181,12 @@ export const useClick = (selectedSet: Ref<Set<unknown>>, emit) => {
     emit('headerContextMenuClick', column, event)
   }
 
-  const onRowContextMenu = (event, item, index) => {
+  const onRowContextMenu = (event: MouseEvent, item: T, index: number) => {
     if (event.ctrlKey) {
       return
     }
     event.preventDefault()
-    emit('rowContextMenuClick', event, item, index)
+    emit('rowContextMenuClick', item, undefined, event)
   }
 
   return { onRowClick, onHeaderContextMenu, onRowContextMenu }
