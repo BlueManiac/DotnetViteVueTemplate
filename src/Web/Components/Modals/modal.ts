@@ -10,7 +10,7 @@ export const modals = ref<VNode[]>([])
 
 export class ModalState<TResult = unknown> {
   visible = false
-  state: TResult
+  state: TResult | undefined
 
   show() {
     this.visible = true
@@ -31,7 +31,7 @@ export const useDialog = () => {
   return el
 }
 
-export const useModal = (component: Component = null, props = {}) => {
+export const useModal = (component: Component | null = null, props = {}) => {
   const state = reactive(new ModalState())
 
   if (component) {
@@ -47,7 +47,7 @@ export const useModal = (component: Component = null, props = {}) => {
   return state
 }
 
-export const showModal = async <TResult = undefined>(component: Component, props = {}, state: TResult | null = undefined): Promise<UnwrapRef<TResult>> => {
+export const showModal = async <TResult = undefined>(component: Component, props = {}, state: TResult | undefined = undefined): Promise<UnwrapRef<TResult> | undefined> => {
   const modalState = reactive(new ModalState<TResult>())
 
   if (state !== undefined) {

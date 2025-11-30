@@ -6,7 +6,7 @@ import 'bootstrap'
 import '../Util/Client/array'
 
 import { useTitle } from '@vueuse/core'
-import { setPreferredTheme } from '../Components/ColorThemes/color-themes'
+import { initializeTheme } from '../Components/ColorThemes/color-themes'
 import { NotificationService } from '../Components/Notifications/notifications'
 import { ApiService } from './ApiService'
 import { AppConfig } from './AppConfig'
@@ -14,7 +14,7 @@ import { AuthService } from './Auth/AuthService'
 import { Profile } from './Auth/Profile'
 import { HealthService } from './Health/HealthService'
 
-setPreferredTheme()
+initializeTheme()
 
 import { createApp } from 'vue'
 import App from './App.vue'

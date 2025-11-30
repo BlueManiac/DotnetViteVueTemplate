@@ -4,7 +4,7 @@
       <span v-if="!selectedOptions.length">{{ placeholder }}</span>
       <span v-else>
         <button type="button" class="badge text-bg-secondary border border-0 me-1" v-for="(value, index) in selectedOptions" :key="index" @click="selectedOptions.splice(index, 1)">
-          {{ options.find(x => x.value == value)?.label }}
+          {{options.find(x => x.value == value)?.label}}
         </button>
       </span>
       <div class="dropdown-toggle float-end"></div>
@@ -36,7 +36,7 @@ const { options } = defineProps<{
   options: Option[],
 }>()
 
-const selectedOptions = defineModel<any[]>()
+const selectedOptions = defineModel<unknown[]>({ default: () => [] })
 const isOpen = ref(false)
 
 watch(selectedOptions, () => {

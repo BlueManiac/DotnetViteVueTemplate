@@ -93,7 +93,7 @@ export const fetch = async (url: RequestInfo | URL, init: RequestInitExtended) =
     error.url = response.url
 
     // Attach problem details if present
-    const isProblem = contentType?.indexOf('application/problem+json') >= 0
+    const isProblem = !contentType || contentType.indexOf('application/problem+json') >= 0
     const problemDetails = (isProblem && await response.json()) as ProblemDetails
 
     if (problemDetails) {

@@ -35,7 +35,7 @@ const password = ref('')
 
 const validEmail = ref<boolean>(false)
 watch(email, () => {
-  validEmail.value = emailElement.value.validity.valid
+  validEmail.value = emailElement.value?.validity.valid ?? false
 })
 const valid = computed(() => {
   return validEmail.value && password.value

@@ -1,5 +1,5 @@
 <template>
-  <slot v-if="active?.id === id"></slot>
+  <slot v-if="tabProvider.active.value?.id === id"></slot>
 </template>
 
 <script setup lang="ts">
@@ -11,20 +11,22 @@ const { header, id = Math.random().toString(36).substring(2, 12) } = defineProps
   id?: string
 }>()
 
-const { active, add, remove, update } = inject<TabProvider>("TabProvider")
+const tabProvider = inject<TabProvider>("TabProvider")!
 
 watch(() => header, () => {
-  update(id, {
-    header: header
-  })
+  if (header !== undefined) {
+    tabProvider.update(id, { header })
+  }
 })
 
 onBeforeMount(() => {
-  add({ header, id })
+  if (header !== undefined) {
+    tabProvider.add({ header, id })
+  }
 })
 
 onBeforeUnmount(() => {
-  remove(id)
+  tabProvider.remove(id)
 })
 
 </script>

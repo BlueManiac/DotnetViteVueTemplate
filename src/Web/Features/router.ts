@@ -48,14 +48,18 @@ export const routePath = computed(() => {
 
   return Array.from(create(currentRoute))
 
-  function* create(route: RouteLocationNormalizedLoaded): Generator<RouteRecordRaw> {
-    if (route.meta.parentId) {
-      const parentRoute = routeMap[route.meta.parentId]
+  function* create(route: RouteLocationNormalizedLoaded | RouteRecordRaw | undefined): Generator<RouteRecordRaw> {
+    if (!route?.meta) {
+      return
+    }
+
+    if (route.meta?.parentId) {
+      const parentRoute = routeMap.get(route.meta.parentId)
 
       yield* create(parentRoute)
     }
 
-    yield routeMap[route.meta.id]
+    yield routeMap.get(route.meta!.id!)!
   }
 })
 
@@ -65,12 +69,12 @@ function addRouteMetadata(routes: RouteRecordRaw[], parentRoute?: RouteRecordRaw
 
     const id = route.meta.id = createUniqueId()
 
-    route.meta.parentId = parentRoute?.meta.id
+    route.meta.parentId = parentRoute?.meta?.id
     route.meta.fullPath = createFullPath(route, parentRoute)
 
     route.name ??= route.meta.fullPath
 
-    routeMap[id] = route
+    routeMap.set(id, route)
 
     if (route.children && route.children.length > 0) {
       addRouteMetadata(route.children, route)
@@ -83,15 +87,15 @@ function addRouteMetadata(routes: RouteRecordRaw[], parentRoute?: RouteRecordRaw
     return Math.random().toString(36).substring(2, 9)
   }
 
-  function createFullPath(route: RouteRecordRaw, parentRoute: RouteRecordRaw) {
+  function createFullPath(route: RouteRecordRaw, parentRoute: RouteRecordRaw | undefined) {
     if (!route.component)
-      return null
+      return undefined
 
     let path = route.path
 
     while (parentRoute) {
       path = parentRoute.path + '/' + path
-      parentRoute = routeMap[parentRoute.meta.parentId]
+      parentRoute = routeMap.get(parentRoute.meta?.parentId!)
     }
 
     return path
@@ -103,7 +107,7 @@ function* createNavigationRoutes(routes: readonly RouteRecordRaw[]) {
     if (route.meta?.title)
       yield route
 
-    if (!route.meta.fullPath && route.children) {
+    if (!route.meta?.fullPath && route.children) {
       for (let childRoute of route.children) {
         // Include root index pages
         if (childRoute.meta?.title && !childRoute.path)

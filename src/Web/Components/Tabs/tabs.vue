@@ -17,7 +17,7 @@ const tabs = defineModel<TabDataWithId[]>('tabs', {
 const active = defineModel<TabDataWithId>('active')
 
 const setActive = (id: string) => {
-  active.value = tabs.value.find(t => t.id === id)
+  active.value = tabs.value.find(t => t.id === id)!
 }
 const setDefaultTab = () => {
   if (!active.value && tabs.value.length > 0) {
@@ -40,6 +40,8 @@ const remove = (id: string) => {
 const update = async (id: string, props: Record<string, any>) => {
   const tab = tabs.value.find(t => t.id === id)
 
+  if (!tab) return
+
   Object.assign(tab, props)
 
   tabs.value = [...tabs.value]
@@ -60,6 +62,6 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   tabs.value = []
-  active.value = null
+  active.value = { header: '', id: '' }
 })
 </script>

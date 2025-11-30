@@ -9,16 +9,16 @@
 import { watch } from 'vue'
 
 const modelValue = defineModel<File>()
-const fileElement = ref<HTMLInputElement>(null)
+const fileElement = ref<HTMLInputElement>()
 
 watch(modelValue, () => {
   if (!modelValue.value) {
-    fileElement.value.value = null
+    fileElement.value!.value = ''
   }
 })
 
 const fileSelected = () => {
-  const file = fileElement.value.files?.[0]
+  const file = fileElement.value?.files?.[0]
   if (file) {
     modelValue.value = file
   }

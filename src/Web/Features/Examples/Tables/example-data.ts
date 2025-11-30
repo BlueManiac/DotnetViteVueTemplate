@@ -1,5 +1,7 @@
 ﻿import { faker } from '@faker-js/faker/locale/en'
 
+export type Person = ReturnType<typeof createPerson>
+
 export const createPerson = () => {
   return {
     id: faker.string.uuid(),

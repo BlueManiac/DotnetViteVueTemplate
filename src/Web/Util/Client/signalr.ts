@@ -2,7 +2,7 @@
 import { tryOnScopeDispose, useEventListener } from '@vueuse/core'
 import { Ref, onMounted, ref } from 'vue'
 
-export type SignalrSender = { [key: string]: (...rest: unknown[]) => Promise<void> }
+export type SignalrSender = { [key: string]: (...args: any[]) => Promise<void> }
 export type SignalrReciever = { [key: string]: Ref<unknown> }
 
 export function signalr<TSender extends SignalrSender = SignalrSender, TReciever extends SignalrReciever = SignalrReciever>(url: string, accessToken?: () => string | undefined) {
@@ -37,15 +37,15 @@ export function signalr<TSender extends SignalrSender = SignalrSender, TReciever
   }
 
   const sender = new Proxy({}, {
-    get(target, prop, receiver) {
+    get(_target, prop, _receiver) {
       return function (...args: any[]) {
-        return connection.send.apply(connection, [prop, ...args])
+        return connection.send.apply(connection, [prop as string, ...args])
       }
     },
   }) as TSender
 
   const receiver = new Proxy({}, {
-    get(target, prop: string, receiver) {
+    get(_target, prop: string, _receiver) {
       return data(prop)
     },
   }) as TReciever

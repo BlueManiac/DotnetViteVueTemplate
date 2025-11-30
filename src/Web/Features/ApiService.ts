@@ -19,7 +19,7 @@ export class ApiService {
       }
 
       const accessToken = this.profile?.accessToken
-      if (accessToken?.value && (!request.headers || !request.headers['Authorization'])) {
+      if (accessToken?.value && !request?.headers?.['Authorization']) {
         request.headers ??= {}
         request.headers['Authorization'] = `Bearer ${accessToken.value}`
       }

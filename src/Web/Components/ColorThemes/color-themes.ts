@@ -1,6 +1,7 @@
-﻿import { shallowRef } from 'vue'
+﻿import { useLocalStorage } from '@vueuse/core'
 
-type Theme = { id: string, name: string, icon: any }
+type ThemeId = 'light' | 'dark' | 'auto'
+type Theme = { id: ThemeId, name: string, icon: any }
 
 export const themes: Theme[] = [{
   id: 'light',
@@ -16,11 +17,19 @@ export const themes: Theme[] = [{
   icon: MdiCircleHalfFull
 }]
 
-export const currentTheme = shallowRef<Theme>(null)
+const getPreferredThemeId = () => {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches
+    ? 'dark'
+    : 'light'
+}
 
-export const setTheme = (theme: string) => {
-  currentTheme.value = themes.find(x => x.id == theme)
-  localStorage.setItem('theme', theme)
+export const currentThemeId = useLocalStorage<ThemeId>('theme', getPreferredThemeId())
+export const currentTheme = computed<Theme>(() => {
+  return themes.find(x => x.id == currentThemeId.value)!
+})
+
+export const setTheme = (theme: ThemeId) => {
+  currentThemeId.value = theme
 
   if (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
     theme = 'dark'
@@ -29,14 +38,6 @@ export const setTheme = (theme: string) => {
   document.documentElement.setAttribute('data-bs-theme', theme)
 }
 
-const getPreferredTheme = () => {
-  const storedTheme = localStorage.getItem('theme')
-
-  if (storedTheme) {
-    return storedTheme
-  }
-
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+export const initializeTheme = () => {
+  setTheme(currentThemeId.value)
 }
-
-export const setPreferredTheme = () => setTheme(getPreferredTheme())

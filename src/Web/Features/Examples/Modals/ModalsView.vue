@@ -1,6 +1,6 @@
 <template>
   <div class="col-lg-2 d-flex flex-column gap-1">
-    <btn @click="modalElement.show()">Modal using ref</btn>
+    <btn @click="modalElement!.show()">Modal using ref</btn>
     <modal ref="modalElement">
       <template #header>Header</template>
       <p>Dialog using ref</p>
@@ -18,7 +18,7 @@
       </template>
     </modal>
 
-    <btn @click="dialog.showModal()">Dialog using useDialog</btn>
+    <btn @click="dialog!.showModal()">Dialog using useDialog</btn>
     <dialog class="modal-dialog modal-sm" ref="dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -28,7 +28,7 @@
           <p>Custom dialog</p>
         </div>
         <div class="modal-footer">
-          <btn @click="dialog.close()">Close</btn>
+          <btn @click="dialog!.close()">Close</btn>
         </div>
       </div>
     </dialog>
@@ -63,7 +63,7 @@ const show = async () => {
   await showModal(CustomModal)
 }
 
-const confirmResult = ref<boolean | null>(null)
+const confirmResult = ref<boolean | undefined>(undefined)
 const confirm = async () => {
   confirmResult.value = await showModal<boolean>(ConfirmModal, { header: 'Confirm' })
 }

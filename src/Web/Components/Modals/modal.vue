@@ -30,16 +30,16 @@ const el = ref<HTMLDialogElement>()
 
 const show = () => {
   if (modal) {
-    el.value.showModal()
+    el.value!.showModal()
   }
   else {
-    el.value.show()
+    el.value!.show()
   }
   modelValue.value.visible = true
 }
 
 const close = () => {
-  el.value.close()
+  el.value!.close()
   modelValue.value.visible = false
 }
 

@@ -1,5 +1,5 @@
 <template>
-  <li :key="id" @click="setActiveTab(id)" class="nav-item">
+  <li :key="id" @click="tabProvider.setActive(id)" class="nav-item">
     <span class="nav-link" :class="{ 'active': isActive }">
       {{ header }}
     </span>
@@ -12,9 +12,9 @@ import { TabProvider } from './tabs'
 
 const { header, id } = defineProps<{ header: string; id: string }>()
 
-const { active: activeTab, setActive: setActiveTab } = inject<TabProvider>("TabProvider")
+const tabProvider = inject<TabProvider>("TabProvider")!
 
-const isActive = computed(() => activeTab.value?.id === id)
+const isActive = computed(() => tabProvider.active.value?.id === id)
 </script>
 
 <style scoped>
