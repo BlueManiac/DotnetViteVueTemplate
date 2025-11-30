@@ -52,9 +52,8 @@ export function createApp(...args: Parameters<typeof vueCreateApp>) {
     }
 
     // Handle instance only - infer constructor
-    const instance = arg1 as T
-    const ctor = instance.constructor as Ctor<T>
-    return originalProvide.call(this, keyFor(ctor), instance)
+    const instance = arg1 as T & { constructor: any }
+    return originalProvide.call(this, keyFor(instance.constructor), instance)
   }
 
   return app
@@ -65,7 +64,7 @@ export * from 'vue-original'
 export function inject<T>(
   keyOrCtor: InjectionKey<T> | string | Ctor<T>,
   defaultValue?: T
-): T | undefined {
+): T {
   if (typeof keyOrCtor === 'function') {
     const componentInstance = getCurrentInstance()
 
@@ -76,23 +75,34 @@ export function inject<T>(
     const key = keyFor(keyOrCtor)
     let instance = vueInject(key, defaultValue)
 
-    // If not found and we have a factory, create the instance lazily
-    if (instance === undefined && factories.has(key as symbol)) {
-      const factory = factories.get(key as symbol)
-      instance = factory()
-
-      // Provide it to the app so subsequent injects get the same instance
-      const app = componentInstance.appContext.app
-      app.provide(key, instance)
-
-      // Remove factory since we've instantiated it
-      factories.delete(key as symbol)
+    if (instance) {
+      return instance
     }
+
+    // If not found and we have a factory, create the instance lazily
+    const factory = factories.get(key as symbol)
+    instance = factory?.()
+
+    if (!instance) {
+      throw new Error(`Dependency not found: ${keyOrCtor.name}. Make sure it's provided via app.provide().`)
+    }
+
+    // Provide it to the app so subsequent injects get the same instance
+    const app = componentInstance.appContext.app
+    app.provide(key, instance)
+
+    // Remove factory since we've instantiated it
+    factories.delete(key as symbol)
 
     return instance
   }
 
-  return vueInject(keyOrCtor as any, defaultValue)
+  const instance = vueInject(keyOrCtor as any, defaultValue)
+  if (!instance) {
+    throw new Error(`Dependency not found for key: ${String(keyOrCtor)}. Make sure it's provided.`)
+  }
+
+  return instance
 }
 
 declare module 'vue' {
@@ -101,7 +111,8 @@ declare module 'vue' {
     provide<T>(ctor: Ctor<T>): this
     provide<T>(ctor: Ctor<T>, factory: () => T): this
     provide<T>(ctor: Ctor<T>, instance: T): this
+    provide<T>(key: InjectionKey<T> | string, value: T): this
   }
-  function inject<T>(ctor: Ctor<T>): T | undefined
+  function inject<T>(ctor: Ctor<T>): T
 }
 
