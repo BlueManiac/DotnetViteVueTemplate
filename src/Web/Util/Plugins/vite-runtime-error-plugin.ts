@@ -45,22 +45,21 @@ export function viteRuntimeErrorOverlayPlugin(options?: {
           return
         }
 
-        const { stack, loc } = rewriteStacktrace(cleanStack(error.stack), server.moduleGraph)
-        const source = loc?.file && readFileSync(loc.file, { encoding: 'utf8', flag: 'r' })
+        const { stack, loc, frame } = processErrorStack(error.stack, server.moduleGraph)
 
         const err: ErrorPayload['err'] = {
           name: error.name,
           message: error.message,
           stack,
           id: loc?.file,
-          frame: loc && generateCodeFrame(source, { line: loc.line, column: loc.column - 1 }),
+          frame,
           loc,
           plugin: packageName
         }
 
         const msg = buildErrorMessage(err, [
           `Client error: ${err.message}`,
-        ], options.includeServerStack)
+        ], options?.includeServerStack)
 
         server.config.logger.error(msg, {
           clear: true,
@@ -109,6 +108,27 @@ window.addEventListener("unhandledrejection", (evt) => {
 
 `
 
+function processErrorStack(stack: string | undefined, moduleGraph: ModuleGraph) {
+  if (!stack) {
+    return { stack: '', loc: undefined, frame: undefined }
+  }
+
+  const rawStack = cleanStack(stack)
+  const { stack: rewrittenStack, loc } = rewriteStacktrace(rawStack, moduleGraph)
+
+  let frame: string | undefined
+  if (loc?.file) {
+    try {
+      const source = readFileSync(loc.file, { encoding: 'utf8', flag: 'r' })
+      frame = generateCodeFrame(source, { line: loc.line, column: loc.column - 1 })
+    } catch (error) {
+      console.error(`Failed to read source file for error frame: ${loc.file}`, error)
+    }
+  }
+
+  return { stack: rewrittenStack, loc, frame }
+}
+
 function cleanStack(stack: string) {
   return stack
     .split(/\n/g)
@@ -117,7 +137,7 @@ function cleanStack(stack: string) {
 }
 
 function rewriteStacktrace(stack: string, moduleGraph: ModuleGraph) {
-  let loc: { line: number, column: number, file: string }
+  let loc: { line: number, column: number, file: string } | undefined
 
   const rewrittenStack = stack
     .split('\n')
@@ -130,7 +150,7 @@ function rewriteStacktrace(stack: string, moduleGraph: ModuleGraph) {
 
           const module = moduleGraph.urlToModuleMap.get(url)
 
-          if (!module) {
+          if (!module || !module.file) {
             return input
           }
 
