@@ -1,10 +1,10 @@
 ﻿import { MaybeRefOrGetter, Ref, onBeforeUnmount, shallowRef, watch, watchEffect } from 'vue'
 
-export type TableColumn = Record<string, unknown> & { field: string, header?: MaybeRefOrGetter<string> }
+export type TableColumn = Record<string, unknown> & { field: string, header?: MaybeRefOrGetter<string>, filterable?: boolean }
 
 export type TableFilter = { global?: string, column?: TableColumn, value?: string } | undefined
 
-export const useFiltering = <T extends Record<string, any>>(items: Ref<T[]>, filter: Ref<TableFilter>) => {
+export const useFiltering = <T extends Record<string, any>>(items: Ref<T[]>, filter: Ref<TableFilter>, columns: Ref<TableColumn[]>) => {
   const filteredItems = shallowRef<T[]>([])
 
   watchEffect(() => {
@@ -14,7 +14,13 @@ export const useFiltering = <T extends Record<string, any>>(items: Ref<T[]>, fil
     const searchTerm = filter.value?.global?.toLowerCase()
     if (searchTerm) {
       result = result.filter(item => {
-        return Object.values(item).some(value => {
+        // Get filterable columns (default to true if not specified)
+        const filterableFields = columns.value
+          .filter(col => col.filterable !== false)
+          .map(col => col.field)
+
+        return filterableFields.some(field => {
+          const value = item[field]
           if (value == null) return false
           return String(value).toLowerCase().includes(searchTerm)
         })

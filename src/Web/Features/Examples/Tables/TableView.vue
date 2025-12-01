@@ -31,11 +31,11 @@ import { createPerson, invertColor, Person } from './example-data'
 import { TableColumn, TableFilter } from '/Components/Tables/data-table'
 import '/Components/Tables/data-table.vue'
 
-const columns = ref([
+const columns = ref<TableColumn[]>([
   { field: 'name', hidden: false },
   { field: 'age' },
   { field: 'sex' },
-  { field: 'color' },
+  { field: 'color', filterable: false },
   { field: 'date' }
 ])
 

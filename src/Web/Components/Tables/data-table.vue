@@ -18,7 +18,7 @@
               <template v-else>
                 {{ toValue(col.header) ?? col.field }}
               </template>
-              <div v-if="filterable" class="ms-auto" @click.stop="onFilterClick(col, $event, ($event.target as HTMLElement).closest('th')!)">
+              <div v-if="filterable && col.filterable !== false" class="ms-auto" @click.stop="onFilterClick(col, $event, ($event.target as HTMLElement).closest('th')!)">
                 <MdiFilter v-if="activeFilterColumn?.field === col.field" class="text-primary" />
                 <MdiFilterOutline v-else />
               </div>
@@ -86,7 +86,7 @@ watch(() => [items.value?.length, columns.value], () => {
 }, { immediate: true })
 
 const { observeElement, visibleIndexSet, isLoaded } = useVirtualization()
-const filteredItems = useFiltering(items, filter)
+const filteredItems = useFiltering(items, filter, columns)
 const { selectedSet, toggleSelected, selectAll, checkbox } = useSelection(filteredItems, selected)
 const { sort } = useSorting(sortField, sortOrder, columns, filteredItems)
 const { onRowClick, onHeaderContextMenu, onRowContextMenu } = useClick(selectedSet, emit)
