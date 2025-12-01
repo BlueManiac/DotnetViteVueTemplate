@@ -209,7 +209,7 @@ export const useSorting = <T extends Record<string, any>>(sortField: Ref<string>
   return { sort }
 }
 
-export const useClick = <T>(selectedSet: Ref<Set<T>>, emit: any) => {
+export const useClick = <T>(selectedSet: ShallowRef<Set<T>>, emit: any) => {
   const onRowClick = (item: T, column: TableColumn | undefined, event: MouseEvent) => {
     // if the click was on the selection column, do nothing
     if (hasParentClass(event.target as HTMLElement, 'selection-column')) {
@@ -223,11 +223,14 @@ export const useClick = <T>(selectedSet: Ref<Set<T>>, emit: any) => {
 
     // Support ctrl+click to select multiple rows
     if (event.ctrlKey) {
-      if (selectedSet.value.has(item))
+      if (selectedSet.value.has(item)) {
         selectedSet.value.delete(item)
-      else
+      }
+      else {
         selectedSet.value.add(item)
+      }
 
+      triggerRef(selectedSet)
       return
     }
 
