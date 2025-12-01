@@ -7,19 +7,22 @@ export type TableFilter = { global?: string, column?: TableColumn, value?: strin
 export const useFiltering = <T extends Record<string, any>>(items: Ref<T[]>, filter: Ref<TableFilter>, columns: Ref<TableColumn[]>) => {
   const filteredItems = shallowRef<T[]>([])
 
+  // Cache filterable fields to avoid recalculating on every filter
+  const filterableFields = computed(() =>
+    columns.value
+      .filter(col => col.filterable !== false)
+      .map(col => col.field)
+  )
+
   watchEffect(() => {
     let result = items.value
 
     // Apply global search filter
     const searchTerm = filter.value?.global?.toLowerCase()
     if (searchTerm) {
+      const fields = filterableFields.value
       result = result.filter(item => {
-        // Get filterable columns (default to true if not specified)
-        const filterableFields = columns.value
-          .filter(col => col.filterable !== false)
-          .map(col => col.field)
-
-        return filterableFields.some(field => {
+        return fields.some(field => {
           const value = item[field]
           if (value == null) return false
           return String(value).toLowerCase().includes(searchTerm)
