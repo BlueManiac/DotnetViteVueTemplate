@@ -1,5 +1,5 @@
 ﻿<template>
-  <table class="table table-striped table-sticky table-hover">
+  <table v-bind="$attrs" class="table table-striped table-sticky table-hover">
     <thead>
       <tr v-show="isLoaded">
         <th class="fs-4 lh-1">
@@ -51,6 +51,10 @@
 import { toValue, watch } from 'vue'
 import { NamedTableColumn, TableColumn, TableFilter as TableFilterType, useClick, useFiltering, useSelection, useSorting, useVirtualization } from './data-table'
 import TableFilter from './table-filter.vue'
+
+defineOptions({
+  inheritAttrs: false
+})
 
 const { rowHeight = '33px', filterable = true } = defineProps<{
   rowHeight?: string,
