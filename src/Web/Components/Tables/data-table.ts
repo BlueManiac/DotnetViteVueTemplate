@@ -2,7 +2,42 @@
 
 export type TableColumn = Record<string, unknown> & { field: string, header?: MaybeRefOrGetter<string> }
 
-export type TableFilter = { column: TableColumn, value: string } | undefined
+export type TableFilter = { global?: string, column?: TableColumn, value?: string } | undefined
+
+export const useFiltering = <T extends Record<string, any>>(items: Ref<T[]>, filter: Ref<TableFilter>) => {
+  const filteredItems = shallowRef<T[]>([])
+
+  watchEffect(() => {
+    let result = items.value
+
+    // Apply global search filter
+    const searchTerm = filter.value?.global?.toLowerCase()
+    if (searchTerm) {
+      result = result.filter(item => {
+        return Object.values(item).some(value => {
+          if (value == null) return false
+          return String(value).toLowerCase().includes(searchTerm)
+        })
+      })
+    }
+
+    // Apply column-specific filter
+    const colFilter = filter.value
+    if (colFilter?.column && colFilter?.value) {
+      const field = colFilter.column.field
+      const filterValue = colFilter.value.toLowerCase()
+      result = result.filter(item => {
+        const value = item[field]
+        if (value == null) return false
+        return String(value).toLowerCase().includes(filterValue)
+      })
+    }
+
+    filteredItems.value = result
+  })
+
+  return filteredItems
+}
 
 export const useVirtualization = () => {
   const visibleIndexSet = ref(new Set<number>())

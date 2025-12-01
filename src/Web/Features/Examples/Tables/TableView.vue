@@ -6,12 +6,12 @@
       <label>Quantity:</label>
       <input-number v-model="changeQuantity"></input-number>
       <input-text v-model="filterDebounced" placeholder="Filter" class="ms-auto" />
-      <btn @click="filterString = ''">Clear</btn>
+      <btn @click="filter = {}">Clear</btn>
     </div>
     <range v-model.number="changeQuantity" min="1" max="10000" class="mt-3" />
     Quantity: {{ items.length }}, Selected: {{ selected.length }} {{ selected[0] }}, Filtered: {{ filteredItems.length }}
     <context-menu ref="contextMenuElement" />
-    <data-table class="table-sm" v-model="filteredItems" :columns="visibleColumns" v-model:selected="selected" v-model:sortField="sortField" v-model:sortOrder="sortOrder" v-model:filter="filter" @headerContextMenuClick="onHeaderContextMenu" @rowContextMenuClick="onRowContextMenu">
+    <data-table class="table-sm" v-model="items" v-model:filteredItems="filteredItems" :columns="visibleColumns" v-model:selected="selected" v-model:sortField="sortField" v-model:sortOrder="sortOrder" v-model:filter="filter" @headerContextMenuClick="onHeaderContextMenu" @rowContextMenuClick="onRowContextMenu">
       <template #id="{ item, col }">
         {{ item[col.field] }}
       </template>
@@ -27,7 +27,6 @@
 
 <script setup lang="ts">
 import { useDebounceFn, useLocalStorage } from '@vueuse/core'
-import { watchEffect } from 'vue'
 import { createPerson, invertColor, Person } from './example-data'
 import { TableColumn, TableFilter } from '/Components/Tables/data-table'
 import '/Components/Tables/data-table.vue'
@@ -40,50 +39,19 @@ const columns = ref([
   { field: 'date' }
 ])
 
-const visibleColumns = ref<TableColumn[]>([])
-watchEffect(() => {
-  visibleColumns.value = columns.value.filter(x => !x.hidden)
-})
+const visibleColumns = computed(() => columns.value.filter(x => !x.hidden))
 
 const items = ref<Person[]>([])
-
-const filter = ref<TableFilter>()
 const filteredItems = ref<Person[]>([])
-const filterString = ref('')
+
+const filter = ref<TableFilter>({})
 
 const filterDebounced = computed({
-  get: () => filterString.value,
-  set: useDebounceFn(value => filterString.value = value, 200)
-})
-
-watchEffect(() => {
-  let result = items.value
-
-  // Apply global search filter
-  const searchTerm = filterString.value.toLowerCase()
-  if (searchTerm) {
-    result = result.filter(item => {
-      return Object.values(item).some(value => {
-        if (value == null) return false
-        return String(value).toLowerCase().includes(searchTerm)
-      })
-    })
-  }
-
-
-  // Apply column-specific filter
-  const colFilter = filter.value
-  if (colFilter?.value) {
-    const field = colFilter.column.field
-    const filterValue = colFilter.value.toLowerCase()
-    result = result.filter(item => {
-      const value = item[field]
-      if (value == null) return false
-      return String(value).toLowerCase().includes(filterValue)
-    })
-  }
-
-  filteredItems.value = result
+  get: () => filter.value?.global || '',
+  set: useDebounceFn(value => {
+    if (!filter.value) filter.value = {}
+    filter.value.global = value
+  }, 200)
 })
 
 const sortField = useLocalStorage('sortField', 'name')

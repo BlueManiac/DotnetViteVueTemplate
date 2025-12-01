@@ -28,7 +28,7 @@
       </tr>
     </thead>
     <tbody>
-      <template v-for="(item, index) of items" :key="index" v-memo="memo(item, index)">
+      <template v-for="(item, index) of filteredItems" :key="index" v-memo="memo(item, index)">
         <tr :ref="el => observeElement(el as HTMLTableRowElement)" @contextmenu="onRowContextMenu($event, item, index)" :class="{ 'table-active': selectedSet.has(item) }">
           <template v-if="visibleIndexSet.has(index)">
             <td class="fs-4 lh-1 selection-column" @click="onRowClick(item, undefined, $event)">
@@ -49,7 +49,7 @@
 
 <script setup lang="ts" generic="T extends Record<string, any>">
 import { toValue, watch } from 'vue'
-import { TableColumn, TableFilter as TableFilterType, useClick, useSelection, useSorting, useVirtualization } from './data-table'
+import { TableColumn, TableFilter as TableFilterType, useClick, useFiltering, useSelection, useSorting, useVirtualization } from './data-table'
 import TableFilter from './table-filter.vue'
 
 const { rowHeight = '33px', filterable = true } = defineProps<{
@@ -67,6 +67,7 @@ const sortField = defineModel<string>("sortField", { default: '' })
 const sortOrder = defineModel<number>("sortOrder", { default: 1 })
 const selected = defineModel<T[]>("selected", { default: () => [] })
 const filter = defineModel<TableFilterType>("filter")
+const filteredItemsModel = defineModel<T[]>("filteredItems")
 
 const emit = defineEmits<{
   rowClick: [item: T, column: TableColumn, event: MouseEvent],
@@ -85,17 +86,23 @@ watch(() => [items.value?.length, columns.value], () => {
 }, { immediate: true })
 
 const { observeElement, visibleIndexSet, isLoaded } = useVirtualization()
-const { selectedSet, toggleSelected, selectAll, checkbox } = useSelection(items, selected)
-const { sort } = useSorting(sortField, sortOrder, columns, items)
+const filteredItems = useFiltering(items, filter)
+const { selectedSet, toggleSelected, selectAll, checkbox } = useSelection(filteredItems, selected)
+const { sort } = useSorting(sortField, sortOrder, columns, filteredItems)
 const { onRowClick, onHeaderContextMenu, onRowContextMenu } = useClick(selectedSet, emit)
+
+// Sync filtered items to model
+watch(filteredItems, (value) => {
+  filteredItemsModel.value = value
+}, { immediate: true })
 
 // Filter functionality
 const filterParent = ref<HTMLElement>()
 const activeFilterColumn = computed(() => filter.value?.value ? filter.value.column : null)
 
 const onFilterClick = (col: TableColumn, event: MouseEvent, headerElement: HTMLElement) => {
-  if (!filter.value || filter.value.column.field !== col.field) {
-    filter.value = { column: col, value: filter.value?.value || '' }
+  if (!filter.value?.column || filter.value.column.field !== col.field) {
+    filter.value = { ...filter.value, column: col, value: filter.value?.value || '' }
   }
   filterParent.value = headerElement
 }
