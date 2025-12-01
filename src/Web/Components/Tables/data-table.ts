@@ -1,5 +1,5 @@
 ﻿import { useRafFn } from '@vueuse/core'
-import { MaybeRefOrGetter, Ref, ShallowRef, onBeforeUnmount, shallowRef, triggerRef, watch, watchEffect } from 'vue'
+import { MaybeRefOrGetter, Ref, ShallowRef, nextTick, onBeforeUnmount, shallowRef, triggerRef, watch, watchEffect } from 'vue'
 
 export type TableColumn = Record<string, unknown> & { field: string, header?: MaybeRefOrGetter<string>, filterable?: boolean }
 export type NamedTableColumn<TField> = Record<string, unknown> & { field: TField, header?: MaybeRefOrGetter<string>, filterable?: boolean }
@@ -17,6 +17,7 @@ export const useFiltering = <T extends Record<string, any>>(items: Ref<T[]>, fil
   )
 
   watchEffect(() => {
+    console.log('Filtering items...')
     let result = items.value
 
     // Apply global search filter
@@ -50,7 +51,7 @@ export const useFiltering = <T extends Record<string, any>>(items: Ref<T[]>, fil
   return filteredItems
 }
 
-export const useVirtualization = () => {
+export const useVirtualization = (tableRef: Ref<HTMLTableElement | undefined>, itemsCount: Ref<number>) => {
   const visibleIndexSet = shallowRef(new Set<number>())
   const isLoaded = ref(false)
 
@@ -86,26 +87,23 @@ export const useVirtualization = () => {
     resume()
   }, { rootMargin: "500px 0px 500px 0px" })
 
-  const observedElements = new WeakSet<HTMLTableRowElement>()
+  // Watch for table ref and items count changes to observe rows
+  watch([tableRef, itemsCount], async () => {
+    if (!tableRef.value) return
 
-  const observeElement = (element: HTMLTableRowElement) => {
-    if (!element) {
-      return
+    await nextTick()
+
+    const rows = tableRef.value.querySelectorAll('tbody tr')
+    for (const row of rows) {
+      observer.observe(row)
     }
-
-    if (observedElements.has(element)) {
-      return
-    }
-
-    observedElements.add(element)
-    observer.observe(element)
-  }
+  })
 
   onBeforeUnmount(() => {
     observer.disconnect()
   })
 
-  return { observeElement, visibleIndexSet, isLoaded }
+  return { visibleIndexSet, isLoaded }
 }
 
 export const useSelection = <T>(items: Ref<T[]>) => {
@@ -137,6 +135,8 @@ export const useSelection = <T>(items: Ref<T[]>) => {
   const checkbox = ref<HTMLInputElement>()
 
   watch(() => [items.value?.length, items], () => {
+    console.log('Updating selected items...')
+
     let changed = false
     for (let item of selectedSet.value) {
       if (!items.value.includes(item)) {
@@ -202,6 +202,7 @@ export const useSorting = <T extends Record<string, any>>(sortField: Ref<string>
   }
 
   watchEffect(() => {
+    console.log('Sorting items...')
     items.value?.sort(compareFunction(sortField.value, sortOrder.value))
     triggerRef(items)
   })

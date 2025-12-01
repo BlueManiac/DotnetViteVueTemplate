@@ -1,5 +1,5 @@
 ﻿<template>
-  <table v-bind="$attrs" class="table table-striped table-sticky table-hover">
+  <table ref="tableRef" v-bind="$attrs" class="table table-striped table-sticky table-hover">
     <thead>
       <tr v-show="isLoaded">
         <th class="fs-4 lh-1">
@@ -29,7 +29,7 @@
     </thead>
     <tbody>
       <template v-for="(item, index) of filteredItems" :key="index" v-memo="memo(item, index)">
-        <tr :ref="el => observeElement(el as HTMLTableRowElement)" @contextmenu="onRowContextMenu($event, item, index)" :class="{ 'table-active': selectedSet.has(item) }">
+        <tr @contextmenu="onRowContextMenu($event, item, index)" :class="{ 'table-active': selectedSet.has(item), 'invisible': !isLoaded && !visibleIndexSet.has(index) }">
           <template v-if="visibleIndexSet.has(index)">
             <td class="fs-4 lh-1 selection-column" @click="onRowClick(item, undefined, $event)">
               <input class="form-check-input mt-0" type="checkbox" :checked="selectedSet.has(item)" @input="toggleSelected(item, ($event.target as HTMLInputElement).checked)">
@@ -89,8 +89,11 @@ watch(() => [items.value?.length, columns.value], () => {
     : []
 }, { immediate: true })
 
-const { observeElement, visibleIndexSet, isLoaded } = useVirtualization()
+const tableRef = ref<HTMLTableElement>()
 const filteredItems = useFiltering(items, filter, columns)
+const itemsCount = computed(() => filteredItems.value.length)
+
+const { visibleIndexSet, isLoaded } = useVirtualization(tableRef, itemsCount)
 const { selectedSet, toggleSelected, selectAll, checkbox } = useSelection(filteredItems)
 const { sort } = useSorting(sortField, sortOrder, columns, filteredItems)
 const { onRowClick, onHeaderContextMenu, onRowContextMenu } = useClick(selectedSet, emit)
