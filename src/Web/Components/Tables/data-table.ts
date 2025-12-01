@@ -1,4 +1,4 @@
-﻿import { MaybeRefOrGetter, Ref, onBeforeUnmount, shallowRef, watch, watchEffect } from 'vue'
+﻿import { MaybeRefOrGetter, Ref, onBeforeUnmount, shallowRef, triggerRef, watch, watchEffect } from 'vue'
 
 export type TableColumn = Record<string, unknown> & { field: string, header?: MaybeRefOrGetter<string>, filterable?: boolean }
 
@@ -90,7 +90,7 @@ export const useVirtualization = () => {
   return { observeElement, visibleIndexSet, isLoaded }
 }
 
-export const useSelection = <T>(items: Ref<T[]>, selected: Ref<T[]>) => {
+export const useSelection = <T>(items: Ref<T[]>) => {
   const selectedSet = shallowRef(new Set<T>())
 
   const toggleSelected = (item: T, checked: boolean) => {
@@ -99,8 +99,8 @@ export const useSelection = <T>(items: Ref<T[]>, selected: Ref<T[]>) => {
     } else {
       selectedSet.value.delete(item)
     }
-    // Trigger reactivity for shallowRef
-    selectedSet.value = new Set(selectedSet.value)
+
+    triggerRef(selectedSet)
   }
 
   const selectAll = (checked: boolean) => {
@@ -112,17 +112,22 @@ export const useSelection = <T>(items: Ref<T[]>, selected: Ref<T[]>) => {
     else {
       selectedSet.value.clear()
     }
-    // Trigger reactivity for shallowRef
-    selectedSet.value = new Set(selectedSet.value)
+
+    triggerRef(selectedSet)
   }
 
   const checkbox = ref<HTMLInputElement>()
 
   watch(() => [items.value?.length, items], () => {
+    let changed = false
     for (let item of selectedSet.value) {
       if (!items.value.includes(item)) {
         selectedSet.value.delete(item)
+        changed = true
       }
+    }
+    if (changed) {
+      triggerRef(selectedSet)
     }
   })
 
@@ -134,11 +139,12 @@ export const useSelection = <T>(items: Ref<T[]>, selected: Ref<T[]>) => {
     checkbox.value.indeterminate = selectedSet.value.size > 0 && selectedSet.value.size != items.value.length
   })
 
-  watch(() => selectedSet.value.size, () => {
-    selected.value = [...selectedSet.value]
-  })
-
-  return { selectedSet, toggleSelected, selectAll, checkbox }
+  return {
+    selectedSet,
+    toggleSelected,
+    selectAll,
+    checkbox
+  }
 }
 
 export const useSorting = <T extends Record<string, any>>(sortField: Ref<string>, sortOrder: Ref<number>, columns: Ref<TableColumn[]>, items: Ref<T[]>) => {

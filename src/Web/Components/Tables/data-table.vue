@@ -65,7 +65,7 @@ const columns = defineModel<TableColumn[]>("columns", { default: () => [] })
 const items = defineModel<T[]>("modelValue", { default: () => [] })
 const sortField = defineModel<string>("sortField", { default: '' })
 const sortOrder = defineModel<number>("sortOrder", { default: 1 })
-const selected = defineModel<T[]>("selected", { default: () => [] })
+const selectedModel = defineModel<T[]>("selected", { default: () => [] })
 const filter = defineModel<TableFilterType>("filter")
 const filteredItemsModel = defineModel<T[]>("filteredItems")
 
@@ -87,9 +87,14 @@ watch(() => [items.value?.length, columns.value], () => {
 
 const { observeElement, visibleIndexSet, isLoaded } = useVirtualization()
 const filteredItems = useFiltering(items, filter, columns)
-const { selectedSet, toggleSelected, selectAll, checkbox } = useSelection(filteredItems, selected)
+const { selectedSet, toggleSelected, selectAll, checkbox } = useSelection(filteredItems)
 const { sort } = useSorting(sortField, sortOrder, columns, filteredItems)
 const { onRowClick, onHeaderContextMenu, onRowContextMenu } = useClick(selectedSet, emit)
+
+// Sync selectedSet to model (observing the Set directly)
+watch(selectedSet, () => {
+  selectedModel.value = [...selectedSet.value]
+}, { immediate: true })
 
 // Sync filtered items to model
 watch(filteredItems, (value) => {
