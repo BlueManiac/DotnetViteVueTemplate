@@ -18,7 +18,7 @@
               <template v-else>
                 {{ toValue(col.header) ?? col.field }}
               </template>
-              <div v-if="onFilterClick" class="ms-auto" @click.stop="emit('filterClick', col, $event, ($event.target as HTMLElement).closest('th')!)">
+              <div v-if="filterable" class="ms-auto" @click.stop="onFilterClick(col, $event, ($event.target as HTMLElement).closest('th')!)">
                 <MdiFilter v-if="activeFilterColumn?.field === col.field" class="text-primary" />
                 <MdiFilterOutline v-else />
               </div>
@@ -44,16 +44,17 @@
       </template>
     </tbody>
   </table>
+  <TableFilter v-if="filterable" v-model:parent="filterParent" v-model:filter="filter" />
 </template>
 
 <script setup lang="ts" generic="T extends Record<string, any>">
 import { toValue, watch } from 'vue'
-import { TableColumn, useClick, useSelection, useSorting, useVirtualization } from './data-table'
+import { TableColumn, TableFilter as TableFilterType, useClick, useSelection, useSorting, useVirtualization } from './data-table'
+import TableFilter from './table-filter.vue'
 
-const { rowHeight = '33px', onFilterClick, activeFilterColumn } = defineProps<{
+const { rowHeight = '33px', filterable = true } = defineProps<{
   rowHeight?: string,
-  onFilterClick?: Function,
-  activeFilterColumn?: TableColumn | null
+  filterable?: boolean
 }>()
 
 defineSlots<{
@@ -65,12 +66,12 @@ const items = defineModel<T[]>("modelValue", { default: () => [] })
 const sortField = defineModel<string>("sortField", { default: '' })
 const sortOrder = defineModel<number>("sortOrder", { default: 1 })
 const selected = defineModel<T[]>("selected", { default: () => [] })
+const filter = defineModel<TableFilterType>("filter")
 
 const emit = defineEmits<{
   rowClick: [item: T, column: TableColumn, event: MouseEvent],
   headerContextMenuClick: [column: TableColumn, event: MouseEvent],
-  rowContextMenuClick: [item: T, column: TableColumn, event: MouseEvent],
-  filterClick: [column: TableColumn, event: MouseEvent, headerElement: HTMLElement]
+  rowContextMenuClick: [item: T, column: TableColumn, event: MouseEvent]
 }>()
 
 // Retrive columns from items if not set
@@ -87,6 +88,17 @@ const { observeElement, visibleIndexSet, isLoaded } = useVirtualization()
 const { selectedSet, toggleSelected, selectAll, checkbox } = useSelection(items, selected)
 const { sort } = useSorting(sortField, sortOrder, columns, items)
 const { onRowClick, onHeaderContextMenu, onRowContextMenu } = useClick(selectedSet, emit)
+
+// Filter functionality
+const filterParent = ref<HTMLElement>()
+const activeFilterColumn = computed(() => filter.value?.value ? filter.value.column : null)
+
+const onFilterClick = (col: TableColumn, event: MouseEvent, headerElement: HTMLElement) => {
+  if (!filter.value || filter.value.column.field !== col.field) {
+    filter.value = { column: col, value: filter.value?.value || '' }
+  }
+  filterParent.value = headerElement
+}
 
 // Detect HMR changes for memoization
 let hmrChange = 0

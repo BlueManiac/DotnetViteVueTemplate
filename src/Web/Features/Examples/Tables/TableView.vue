@@ -6,13 +6,12 @@
       <label>Quantity:</label>
       <input-number v-model="changeQuantity"></input-number>
       <input-text v-model="filterDebounced" placeholder="Filter" class="ms-auto" />
-      <btn @click="filter = ''">Clear</btn>
+      <btn @click="filterString = ''">Clear</btn>
     </div>
     <range v-model.number="changeQuantity" min="1" max="10000" class="mt-3" />
     Quantity: {{ items.length }}, Selected: {{ selected.length }} {{ selected[0] }}, Filtered: {{ filteredItems.length }}
     <context-menu ref="contextMenuElement" />
-    <TableFilter v-model:parent="filterParent" v-model:column="filterColumn" v-model:filterValue="columnFilterValue" />
-    <data-table class="table-sm" v-model="filteredItems" :columns="visibleColumns" v-model:selected="selected" v-model:sortField="sortField" v-model:sortOrder="sortOrder" :activeFilterColumn="activeFilterColumn" @headerContextMenuClick="onHeaderContextMenu" @rowContextMenuClick="onRowContextMenu" @filterClick="onFilterClick">
+    <data-table class="table-sm" v-model="filteredItems" :columns="visibleColumns" v-model:selected="selected" v-model:sortField="sortField" v-model:sortOrder="sortOrder" v-model:filter="filter" @headerContextMenuClick="onHeaderContextMenu" @rowContextMenuClick="onRowContextMenu">
       <template #id="{ item, col }">
         {{ item[col.field] }}
       </template>
@@ -28,17 +27,10 @@
 
 <script setup lang="ts">
 import { useDebounceFn, useLocalStorage } from '@vueuse/core'
-import { watch, watchEffect } from 'vue'
-import TableFilter from './TableFilter.vue'
+import { watchEffect } from 'vue'
 import { createPerson, invertColor, Person } from './example-data'
-import { TableColumn } from '/Components/Tables/data-table'
+import { TableColumn, TableFilter } from '/Components/Tables/data-table'
 import '/Components/Tables/data-table.vue'
-
-const filter = ref('')
-const filterDebounced = computed({
-  get: () => filter.value,
-  set: useDebounceFn(value => filter.value = value, 200)
-})
 
 const columns = ref([
   { field: 'name', hidden: false },
@@ -55,31 +47,20 @@ watchEffect(() => {
 
 const items = ref<Person[]>([])
 
-// Column filter state
-const filterParent = ref<HTMLElement>()
-const filterColumn = ref<TableColumn>()
-const columnFilterValue = ref<string>("")
-
-// Only show active filter icon when there's actually a filter value
-const activeFilterColumn = computed(() => {
-  return columnFilterValue.value ? filterColumn.value : null
-})
-
-// Clear filterColumn when filter value is cleared
-watch(columnFilterValue, (newValue) => {
-  if (!newValue) {
-    filterColumn.value = undefined
-  }
-})
-
+const filter = ref<TableFilter>()
 const filteredItems = ref<Person[]>([])
-watchEffect(() => {
-  const searchTerm = filter.value.toLowerCase()
-  const columnFilter = columnFilterValue.value?.toLowerCase()
+const filterString = ref('')
 
+const filterDebounced = computed({
+  get: () => filterString.value,
+  set: useDebounceFn(value => filterString.value = value, 200)
+})
+
+watchEffect(() => {
   let result = items.value
 
   // Apply global search filter
+  const searchTerm = filterString.value.toLowerCase()
   if (searchTerm) {
     result = result.filter(item => {
       return Object.values(item).some(value => {
@@ -89,13 +70,16 @@ watchEffect(() => {
     })
   }
 
+
   // Apply column-specific filter
-  if (columnFilter && filterColumn.value) {
-    const field = filterColumn.value.field
+  const colFilter = filter.value
+  if (colFilter?.value) {
+    const field = colFilter.column.field
+    const filterValue = colFilter.value.toLowerCase()
     result = result.filter(item => {
       const value = item[field]
       if (value == null) return false
-      return String(value).toLowerCase().includes(columnFilter)
+      return String(value).toLowerCase().includes(filterValue)
     })
   }
 
@@ -158,10 +142,5 @@ const onRowContextMenu = (item: Person, column: TableColumn, event: MouseEvent) 
       }
     }
   ])
-}
-
-const onFilterClick = (col: TableColumn, event: MouseEvent, columnElement: HTMLElement) => {
-  filterParent.value = columnElement
-  filterColumn.value = col
 }
 </script>

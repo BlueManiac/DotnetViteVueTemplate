@@ -2,6 +2,8 @@
 
 export type TableColumn = Record<string, unknown> & { field: string, header?: MaybeRefOrGetter<string> }
 
+export type TableFilter = { column: TableColumn, value: string } | undefined
+
 export const useVirtualization = () => {
   const visibleIndexSet = ref(new Set<number>())
   const isLoaded = ref(false)
