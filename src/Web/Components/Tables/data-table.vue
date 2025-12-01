@@ -49,7 +49,7 @@
 
 <script setup lang="ts" generic="T extends Record<string, any>">
 import { toValue, watch } from 'vue'
-import { TableColumn, TableFilter as TableFilterType, useClick, useFiltering, useSelection, useSorting, useVirtualization } from './data-table'
+import { NamedTableColumn, TableColumn, TableFilter as TableFilterType, useClick, useFiltering, useSelection, useSorting, useVirtualization } from './data-table'
 import TableFilter from './table-filter.vue'
 
 const { rowHeight = '33px', filterable = true } = defineProps<{
@@ -58,7 +58,7 @@ const { rowHeight = '33px', filterable = true } = defineProps<{
 }>()
 
 defineSlots<{
-  [K in keyof T]?: (props: { item: T, col: TableColumn }) => any
+  [K in keyof T]?: (props: { item: T, col: NamedTableColumn<K> }) => any
 }>()
 
 const columns = defineModel<TableColumn[]>("columns", { default: () => [] })

@@ -2,6 +2,7 @@
 import { MaybeRefOrGetter, Ref, onBeforeUnmount, shallowRef, triggerRef, watch, watchEffect } from 'vue'
 
 export type TableColumn = Record<string, unknown> & { field: string, header?: MaybeRefOrGetter<string>, filterable?: boolean }
+export type NamedTableColumn<TField> = Record<string, unknown> & { field: TField, header?: MaybeRefOrGetter<string>, filterable?: boolean }
 
 export type TableFilter = { global?: string, column?: TableColumn, value?: string } | undefined
 
