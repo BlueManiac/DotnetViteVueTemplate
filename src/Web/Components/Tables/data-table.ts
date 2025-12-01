@@ -49,13 +49,12 @@ export const useFiltering = <T extends Record<string, any>>(items: Ref<T[]>, fil
 }
 
 export const useVirtualization = () => {
-  const visibleIndexSet = ref(new Set<number>())
+  const visibleIndexSet = shallowRef(new Set<number>())
   const isLoaded = ref(false)
 
   const observer = new IntersectionObserver((entries) => {
     for (const entry of entries) {
       const elem = entry.target as HTMLTableRowElement
-
       const index = elem.rowIndex - 1
 
       if (entry.isIntersecting) {
@@ -64,6 +63,10 @@ export const useVirtualization = () => {
       else {
         visibleIndexSet.value.delete(index)
       }
+    }
+
+    if (entries.length > 0) {
+      triggerRef(visibleIndexSet)
     }
 
     isLoaded.value = true
@@ -80,6 +83,7 @@ export const useVirtualization = () => {
       return
     }
 
+    observedElements.add(element)
     observer.observe(element)
   }
 
