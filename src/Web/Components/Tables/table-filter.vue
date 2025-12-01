@@ -1,7 +1,7 @@
 <template>
   <div v-if="visible" class="position-absolute bg-body border shadow-sm rounded" :style="style" ref="root">
     <div class="p-2">
-      <input-text v-model="localFilterValue" placeholder="Filter..." @keydown.enter="applyFilter" :focus="!!filter" class="mb-2" />
+      <input-text v-model="localFilterValue" placeholder="Filter..." @keydown.enter="applyFilter" @keydown.esc="close" :focus="!!filter" class="mb-2" />
       <div class="d-flex gap-1">
         <btn @click="applyFilter" class="btn-sm">Apply</btn>
         <btn @click="clearFilter" class="btn-sm">Clear</btn>
@@ -56,6 +56,10 @@ const applyFilter = () => {
 const clearFilter = () => {
   localFilterValue.value = ""
   filter.value = undefined
+  parentElement.value = undefined
+}
+
+const close = () => {
   parentElement.value = undefined
 }
 </script>
