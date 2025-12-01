@@ -1,4 +1,5 @@
-﻿import { MaybeRefOrGetter, Ref, onBeforeUnmount, shallowRef, triggerRef, watch, watchEffect } from 'vue'
+﻿import { useRafFn } from '@vueuse/core'
+import { MaybeRefOrGetter, Ref, onBeforeUnmount, shallowRef, triggerRef, watch, watchEffect } from 'vue'
 
 export type TableColumn = Record<string, unknown> & { field: string, header?: MaybeRefOrGetter<string>, filterable?: boolean }
 
@@ -52,8 +53,17 @@ export const useVirtualization = () => {
   const visibleIndexSet = shallowRef(new Set<number>())
   const isLoaded = ref(false)
 
-  const observer = new IntersectionObserver((entries) => {
-    for (const entry of entries) {
+  let pendingEntries: IntersectionObserverEntry[] = []
+
+  // Process intersection updates on animation frame for better performance
+  // This allows unnessesary iterations of the observed elements to be skipped
+  const { pause, resume } = useRafFn(() => {
+    if (pendingEntries.length === 0) {
+      pause()
+      return
+    }
+
+    for (const entry of pendingEntries) {
       const elem = entry.target as HTMLTableRowElement
       const index = elem.rowIndex - 1
 
@@ -65,11 +75,14 @@ export const useVirtualization = () => {
       }
     }
 
-    if (entries.length > 0) {
-      triggerRef(visibleIndexSet)
-    }
-
+    triggerRef(visibleIndexSet)
     isLoaded.value = true
+    pendingEntries = []
+  }, { immediate: false })
+
+  const observer = new IntersectionObserver((entries) => {
+    pendingEntries = entries
+    resume()
   }, { rootMargin: "500px 0px 500px 0px" })
 
   const observedElements = new WeakSet<HTMLTableRowElement>()
