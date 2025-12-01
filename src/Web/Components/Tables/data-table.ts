@@ -1,5 +1,5 @@
 ﻿import { useRafFn } from '@vueuse/core'
-import { MaybeRefOrGetter, Ref, onBeforeUnmount, shallowRef, triggerRef, watch, watchEffect } from 'vue'
+import { MaybeRefOrGetter, Ref, ShallowRef, onBeforeUnmount, shallowRef, triggerRef, watch, watchEffect } from 'vue'
 
 export type TableColumn = Record<string, unknown> & { field: string, header?: MaybeRefOrGetter<string>, filterable?: boolean }
 export type NamedTableColumn<TField> = Record<string, unknown> & { field: TField, header?: MaybeRefOrGetter<string>, filterable?: boolean }
@@ -165,7 +165,7 @@ export const useSelection = <T>(items: Ref<T[]>) => {
   }
 }
 
-export const useSorting = <T extends Record<string, any>>(sortField: Ref<string>, sortOrder: Ref<number>, columns: Ref<TableColumn[]>, items: Ref<T[]>) => {
+export const useSorting = <T extends Record<string, any>>(sortField: Ref<string>, sortOrder: Ref<number>, columns: Ref<TableColumn[]>, items: ShallowRef<T[]>) => {
   sortField.value ??= columns.value[0]?.field
   sortOrder.value ??= 1
 
@@ -203,6 +203,7 @@ export const useSorting = <T extends Record<string, any>>(sortField: Ref<string>
 
   watchEffect(() => {
     items.value?.sort(compareFunction(sortField.value, sortOrder.value))
+    triggerRef(items)
   })
 
   return { sort }
