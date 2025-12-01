@@ -4,7 +4,6 @@
     "target": "ES2021",
     "moduleResolution": "bundler",
     "strict": true,
-    "noImplicitAny": false,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "types": [

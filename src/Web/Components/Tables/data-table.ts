@@ -166,7 +166,7 @@ export const useSelection = <T>(items: Ref<T[]>) => {
 }
 
 export const useSorting = <T extends Record<string, any>>(sortField: Ref<string>, sortOrder: Ref<number>, columns: Ref<TableColumn[]>, items: Ref<T[]>) => {
-  sortField.value ??= columns[0]?.field
+  sortField.value ??= columns.value[0]?.field
   sortOrder.value ??= 1
 
   const sort = (column: TableColumn) => {
@@ -211,7 +211,7 @@ export const useSorting = <T extends Record<string, any>>(sortField: Ref<string>
 export const useClick = <T>(selectedSet: Ref<Set<T>>, emit: any) => {
   const onRowClick = (item: T, column: TableColumn | undefined, event: MouseEvent) => {
     // if the click was on the selection column, do nothing
-    if (hasParentClass(event.target, 'selection-column')) {
+    if (hasParentClass(event.target as HTMLElement, 'selection-column')) {
       return
     }
 
@@ -232,12 +232,12 @@ export const useClick = <T>(selectedSet: Ref<Set<T>>, emit: any) => {
 
     emit('rowClick', item, column, event)
 
-    function hasParentClass(element, className: string) {
+    function hasParentClass(element: HTMLElement, className: string) {
       do {
         if (element.classList && element.classList.contains(className)) {
           return true
         }
-        element = element.parentNode
+        element = element.parentNode as HTMLElement
       } while (element)
       return false
     }
@@ -264,40 +264,45 @@ export const useClick = <T>(selectedSet: Ref<Set<T>>, emit: any) => {
 
 const useDragDrop = (table: HTMLTableElement, visibleColumns: Ref<any[]>) => {
   // Drag and drop columns
-  const onDragStart = (event, col) => {
-    event.dataTransfer.setData('text', col.field)
+  const onDragStart = (event: DragEvent, col: any) => {
+    event.dataTransfer?.setData('text', col.field)
   }
 
-  const onDragOver = event => {
+  const onDragOver = (event: DragEvent) => {
     event.preventDefault()
 
-    const isLeft = event.offsetX < event.target.offsetWidth / 2
+    const target = event.target as HTMLElement
+    const currentTarget = event.currentTarget as HTMLElement
+    const isLeft = event.offsetX < target.offsetWidth / 2
 
     if (isLeft) {
-      event.currentTarget.classList.remove('drag-over-right')
-      event.currentTarget.classList.add('drag-over-left')
+      currentTarget.classList.remove('drag-over-right')
+      currentTarget.classList.add('drag-over-left')
     }
     else {
-      event.currentTarget.classList.remove('drag-over-left')
-      event.currentTarget.classList.add('drag-over-right')
+      currentTarget.classList.remove('drag-over-left')
+      currentTarget.classList.add('drag-over-right')
     }
   }
 
-  const onDragLeave = event => {
-    event.currentTarget.classList.remove('drag-over-left')
-    event.currentTarget.classList.remove('drag-over-right')
+  const onDragLeave = (event: DragEvent) => {
+    const currentTarget = event.currentTarget as HTMLElement
+    currentTarget.classList.remove('drag-over-left')
+    currentTarget.classList.remove('drag-over-right')
   }
 
-  const onDrop = (event, col) => {
-    let field = event.dataTransfer.getData('text')
+  const onDrop = (event: DragEvent, col: any) => {
+    const field = event.dataTransfer?.getData('text')
+    const currentTarget = event.currentTarget as HTMLElement
+    const target = event.target as HTMLElement
 
-    event.currentTarget.classList.remove('drag-over-left')
-    event.currentTarget.classList.remove('drag-over-right')
+    currentTarget.classList.remove('drag-over-left')
+    currentTarget.classList.remove('drag-over-right')
 
-    if (field == col.field)
+    if (field === col.field)
       return
 
-    const isLeft = event.offsetX < event.target.offsetWidth / 2
+    const isLeft = event.offsetX < target.offsetWidth / 2
 
     const columns = [...visibleColumns.value]
 

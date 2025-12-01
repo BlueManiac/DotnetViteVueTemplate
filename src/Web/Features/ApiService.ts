@@ -18,10 +18,10 @@ export class ApiService {
         await until(this.health.backendReady).toBe(true)
       }
 
-      const accessToken = this.profile?.accessToken
-      if (accessToken?.value && !request?.headers?.['Authorization']) {
+      const accessToken = this.profile.accessToken.value
+      if (accessToken && !request.headers?.['Authorization']) {
         request.headers ??= {}
-        request.headers['Authorization'] = `Bearer ${accessToken.value}`
+        request.headers['Authorization'] = `Bearer ${accessToken}`
       }
 
       return request

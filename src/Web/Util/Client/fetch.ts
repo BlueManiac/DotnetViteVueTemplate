@@ -24,8 +24,9 @@ export class HttpError extends Error {
   }
 }
 
-type RequestInitExtended = RequestInit & {
-  isLoading?: Ref<boolean>,
+type RequestInitExtended = Omit<RequestInit, 'headers'> & {
+  headers?: Record<string, string>
+  isLoading?: Ref<boolean>
   query?: object
 }
 
