@@ -1,3 +1,4 @@
+using Persistence.Shared.Cqrs;
 using Web.Util.Modules;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +14,8 @@ builder.Services.Configure<HostOptions>(options =>
     options.ServicesStartConcurrently = true;
     options.ServicesStopConcurrently = true;
 });
+
+builder.Services.AddCqrs();
 
 builder.AddModules();
 

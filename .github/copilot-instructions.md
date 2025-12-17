@@ -200,6 +200,11 @@ try {
 | TypeScript Classes | PascalCase | `ApiService`, `AuthService` |
 | TypeScript Files | Match class name | `ApiService.ts`, `Profile.ts` |
 | C# Modules | `{Feature}Module.cs` | `AuthModule.cs` |
+| CQRS Commands | `{Entity}{Action}Command` | `UserCreateCommand`, `InvoiceUpdateCommand` |
+| CQRS Command Files | Match command class | `UserCreateCommand.cs` |
+| CQRS Queries | `{Entity}Query` | `UserQuery`, `InvoiceQuery` |
+| CQRS Query Files | Match query class | `UserQuery.cs` |
+| CQRS Requests | `{Entity}Request` or `{Entity}{Action}Request` | `UserRequest`, `UserCreateRequest` |
 | Routes | lowercase | `/auth/login`, `/examples/tables` |
 
 ### Code Style
@@ -226,6 +231,18 @@ try {
 - **Use** minimal APIs with route handlers
 - **Return** Problem Details for errors
 - **Keep** modules self-contained
+- **Always** use block bodies `{ }` for method bodies instead of expression bodies `=>`
+- **Format** method signatures based on parameter count:
+  - 1-2 parameters: Keep entire signature on one line
+  - 3+ parameters: Place each parameter on a separate line with proper indentation
+  - Generic constraints: Always place on separate lines regardless of parameter count
+- **Prefer** C# 14 `extension` syntax over static classes for extension methods
+
+#### CQRS Patterns
+- **Don't** create separate queries for different filtering criteria - use one query that accepts multiple optional parameters
+- **Don't** create separate queries for single vs multiple items - use one query that accepts multiple parameters
+- **Define** request records above the command/query class in the same file
+- **Format** request parameters on separate lines for readability
 
 #### Comments
 - **Only** add comments for non-obvious code - complex logic, workarounds, or business rules

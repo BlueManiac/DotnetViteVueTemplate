@@ -56,5 +56,9 @@
     "workbench.tree.indent": 16,
     "workbench.tree.renderIndentGuides": "always",
     // For vue goto functionality
-    "editor.gotoLocation.multipleDefinitions": "goto"
+    "editor.gotoLocation.multipleDefinitions": "goto",
+    "chat.tools.terminal.autoApprove": {
+        "/^Remove-Item\\b/i": true,
+        "/^Move-Item\\b/i": true
+    }
 }
