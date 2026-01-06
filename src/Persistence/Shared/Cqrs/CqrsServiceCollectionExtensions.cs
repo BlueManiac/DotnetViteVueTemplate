@@ -12,38 +12,33 @@ public static class CqrsServiceCollectionExtensions
 
         if (!assemblies.Any())
         {
-            assemblies = [Assembly.GetAssembly(typeof(CqrsServiceCollectionExtensions))!];
+            assemblies = Enumerable.Append(assemblies, Assembly.GetAssembly(typeof(CqrsServiceCollectionExtensions))!);
         }
 
-        foreach (var assembly in assemblies)
-        {
-            RegisterCommandsAndQueries(services, assembly);
-        }
-
-        return services;
-    }
-
-    private static void RegisterCommandsAndQueries(IServiceCollection services, Assembly assembly)
-    {
-        var cqrsTypes = new[]
+        var cqrsTypes = new HashSet<Type>
         {
             typeof(ICommand<>),
             typeof(ICommand<,>),
             typeof(IQuery<,>)
         };
 
-        var types = assembly.GetTypes()
-            .Where(t => t.IsClass && !t.IsAbstract);
-
-        foreach (var type in types)
+        foreach (var assembly in assemblies)
         {
-            var interfaces = type.GetInterfaces()
-                .Where(i => i.IsGenericType && cqrsTypes.Contains(i.GetGenericTypeDefinition()));
-
-            foreach (var interfaceType in interfaces)
+            foreach (var type in assembly.GetTypes())
             {
-                services.AddScoped(interfaceType, type);
+                if (!type.IsClass || type.IsAbstract)
+                    continue;
+
+                foreach (var i in type.GetInterfaces())
+                {
+                    if (!i.IsGenericType || !cqrsTypes.Contains(i.GetGenericTypeDefinition()))
+                        continue;
+
+                    services.AddScoped(i, type);
+                }
             }
         }
+
+        return services;
     }
 }

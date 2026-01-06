@@ -133,10 +133,19 @@ public class QueryBuilder<TRequest, TResult>
 
     public RouteHandlerBuilder MapGet(string pattern)
     {
-        return _group.MapGet(pattern, async ([AsParameters] TRequest request, QueryExecutor executor) =>
+        return _group.MapGet(pattern, async ([AsParameters] TRequest request, QueryExecutor executor, CancellationToken ct) =>
         {
-            var result = await executor.Execute<TRequest, TResult>(request);
+            var result = await executor.Execute<TRequest, TResult>(request, ct);
             return TypedResults.Ok(result);
+        });
+    }
+
+    public RouteHandlerBuilder MapGet<TResponse>(string pattern, Func<TResult, CancellationToken, TResponse> transformer)
+    {
+        return _group.MapGet(pattern, async ([AsParameters] TRequest request, QueryExecutor executor, CancellationToken ct) =>
+        {
+            var result = await executor.Execute<TRequest, TResult>(request, ct);
+            return transformer(result, ct);
         });
     }
 }
