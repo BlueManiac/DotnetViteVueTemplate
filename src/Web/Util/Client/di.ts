@@ -98,11 +98,8 @@ export function inject<T>(
   }
 
   const instance = vueInject(keyOrCtor as any, defaultValue)
-  if (!instance) {
-    throw new Error(`Dependency not found for key: ${String(keyOrCtor)}. Make sure it's provided.`)
-  }
 
-  return instance
+  return instance as T
 }
 
 declare module 'vue' {
