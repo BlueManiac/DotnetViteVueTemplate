@@ -238,6 +238,14 @@ try {
   - Generic constraints: Always place on separate lines regardless of parameter count
 - **Prefer** C# 14 `extension` syntax over static classes for extension methods
 
+#### Entity Framework & Database
+- **Never** add `DbSet<T>` properties to `DbContext` - entities are discovered through `modelBuilder.Entity<T>()` references
+- **Always** prefer data annotations (attributes) on entities over fluent API configuration:
+  - ✅ Use `[Key]` on entity properties instead of `HasKey()` in `OnModelCreating`
+  - ✅ Use `[Required]`, `[MaxLength]`, `[ForeignKey]` attributes on entities
+  - ❌ Avoid fluent API configuration in `OnModelCreating` unless absolutely necessary (complex relationships, indexes)
+- **Inject** `DbContext` (base class) in queries/commands, not the concrete context type (e.g., use `DbContext db` not `DatabaseContext dbContext`)
+
 #### CQRS Patterns
 - **Don't** create separate queries for different filtering criteria - use one query that accepts multiple optional parameters
 - **Don't** create separate queries for single vs multiple items - use one query that accepts multiple parameters

@@ -1,4 +1,6 @@
+using Persistence.Database;
 using Persistence.Shared.Cqrs;
+using Persistence.Shared.Features;
 using Web.Util.Modules;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +17,7 @@ builder.Services.Configure<HostOptions>(options =>
     options.ServicesStopConcurrently = true;
 });
 
+builder.Services.AddFeature<DatabaseFeature<DatabaseContext>>(builder.Configuration.GetSection("Database"));
 builder.Services.AddCqrs();
 
 builder.AddModules();
