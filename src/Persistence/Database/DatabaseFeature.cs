@@ -11,7 +11,7 @@ namespace Persistence.Database;
 public class DatabaseFeature<TContext> : IFeature
     where TContext : DbContext
 {
-    public static IServiceCollection AddServices(IServiceCollection services, IConfiguration configuration)
+    public IServiceCollection AddServices(IServiceCollection services, IConfiguration configuration)
     {
         services
             .AddEntityConfigurations()
