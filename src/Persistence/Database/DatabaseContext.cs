@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Database;
 
-public class DatabaseContext(DbContextOptions<DatabaseContext> options, IEnumerable<IEntityConfiguraton> configurations) : DbContext(options)
+public class DatabaseContext(DbContextOptions<DatabaseContext> options, IEnumerable<IEntityConfiguration> configurations) : DbContext(options)
 {
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

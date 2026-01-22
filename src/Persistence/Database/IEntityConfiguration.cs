@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Database;
 
-public interface IEntityConfiguraton
+public interface IEntityConfiguration
 {
     void OnModelCreating(ModelBuilder builder);
 }
