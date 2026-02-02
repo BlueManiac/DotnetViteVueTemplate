@@ -31,8 +31,6 @@ public class GoogleAuthModule : IModule
         var authBuilder = builder.Services.AddAuthentication();
 
         authBuilder
-            // Cookie scheme to temporarily hold Google authentication info
-            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
             {
                 options.ClientId = clientId;

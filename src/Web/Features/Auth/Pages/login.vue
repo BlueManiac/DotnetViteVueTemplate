@@ -12,6 +12,7 @@
     <button class="w-100 btn btn-lg btn-primary" type="submit" :disabled="!valid">Sign in</button>
 
     <google-signin-btn v-if="authService.providers.value.includes('google')" class="w-100" :redirect="route.query.redirect as string" />
+    <microsoft-signin-btn v-if="authService.providers.value.includes('microsoft')" class="w-100" :redirect="route.query.redirect as string" />
   </form>
 </template>
 

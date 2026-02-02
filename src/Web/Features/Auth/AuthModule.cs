@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.BearerToken;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
@@ -17,6 +18,8 @@ public class AuthModule : IModule
                 options.DefaultScheme = BearerTokenDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = BearerTokenDefaults.AuthenticationScheme;
             })
+            // Cookie scheme for temporary external authentication (Google, Microsoft, etc.)
+            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddBearerToken(BearerTokenDefaults.AuthenticationScheme, static options =>
             {
                 options.BearerTokenExpiration = TimeSpan.FromMinutes(60);
