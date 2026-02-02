@@ -10,7 +10,7 @@ declare module 'vue-router' {
     id?: string
     parentId?: string
     fullPath?: string
-    centered?: boolean
+    display?: 'centered' | 'full'
     auth?: boolean
   }
 }

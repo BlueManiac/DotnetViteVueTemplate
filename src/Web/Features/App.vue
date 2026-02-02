@@ -1,7 +1,7 @@
 ﻿<template>
-  <main :class="{ centered: isCentered }" class="container-fluid vh-100">
-    <Navbar v-if="!isCentered" class="page-navbar" />
-    <Breadcrumb v-if="!isCentered" class="page-breadcrumb" />
+  <main :class="{ centered: isCentered, 'full': isFull }" class="container-fluid vh-100">
+    <Navbar v-if="!isCentered && !isFull" class="page-navbar" />
+    <Breadcrumb v-if="!isCentered && !isFull" class="page-breadcrumb" />
     <RouterView v-slot="{ Component }">
       <template v-if="Component">
         <suspense timeout="30">
@@ -32,7 +32,8 @@ import { HttpError } from '/Util/Client/fetch'
 const route = useRoute()
 const notificationService = inject(NotificationService)
 
-const isCentered = computed(() => route.meta?.centered === true)
+const isCentered = computed(() => route.meta?.display === 'centered')
+const isFull = computed(() => route.meta?.display === 'full')
 
 onErrorCaptured((error) => {
   console.error(error)
@@ -87,6 +88,28 @@ main {
       display: flex;
       justify-content: center;
       align-items: center;
+    }
+
+    .page-navbar,
+    .page-breadcrumb {
+      display: none;
+    }
+  }
+
+  &.full {
+    grid-template-areas: "main";
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr;
+
+    .page-main {
+      display: flex;
+      width: 100%;
+      height: 100%;
+
+      > * {
+        width: 100%;
+        height: 100%;
+      }
     }
 
     .page-navbar,

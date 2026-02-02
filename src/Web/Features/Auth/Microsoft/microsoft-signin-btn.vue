@@ -1,5 +1,5 @@
 <template>
-  <a :href="loginUrl" class="btn btn-lg btn-outline-secondary">
+  <a :href="loginUrl" class="btn btn-lg btn-primary">
     <MdiMicrosoft class="me-2" />
     Sign in with Microsoft
   </a>
