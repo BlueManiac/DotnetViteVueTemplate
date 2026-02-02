@@ -9,6 +9,12 @@ namespace Web.Features.Auth;
 
 public class AuthModule : IModule
 {
+    private static bool IsPasswordAuthEnabled(IConfiguration configuration)
+    {
+        // Enable password authentication by default (true if not configured)
+        return configuration.GetValue("Authentication:Password:Enabled", true);
+    }
+
     public static void AddServices(WebApplicationBuilder builder)
     {
         builder.Services
@@ -52,7 +58,15 @@ public class AuthModule : IModule
 
     public static void MapRoutes(IEndpointRouteBuilder routes)
     {
+        var configuration = routes.ServiceProvider.GetRequiredService<IConfiguration>();
         var group = routes.MapGroup("/auth");
+
+        // Register password authentication provider if enabled
+        if (IsPasswordAuthEnabled(configuration))
+        {
+            var providers = routes.ServiceProvider.GetRequiredService<AuthProviders>();
+            providers.Register("password");
+        }
 
         group.MapPost("/login", static (LoginRequest request) =>
         {
