@@ -55,6 +55,12 @@ public class MicrosoftEntraAuthModule : IModule
             return;
         }
 
+        // Register IHttpContextAccessor (required by MicrosoftTokenProvider)
+        builder.Services.AddHttpContextAccessor();
+
+        // Register Microsoft token provider for server-side use
+        builder.Services.AddScoped<MicrosoftTokenProvider>();
+
         // Extend existing authentication configuration
         var authBuilder = builder.Services.AddAuthentication();
 
@@ -73,6 +79,7 @@ public class MicrosoftEntraAuthModule : IModule
                 options.Scope.Add("openid");
                 options.Scope.Add("profile");
                 options.Scope.Add("email");
+                options.Scope.Add("offline_access"); // Required to receive refresh tokens
 
                 // Add any additional configured scopes
                 if (configuredScopes is not null)
@@ -89,6 +96,36 @@ public class MicrosoftEntraAuthModule : IModule
 
                 options.Events = new OpenIdConnectEvents
                 {
+                    OnTokenValidated = context =>
+                    {
+                        var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<MicrosoftEntraAuthModule>>();
+                        var email = context.Principal?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email || c.Type == "email")?.Value;
+
+                        using (logger.BeginScope(new Dictionary<string, object> { ["User"] = email ?? "unknown" }))
+                        {
+                            // Store Microsoft access token and refresh token as claims
+                            // These can be retrieved later to call Microsoft Graph API
+                            if (context.TokenEndpointResponse?.AccessToken is not null)
+                            {
+                                var claim = new Claim(MicrosoftTokenProvider.CLAIM_TYPE_ACCESS_TOKEN, context.TokenEndpointResponse.AccessToken);
+                                context.Principal?.Identities.FirstOrDefault()?.AddClaim(claim);
+                                logger.LogDebug("Microsoft Access Token stored");
+                            }
+                            else
+                            {
+                                logger.LogWarning("Microsoft Access Token not received - check OAuth configuration");
+                            }
+
+                            if (context.TokenEndpointResponse?.RefreshToken is not null)
+                            {
+                                var claim = new Claim(MicrosoftTokenProvider.CLAIM_TYPE_REFRESH_TOKEN, context.TokenEndpointResponse.RefreshToken);
+                                context.Principal?.Identities.FirstOrDefault()?.AddClaim(claim);
+                                logger.LogDebug("Microsoft Refresh Token stored");
+                            }
+                        }
+
+                        return Task.CompletedTask;
+                    },
                     OnRemoteFailure = context =>
                     {
                         context.Response.Redirect("/auth/login?error=microsoft-auth-failed");
@@ -134,7 +171,7 @@ public class MicrosoftEntraAuthModule : IModule
         })
         .AllowAnonymous();
 
-        group.MapGet("/microsoft-callback-handler", async (HttpContext context, IConfiguration configuration) =>
+        group.MapGet("/microsoft-callback-handler", async (HttpContext context, IConfiguration configuration, ILogger<MicrosoftEntraAuthModule> logger) =>
         {
             var authenticateResult = await context.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
@@ -150,11 +187,26 @@ public class MicrosoftEntraAuthModule : IModule
             var email = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email || c.Type == "email")?.Value!;
             var name = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name || c.Type == "name")?.Value!;
 
+            if (logger.IsEnabled(LogLevel.Information))
+            {
+                logger.LogInformation("Microsoft account login: {User}", email);
+            }
+
             var userClaims = new List<Claim>
             {
                 new(ClaimTypes.Email, email),
                 new(ClaimTypes.Name, name)
             };
+
+            // Preserve Microsoft tokens in the bearer token for later use
+            if (claims.FirstOrDefault(c => c.Type == MicrosoftTokenProvider.CLAIM_TYPE_ACCESS_TOKEN)?.Value is string microsoftAccessToken)
+            {
+                userClaims.Add(new Claim(MicrosoftTokenProvider.CLAIM_TYPE_ACCESS_TOKEN, microsoftAccessToken));
+            }
+            if (claims.FirstOrDefault(c => c.Type == MicrosoftTokenProvider.CLAIM_TYPE_REFRESH_TOKEN)?.Value is string microsoftRefreshToken)
+            {
+                userClaims.Add(new Claim(MicrosoftTokenProvider.CLAIM_TYPE_REFRESH_TOKEN, microsoftRefreshToken));
+            }
 
             var claimsPrincipal = new ClaimsPrincipal(
                 new ClaimsIdentity(userClaims, BearerTokenDefaults.AuthenticationScheme)
