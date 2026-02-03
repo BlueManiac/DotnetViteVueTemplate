@@ -20,7 +20,7 @@ export class Profile {
   private authData = useLocalStorage<AuthData>('auth-data', {})
 
   expiresAt = computed(() => this.authData.value.expiresAt ?? 0)
-  isLoggedIn = computed(() => this.authData.value.accessToken && Date.now() < this.expiresAt.value)
+  isLoggedIn = computed(() => !!this.authData.value.refreshToken)
 
   accessToken = computed(() => this.authData.value.accessToken)
   refreshToken = computed(() => this.authData.value.refreshToken)

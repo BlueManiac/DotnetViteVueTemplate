@@ -12,6 +12,7 @@ import { ApiService } from './ApiService'
 import { AppConfig } from './AppConfig'
 import { AuthService } from './Auth/AuthService'
 import { Profile } from './Auth/Profile'
+import { TokenValidator } from './Auth/TokenValidator'
 import { HealthService } from './Health/HealthService'
 
 initializeTheme()
@@ -23,19 +24,26 @@ import { Router, setupAuthGuard, title } from './router'
 const config = new AppConfig()
 const profile = new Profile()
 const health = new HealthService(config)
+const notifications = new NotificationService()
+const tokenValidator = new TokenValidator(
+  () => profile.expiresAt.value,
+  () => profile.isLoggedIn.value
+)
+const api = new ApiService(tokenValidator, config, profile, health)
+const authService = new AuthService(tokenValidator, api, profile, notifications)
 
-setupAuthGuard(profile)
+setupAuthGuard(profile, tokenValidator)
 
 const app = createApp(App)
   .use(Router)
   .provide(AppConfig, config)
   .provide(Profile, profile)
   .provide(HealthService, health)
-  .provide(NotificationService)
-  .provide(AuthService)
-  .provide(ApiService)
+  .provide(TokenValidator, tokenValidator)
+  .provide(NotificationService, notifications)
+  .provide(ApiService, api)
+  .provide(AuthService, authService)
 
-// Wait for router to resolve initial route before mounting
 Router.isReady().then(() => {
   app.mount('#app')
 })

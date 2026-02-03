@@ -95,7 +95,8 @@ export const fetch = async (url: RequestInfo | URL, init: RequestInitExtended) =
 
     // Attach problem details if present
     const isProblem = !contentType || contentType.indexOf('application/problem+json') >= 0
-    const problemDetails = (isProblem && await response.json()) as ProblemDetails
+    const text = await response.text()
+    const problemDetails = (isProblem && text ? JSON.parse(text) : null) as ProblemDetails
 
     if (problemDetails) {
       const name = problemDetails?.title || 'Request failed'
@@ -126,14 +127,14 @@ const parseResponse = async<T>(response: Response) => {
   return response.text() as T
 }
 
-type RequestInterceptor = (init: RequestInitExtended) => RequestInitExtended | Promise<RequestInitExtended>
+type RequestInterceptor = (url: string, init: RequestInitExtended) => RequestInitExtended | Promise<RequestInitExtended>
 
-export const useApi = ({ apiUrl, intercept = x => x }: { apiUrl: string, intercept?: RequestInterceptor }) => {
+export const useApi = ({ apiUrl, intercept = (url, x) => x }: { apiUrl: string, intercept?: RequestInterceptor }) => {
   return {
     url: apiUrl,
-    fetch: async (url: RequestInfo | URL, init: RequestInitExtended = {}) => fetch(apiUrl + url, await intercept(init)),
+    fetch: async (url: RequestInfo | URL, init: RequestInitExtended = {}) => fetch(apiUrl + url, await intercept(String(url), init)),
     get: async <T>(url: RequestInfo | URL, init?: RequestInitExtended) => {
-      const response = await fetch(apiUrl + url, await intercept({
+      const response = await fetch(apiUrl + url, await intercept(String(url), {
         method: 'GET',
         ...init
       }))
@@ -142,7 +143,7 @@ export const useApi = ({ apiUrl, intercept = x => x }: { apiUrl: string, interce
     },
     post: async <T>(url: RequestInfo | URL, body?: any, init?: RequestInitExtended) => {
       const isFormData = body instanceof FormData
-      const response = await fetch(apiUrl + url, await intercept({
+      const response = await fetch(apiUrl + url, await intercept(String(url), {
         method: 'POST',
         body: isFormData ? body : JSON.stringify(body),
         headers: isFormData ? {} : {
@@ -154,7 +155,7 @@ export const useApi = ({ apiUrl, intercept = x => x }: { apiUrl: string, interce
       return await parseResponse<T>(response)
     },
     put: async <T>(url: RequestInfo | URL, body?: any, init?: RequestInitExtended) => {
-      const response = await fetch(apiUrl + url, await intercept({
+      const response = await fetch(apiUrl + url, await intercept(String(url), {
         method: 'PUT',
         body: JSON.stringify(body),
         headers: {
@@ -166,7 +167,7 @@ export const useApi = ({ apiUrl, intercept = x => x }: { apiUrl: string, interce
       return await parseResponse<T>(response)
     },
     delete: async <T>(url: RequestInfo | URL, body?: any, init?: RequestInitExtended) => {
-      const response = await fetch(apiUrl + url, await intercept({
+      const response = await fetch(apiUrl + url, await intercept(String(url), {
         method: 'DELETE',
         body: JSON.stringify(body),
         headers: {

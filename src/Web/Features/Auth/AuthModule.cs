@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.BearerToken;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity.Data;
@@ -24,8 +25,8 @@ public class AuthModule : IModule
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddBearerToken(BearerTokenDefaults.AuthenticationScheme, static options =>
             {
-                options.BearerTokenExpiration = TimeSpan.FromMinutes(60);
-                options.RefreshTokenExpiration = TimeSpan.FromMinutes(60);
+                options.BearerTokenExpiration = TimeSpan.FromMinutes(10);
+                options.RefreshTokenExpiration = TimeSpan.FromDays(7);
 
                 // Allow SignalR to pass tokens via query string
                 options.Events = new()
@@ -62,7 +63,7 @@ public class AuthModule : IModule
 
             if (refreshTicket?.Properties?.ExpiresUtc is not { } expiresUtc || timeProvider.GetUtcNow() >= expiresUtc)
             {
-                return Results.Challenge();
+                return Results.Unauthorized();
             }
 
             return TypedResults.SignIn(refreshTicket.Principal);
@@ -85,6 +86,12 @@ public class AuthModule : IModule
             var provider = user.Claims.FirstOrDefault(c => c.Type == CLAIM_AUTH_PROVIDER)?.Value;
 
             return TypedResults.Ok(new UserResponse(user.Identity.Name, provider));
+        });
+
+        group.MapPost("/logout", static async (HttpContext context) =>
+        {
+            await context.SignOutAsync(BearerTokenDefaults.AuthenticationScheme);
+            return TypedResults.Ok();
         });
     }
 }

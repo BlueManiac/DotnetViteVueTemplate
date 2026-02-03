@@ -1,6 +1,7 @@
 ﻿import { watch } from 'vue'
 import { createRouter, createWebHistory, RouteLocationNormalizedLoaded, RouteRecordRaw } from 'vue-router'
 import { Profile } from './Auth/Profile'
+import type { TokenValidator } from './Auth/TokenValidator'
 import { routes } from './routes'
 
 const routeMap = new Map<string, RouteRecordRaw>()
@@ -12,15 +13,21 @@ export const Router = createRouter({
   linkActiveClass: 'active'
 })
 
-export function setupAuthGuard(profile: Profile) {
-  Router.beforeEach((to, from, next) => {
+export function setupAuthGuard(profile: Profile, tokenValidator: TokenValidator) {
+  Router.beforeEach(async (to, from, next) => {
     const requiresAuth = to.meta.auth !== false // default is true
 
-    if (requiresAuth && !profile.isLoggedIn.value) {
-      next({ path: '/auth/login', query: { redirect: to.fullPath } })
-    } else {
-      next()
+    if (requiresAuth) {
+      // Validate token (checks login status and refreshes if needed)
+      const isValid = await tokenValidator.ensureValidToken()
+
+      if (!isValid) {
+        next({ path: '/auth/login', query: { redirect: to.fullPath } })
+        return
+      }
     }
+
+    next()
   })
 
   // Redirect to login if user is logged out (e.g., logout in another tab)
