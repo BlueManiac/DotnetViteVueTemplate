@@ -9,6 +9,8 @@ namespace Web.Features.Auth;
 
 public class AuthModule : IModule
 {
+    public const string CLAIM_AUTH_PROVIDER = "auth_provider";
+
     public static void AddServices(WebApplicationBuilder builder)
     {
         builder.Services
@@ -47,7 +49,7 @@ public class AuthModule : IModule
         builder.Services.AddSingleton<AuthProviders>();
     }
 
-    public record UserResponse(string Name);
+    public record UserResponse(string Name, string? Provider);
 
     public static void MapRoutes(IEndpointRouteBuilder routes)
     {
@@ -80,7 +82,9 @@ public class AuthModule : IModule
                 return Results.Unauthorized();
             }
 
-            return TypedResults.Ok(new UserResponse(user.Identity.Name));
+            var provider = user.Claims.FirstOrDefault(c => c.Type == CLAIM_AUTH_PROVIDER)?.Value;
+
+            return TypedResults.Ok(new UserResponse(user.Identity.Name, provider));
         });
     }
 }

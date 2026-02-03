@@ -4,6 +4,7 @@ import { AccessTokenResponse } from "./AuthService"
 
 type UserData = {
   name: string
+  provider?: string
 }
 
 type AuthData = {
@@ -25,6 +26,7 @@ export class Profile {
   refreshToken = computed(() => this.authData.value.refreshToken)
 
   userName = computed(() => this.user.value?.name ?? null)
+  authProvider = computed(() => this.user.value?.provider ?? null)
 
   constructor() {
     // Clear user data when auth data is cleared (e.g., logout in another tab)

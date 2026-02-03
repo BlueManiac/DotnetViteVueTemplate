@@ -5,8 +5,8 @@ namespace Web.Features.Auth.Microsoft;
 /// </summary>
 public class MicrosoftTokenProvider(IHttpContextAccessor httpContextAccessor)
 {
-    public const string CLAIM_TYPE_ACCESS_TOKEN = "microsoft_access_token";
-    public const string CLAIM_TYPE_REFRESH_TOKEN = "microsoft_refresh_token";
+    public const string CLAIM_ACCESS_TOKEN = "microsoft_access_token";
+    public const string CLAIM_REFRESH_TOKEN = "microsoft_refresh_token";
 
     private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
 
@@ -19,7 +19,7 @@ public class MicrosoftTokenProvider(IHttpContextAccessor httpContextAccessor)
         get
         {
             var user = _httpContextAccessor.HttpContext?.User;
-            return user?.Claims.FirstOrDefault(c => c.Type == CLAIM_TYPE_ACCESS_TOKEN)?.Value;
+            return user?.Claims.FirstOrDefault(c => c.Type == CLAIM_ACCESS_TOKEN)?.Value;
         }
     }
 
@@ -31,7 +31,7 @@ public class MicrosoftTokenProvider(IHttpContextAccessor httpContextAccessor)
         get
         {
             var user = _httpContextAccessor.HttpContext?.User;
-            return user?.Claims.FirstOrDefault(c => c.Type == CLAIM_TYPE_REFRESH_TOKEN)?.Value;
+            return user?.Claims.FirstOrDefault(c => c.Type == CLAIM_REFRESH_TOKEN)?.Value;
         }
     }
 }

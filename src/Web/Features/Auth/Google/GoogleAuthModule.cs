@@ -12,6 +12,8 @@ namespace Web.Features.Auth.Google;
 
 public class GoogleAuthModule : IModule
 {
+    public const string PROVIDER_NAME = "google";
+
     private static bool TryGetGoogleAuthConfig(IConfiguration configuration, out string clientId, out string clientSecret)
     {
         clientId = configuration["Authentication:Google:ClientId"] ?? string.Empty;
@@ -51,7 +53,7 @@ public class GoogleAuthModule : IModule
 
         // Register Google as an available auth provider
         var providers = routes.ServiceProvider.GetRequiredService<AuthProviders>();
-        providers.Register("google");
+        providers.Register(PROVIDER_NAME);
 
         var group = routes.MapGroup("/auth");
 
@@ -94,7 +96,8 @@ public class GoogleAuthModule : IModule
             var userClaims = new List<Claim>
             {
                 new(ClaimTypes.Email, email),
-                new(ClaimTypes.Name, name)
+                new(ClaimTypes.Name, name),
+                new(AuthModule.CLAIM_AUTH_PROVIDER, PROVIDER_NAME)
             };
 
             var claimsPrincipal = new ClaimsPrincipal(

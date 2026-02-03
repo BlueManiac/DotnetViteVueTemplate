@@ -6,6 +6,8 @@ namespace Web.Features.Auth.Password;
 
 public class PasswordAuthModule : IModule
 {
+    public const string PROVIDER_NAME = "password";
+
     public record LoginRequest(string UserName, string Password);
 
     public static void MapRoutes(IEndpointRouteBuilder routes)
@@ -19,7 +21,7 @@ public class PasswordAuthModule : IModule
         }
 
         var providers = routes.ServiceProvider.GetRequiredService<AuthProviders>();
-        providers.Register("password");
+        providers.Register(PROVIDER_NAME);
 
         var group = routes.MapGroup("/auth");
 
@@ -28,7 +30,8 @@ public class PasswordAuthModule : IModule
             var claims = new List<Claim>
             {
                 new(ClaimTypes.Email, request.UserName),
-                new(ClaimTypes.Name, request.UserName)
+                new(ClaimTypes.Name, request.UserName),
+                new(AuthModule.CLAIM_AUTH_PROVIDER, PROVIDER_NAME)
             };
 
             var claimsPrincipal = new ClaimsPrincipal(

@@ -38,6 +38,8 @@ namespace Web.Features.Auth.Microsoft;
 /// </summary>
 public class MicrosoftEntraAuthModule : IModule
 {
+    public const string PROVIDER_NAME = "microsoft";
+
     private static bool TryGetEntraAuthConfig(IConfiguration configuration, out string clientId, out string clientSecret, out string tenantId, out string[]? scopes)
     {
         clientId = configuration["Authentication:Microsoft:ClientId"] ?? string.Empty;
@@ -107,7 +109,7 @@ public class MicrosoftEntraAuthModule : IModule
                             // These can be retrieved later to call Microsoft Graph API
                             if (context.TokenEndpointResponse?.AccessToken is not null)
                             {
-                                var claim = new Claim(MicrosoftTokenProvider.CLAIM_TYPE_ACCESS_TOKEN, context.TokenEndpointResponse.AccessToken);
+                                var claim = new Claim(MicrosoftTokenProvider.CLAIM_ACCESS_TOKEN, context.TokenEndpointResponse.AccessToken);
                                 context.Principal?.Identities.FirstOrDefault()?.AddClaim(claim);
                                 logger.LogDebug("Microsoft Access Token stored");
                             }
@@ -118,7 +120,7 @@ public class MicrosoftEntraAuthModule : IModule
 
                             if (context.TokenEndpointResponse?.RefreshToken is not null)
                             {
-                                var claim = new Claim(MicrosoftTokenProvider.CLAIM_TYPE_REFRESH_TOKEN, context.TokenEndpointResponse.RefreshToken);
+                                var claim = new Claim(MicrosoftTokenProvider.CLAIM_REFRESH_TOKEN, context.TokenEndpointResponse.RefreshToken);
                                 context.Principal?.Identities.FirstOrDefault()?.AddClaim(claim);
                                 logger.LogDebug("Microsoft Refresh Token stored");
                             }
@@ -147,7 +149,7 @@ public class MicrosoftEntraAuthModule : IModule
 
         // Register Microsoft as an available auth provider
         var providers = routes.ServiceProvider.GetRequiredService<AuthProviders>();
-        providers.Register("microsoft");
+        providers.Register(PROVIDER_NAME);
 
         var group = routes.MapGroup("/auth");
 
@@ -195,17 +197,18 @@ public class MicrosoftEntraAuthModule : IModule
             var userClaims = new List<Claim>
             {
                 new(ClaimTypes.Email, email),
-                new(ClaimTypes.Name, name)
+                new(ClaimTypes.Name, name),
+                new(AuthModule.CLAIM_AUTH_PROVIDER, PROVIDER_NAME)
             };
 
             // Preserve Microsoft tokens in the bearer token for later use
-            if (claims.FirstOrDefault(c => c.Type == MicrosoftTokenProvider.CLAIM_TYPE_ACCESS_TOKEN)?.Value is string microsoftAccessToken)
+            if (claims.FirstOrDefault(c => c.Type == MicrosoftTokenProvider.CLAIM_ACCESS_TOKEN)?.Value is string microsoftAccessToken)
             {
-                userClaims.Add(new Claim(MicrosoftTokenProvider.CLAIM_TYPE_ACCESS_TOKEN, microsoftAccessToken));
+                userClaims.Add(new Claim(MicrosoftTokenProvider.CLAIM_ACCESS_TOKEN, microsoftAccessToken));
             }
-            if (claims.FirstOrDefault(c => c.Type == MicrosoftTokenProvider.CLAIM_TYPE_REFRESH_TOKEN)?.Value is string microsoftRefreshToken)
+            if (claims.FirstOrDefault(c => c.Type == MicrosoftTokenProvider.CLAIM_REFRESH_TOKEN)?.Value is string microsoftRefreshToken)
             {
-                userClaims.Add(new Claim(MicrosoftTokenProvider.CLAIM_TYPE_REFRESH_TOKEN, microsoftRefreshToken));
+                userClaims.Add(new Claim(MicrosoftTokenProvider.CLAIM_REFRESH_TOKEN, microsoftRefreshToken));
             }
 
             var claimsPrincipal = new ClaimsPrincipal(
