@@ -25,7 +25,7 @@ public class AuthModule : IModule
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddBearerToken(BearerTokenDefaults.AuthenticationScheme, static options =>
             {
-                options.BearerTokenExpiration = TimeSpan.FromMinutes(10);
+                options.BearerTokenExpiration = TimeSpan.FromMinutes(60);
                 options.RefreshTokenExpiration = TimeSpan.FromDays(7);
 
                 // Allow SignalR to pass tokens via query string
