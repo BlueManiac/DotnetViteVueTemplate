@@ -43,11 +43,6 @@ export class AuthService {
     }
   }
 
-  async login(username: string, password: string) {
-    const response = await this.api.post<AccessTokenResponse>('/auth/login', { username, password })
-    this.profile.setAuthTokens(response)
-  }
-
   async logout() {
     this.profile.clear()
   }
