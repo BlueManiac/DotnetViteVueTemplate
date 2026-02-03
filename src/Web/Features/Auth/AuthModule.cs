@@ -66,23 +66,23 @@ public class AuthModule : IModule
         {
             var providers = routes.ServiceProvider.GetRequiredService<AuthProviders>();
             providers.Register("password");
-        }
 
-        group.MapPost("/login", static (LoginRequest request) =>
-        {
-            var claims = new List<Claim>
+            group.MapPost("/login", static (LoginRequest request) =>
             {
-                new(ClaimTypes.Email, request.UserName),
-                new(ClaimTypes.Name, request.UserName)
-            };
+                var claims = new List<Claim>
+                {
+                    new(ClaimTypes.Email, request.UserName),
+                    new(ClaimTypes.Name, request.UserName)
+                };
 
-            var claimsPrincipal = new ClaimsPrincipal(
-                new ClaimsIdentity(claims, BearerTokenDefaults.AuthenticationScheme)
-            );
+                var claimsPrincipal = new ClaimsPrincipal(
+                    new ClaimsIdentity(claims, BearerTokenDefaults.AuthenticationScheme)
+                );
 
-            return TypedResults.SignIn(claimsPrincipal);
-        })
-        .AllowAnonymous();
+                return TypedResults.SignIn(claimsPrincipal);
+            })
+            .AllowAnonymous();
+        }
 
         group.MapPost("/refresh", static (RefreshRequest refreshRequest, IOptionsMonitor<BearerTokenOptions> optionsMonitor, TimeProvider timeProvider) =>
         {
