@@ -24,8 +24,7 @@ export class AuthService {
   private tokenValidator: TokenValidator
 
   providers = computedAsync(async () => {
-    const response = await window.fetch(this.api.apiUrl + '/auth/providers')
-    const data = await response.json() as { providers: string[] }
+    const data = await this.api.get<{ providers: string[] }>('/auth/providers', { auth: false })
     return data.providers
   }, [], { lazy: true })
 
@@ -59,34 +58,20 @@ export class AuthService {
     }
 
     try {
-      // Use window.fetch directly to avoid circular dependency with API interceptor
-      const response = await window.fetch(this.api.apiUrl + '/auth/refresh', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ refreshToken }),
-      })
-
-      if (!response.ok) {
-        // Refresh token expired - log out and notify user
-        this.profile.clear()
-        this.notifications.notify({
-          type: 'warning',
-          title: 'Session expired',
-          detail: 'Please log in again.',
-        })
-        return
-      }
-
-      const data = await response.json() as AccessTokenResponse
+      console.debug('Refreshing access token...', refreshToken)
+      const data = await this.api.post<AccessTokenResponse>('/auth/refresh', { refreshToken }, { auth: false })
       this.profile.setAuthTokens(data)
 
       // Load user profile after successful refresh
       await this.ensureUserProfileLoaded()
     } catch (error) {
-      this.notifications.notifyError(error as Error)
+      // Refresh token expired - log out and notify user
       this.profile.clear()
+      this.notifications.notify({
+        type: 'warning',
+        title: 'Session expired',
+        message: 'Please log in again.',
+      })
     }
   }
 
@@ -107,7 +92,7 @@ export class AuthService {
 
   async logout() {
     try {
-      await this.api.post('/auth/logout')
+      await this.api.post('/auth/logout', undefined, { auth: false })
     } finally {
       this.profile.clear()
     }

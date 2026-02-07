@@ -41,7 +41,7 @@ const valid = computed(() => {
 })
 
 const submit = async () => {
-  const response = await api.post<AccessTokenResponse>('/auth/login', { username: email.value, password: password.value })
+  const response = await api.post<AccessTokenResponse>('/auth/login', { username: email.value, password: password.value }, { auth: false })
   profile.setAuthTokens(response)
   emit('success')
 }

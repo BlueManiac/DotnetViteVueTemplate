@@ -6,7 +6,7 @@ export interface NotificationEntry {
   id: number
   type: NotificationType
   title?: string
-  detail?: string
+  message?: string
   status?: number
   method?: string
   url?: string
@@ -23,7 +23,7 @@ export class NotificationService {
     this.notifications.value = this.notifications.value.filter(n => n.id !== id)
   }
 
-  notify(entry: Omit<NotificationEntry, 'id' | 'data' | 'timestamp'> & { data?: RecordOrArray }) {
+  notify(entry: Omit<NotificationEntry, 'id' | 'data' | 'timestamp'> & { data?: RecordOrArray, persistent?: boolean }) {
     const id = Date.now() + Math.floor(Math.random() * 1000)
     const type = entry.type ?? 'info'
 
@@ -50,7 +50,7 @@ export class NotificationService {
       id,
       type,
       title: entry.title,
-      detail: entry.detail,
+      message: entry.message,
       status: entry.status,
       method: entry.method,
       url: entry.url,
@@ -58,8 +58,9 @@ export class NotificationService {
       data: formatData(entry.data),
     })
 
-    // Auto-dismiss non-error notifications after 6s
-    if (type !== 'error') {
+    // Auto-dismiss non-error notifications after 6s unless marked as persistent
+    const isPersistent = entry.persistent ?? (type === 'error')
+    if (!isPersistent) {
       setTimeout(() => this.dismiss(id), 6000)
     }
 
@@ -69,10 +70,10 @@ export class NotificationService {
   notifyError(error: Error | string, ctx?: { status?: number, method?: string, url?: string }, data?: RecordOrArray) {
     const err = error as Error
     const title = err?.name ?? 'Error'
-    const detail = typeof err === 'string'
+    const message = typeof err === 'string'
       ? err
       : (err?.message || 'An unexpected error occurred')
 
-    return this.notify({ type: 'error', title, detail, ...ctx, data })
+    return this.notify({ type: 'error', title, message, ...ctx, data })
   }
 }

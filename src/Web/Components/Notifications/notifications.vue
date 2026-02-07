@@ -1,12 +1,12 @@
 <template>
-  <div class="position-fixed top-0 end-0" style="z-index: 1100;">
+  <div class="position-fixed top-0 end-0 p-3" style="z-index: 1100;">
     <div class="d-flex flex-column gap-2">
       <div v-for="item in notifications" :key="item.id" class="alert fade show" role="alert" :class="variantClass(item)">
         <div class="d-flex justify-content-between gap-3">
           <strong>{{ item.title || label(item) }}</strong>
           <button type="button" class="btn-close" aria-label="Close" @click="notificationService.dismiss(item.id)"></button>
         </div>
-        <div v-if="item.detail" class="mt-1">{{ item.detail }}</div>
+        <div v-if="item.message" class="mt-1">{{ item.message }}</div>
         <div v-if="item.status || item.method || item.url" class="mt-1 small text-muted d-flex flex-wrap gap-2">
           <span v-if="item.status">HTTP {{ item.status }}</span>
           <span v-if="item.method">{{ item.method }}</span>

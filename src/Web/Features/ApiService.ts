@@ -31,8 +31,8 @@ export class ApiService {
           await until(this.health.backendReady).toBe(true)
         }
 
-        // Wait for token refresh if needed (except for /auth endpoints)
-        if (!url.startsWith('/auth')) {
+        // Wait for token refresh if needed (unless auth: false is passed)
+        if (request.auth !== false) {
           const isValid = await this.tokenValidator.ensureValidToken()
 
           if (!isValid) {

@@ -28,6 +28,7 @@ type RequestInitExtended = Omit<RequestInit, 'headers'> & {
   headers?: Record<string, string>
   isLoading?: Ref<boolean>
   query?: object
+  auth?: boolean
 }
 
 export const fetch = async (url: RequestInfo | URL, init: RequestInitExtended) => {

@@ -23,8 +23,8 @@ import { Router, setupAuthGuard, title } from './router'
 
 const config = new AppConfig()
 const profile = new Profile()
-const health = new HealthService(config)
 const notifications = new NotificationService()
+const health = new HealthService(config, notifications)
 const tokenValidator = new TokenValidator(
   () => profile.expiresAt.value,
   () => profile.isLoggedIn.value
