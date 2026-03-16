@@ -5,6 +5,7 @@ import { AccessTokenResponse } from "./AuthService"
 
 type UserData = {
   name: string
+  email?: string
   provider?: string
 }
 
@@ -29,6 +30,7 @@ export class Profile {
   refreshToken = computed(() => this.authData.value.refreshToken)
 
   userName = computed(() => this.user.value?.name ?? null)
+  userEmail = computed(() => this.user.value?.email ?? null)
   authProvider = computed(() => this.user.value?.provider ?? null)
 
   constructor() {

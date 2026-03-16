@@ -50,7 +50,7 @@ public class AuthModule : IModule
         builder.Services.AddSingleton<AuthProviders>();
     }
 
-    public record UserResponse(string Name, string? Provider);
+    public record UserResponse(string Name, string? Email, string? Provider);
 
     public static void MapRoutes(IEndpointRouteBuilder routes)
     {
@@ -84,8 +84,9 @@ public class AuthModule : IModule
             }
 
             var provider = user.Claims.FirstOrDefault(c => c.Type == CLAIM_AUTH_PROVIDER)?.Value;
+            var email = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
-            return TypedResults.Ok(new UserResponse(user.Identity.Name, provider));
+            return TypedResults.Ok(new UserResponse(user.Identity.Name, email, provider));
         });
 
         group.MapPost("/logout", static async (HttpContext context) =>

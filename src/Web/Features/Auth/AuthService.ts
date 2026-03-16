@@ -9,6 +9,8 @@ import { TokenValidator } from "./TokenValidator"
 
 type UserResponse = {
   name: string
+  email?: string
+  provider?: string
 }
 
 export interface AccessTokenResponse {
@@ -78,18 +80,14 @@ export class AuthService {
     }
   }
 
-  private async loadUserProfile() {
+  async ensureUserProfileLoaded() {
+    if (this.profile.user.value)
+      return
+
     try {
-      const user = await this.api.get<UserResponse>('/auth/user')
-      this.profile.user.value = user
+      this.profile.user.value = await this.api.get<UserResponse>('/auth/user')
     } catch {
       // User profile load failed, ignore
-    }
-  }
-
-  async ensureUserProfileLoaded() {
-    if (!this.profile.user.value) {
-      await this.loadUserProfile()
     }
   }
 
