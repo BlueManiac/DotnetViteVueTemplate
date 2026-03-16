@@ -1,6 +1,6 @@
 import { computedAsync } from "@vueuse/core"
 import type { InjectionKey } from "vue"
-import { inject, watchEffect } from "vue"
+import { inject, watch } from "vue"
 import { useRoute } from "vue-router"
 import { NotificationService } from "../../Components/Notifications/notifications"
 import { ApiService } from "../ApiService"
@@ -47,12 +47,13 @@ export class AuthService {
     // Set refresh callback for token validator
     this.tokenValidator.setRefreshCallback(() => this.refresh())
 
-    // Start background refresh on token changes
-    watchEffect(() => {
-      if (this.profile.isLoggedIn.value) {
+    // Start background refresh and load profile at login or initial load when already logged in
+    watch(this.profile.isLoggedIn, (isLoggedIn) => {
+      if (isLoggedIn) {
         this.tokenValidator.startBackgroundRefresh()
+        this.ensureUserProfileLoaded()
       }
-    })
+    }, { immediate: true })
   }
 
   async refresh(): Promise<void> {
@@ -63,12 +64,9 @@ export class AuthService {
     }
 
     try {
-      console.debug('Refreshing access token...', refreshToken)
+      console.log('Refreshing access token...')
       const data = await this.api.post<AccessTokenResponse>('/auth/refresh', { refreshToken }, { auth: false })
       this.profile.setAuthTokens(data)
-
-      // Load user profile after successful refresh
-      await this.ensureUserProfileLoaded()
     } catch (error) {
       // Refresh token expired - log out and notify user
       this.profile.clear()
@@ -118,9 +116,6 @@ export function useAuthCallback(onSuccess?: () => void) {
       refreshToken,
       tokenType: tokenType || 'Bearer'
     })
-
-    // Load user profile after successful login (don't await - let it load in background)
-    authService.ensureUserProfileLoaded()
 
     onSuccess?.()
   }

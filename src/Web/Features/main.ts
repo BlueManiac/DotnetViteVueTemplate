@@ -32,10 +32,6 @@ const tokenValidator = new TokenValidator(
 const api = new ApiService(tokenValidator, config, profile, health)
 const authService = new AuthService(tokenValidator, api, profile, notifications)
 
-if (profile.isLoggedIn.value) {
-  authService.ensureUserProfileLoaded()
-}
-
 setupAuthGuard(profile, tokenValidator)
 
 const app = createApp(App)

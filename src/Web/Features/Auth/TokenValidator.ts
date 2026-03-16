@@ -60,16 +60,13 @@ export class TokenValidator {
       return
     }
 
-    // Refresh 5 seconds before expiration
+    // Refresh 5 seconds before expiration (or immediately if already expired)
     const timeUntilRefresh = expiresAt - Date.now() - 5000
+    const delay = Math.max(0, timeUntilRefresh)
 
-    if (timeUntilRefresh > 0) {
-      this.refreshTimeout = setTimeout(() => {
-        if (this.onRefresh) {
-          this.onRefresh().then(() => this.startBackgroundRefresh())
-        }
-      }, timeUntilRefresh)
-    }
+    this.refreshTimeout = setTimeout(() => {
+      this.ensureValidToken().then(() => this.startBackgroundRefresh())
+    }, delay)
   }
 
   private isTokenExpired(bufferMs = 0): boolean {
