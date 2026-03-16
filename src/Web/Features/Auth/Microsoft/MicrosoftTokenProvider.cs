@@ -1,3 +1,5 @@
+using System.Security.Claims;
+
 namespace Web.Features.Auth.Microsoft;
 
 /// <summary>
@@ -7,6 +9,7 @@ public class MicrosoftTokenProvider(IHttpContextAccessor httpContextAccessor)
 {
     public const string CLAIM_ACCESS_TOKEN = "microsoft_access_token";
     public const string CLAIM_REFRESH_TOKEN = "microsoft_refresh_token";
+    public const string CLAIM_OBJECT_ID = "microsoft_object_id";
 
     private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
 
@@ -32,6 +35,19 @@ public class MicrosoftTokenProvider(IHttpContextAccessor httpContextAccessor)
         {
             var user = _httpContextAccessor.HttpContext?.User;
             return user?.Claims.FirstOrDefault(c => c.Type == CLAIM_REFRESH_TOKEN)?.Value;
+        }
+    }
+
+    /// <summary>
+    /// Gets the Microsoft Azure AD object ID (oid) for the currently authenticated user.
+    /// This can be used to filter call records and other user-specific data.
+    /// </summary>
+    public string? ObjectId
+    {
+        get
+        {
+            var user = _httpContextAccessor.HttpContext?.User;
+            return user?.Claims.FirstOrDefault(c => c.Type == CLAIM_OBJECT_ID)?.Value;
         }
     }
 }

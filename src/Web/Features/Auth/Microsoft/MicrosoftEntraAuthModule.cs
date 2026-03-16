@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
-using Web.Features.Auth;
+using System.Text.RegularExpressions;
 using Web.Util.Modules;
 
 namespace Web.Features.Auth.Microsoft;
@@ -130,7 +130,67 @@ public class MicrosoftEntraAuthModule : IModule
                     },
                     OnRemoteFailure = context =>
                     {
-                        context.Response.Redirect("/auth/login?error=microsoft-auth-failed");
+                        var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<MicrosoftEntraAuthModule>>();
+                        var configuration = context.HttpContext.RequestServices.GetRequiredService<IConfiguration>();
+                        var frontendUrl = configuration["FrontendUrl"] ?? "https://localhost:5043";
+
+                        // Extract error details from the failure
+                        var originalError = context.Failure?.Message ?? "Microsoft authentication failed";
+                        var errorMessage = originalError;
+
+                        // Extract AADSTS error code if present
+                        var aadMatch = Regex.Match(originalError, @"AADSTS(\d+)");
+                        var errorCode = aadMatch.Success
+                            ? $"AADSTS{aadMatch.Groups[1].Value}"
+                            : "microsoft-auth-failed";
+
+                        // Provide user-friendly messages for common error codes
+                        if (originalError.Contains("'access_denied'") || errorCode == "AADSTS65004")
+                        {
+                            errorMessage = $"You cancelled the sign-in process. Please try again if you want to sign in. ({errorCode})";
+                        }
+                        else if (errorCode == "AADSTS650053")
+                        {
+                            var scopeMatch = Regex.Match(originalError, @"asked for scope '([^']+)'");
+                            if (scopeMatch.Success)
+                            {
+                                var scope = scopeMatch.Groups[1].Value;
+                                errorMessage = $"The scope '{scope}' is not configured in the Azure AD application. Please contact your administrator to add this permission. ({errorCode})";
+                            }
+                            else
+                            {
+                                errorMessage = $"A required permission is not configured in the Azure AD application. Please contact your administrator. ({errorCode})";
+                            }
+                        }
+                        else if (errorCode == "AADSTS50105")
+                        {
+                            errorMessage = $"Your account is not assigned to this application. Please contact your administrator for access. ({errorCode})";
+                        }
+                        else if (errorCode == "AADSTS50020")
+                        {
+                            errorMessage = $"The user account was not found in the directory. Please verify your email address or contact your administrator. ({errorCode})";
+                        }
+                        else if (errorCode == "AADSTS700016")
+                        {
+                            errorMessage = $"The application configuration is invalid. Please contact your administrator. ({errorCode})";
+                        }
+                        else if (errorCode != "microsoft-auth-failed" && errorMessage == originalError)
+                        {
+                            // For unhandled AADSTS errors, append the code for reference
+                            errorMessage = $"{originalError} ({errorCode})";
+                        }
+
+                        logger.LogWarning("Microsoft authentication failed: {ErrorCode} - {Message}", errorCode, errorMessage);
+
+                        var redirectUrl = QueryHelpers.AddQueryString(
+                            $"{frontendUrl}/auth/login",
+                            new Dictionary<string, string?>
+                            {
+                                ["errorMessage"] = errorMessage
+                            }
+                        );
+
+                        context.Response.Redirect(redirectUrl);
                         context.HandleResponse();
                         return Task.CompletedTask;
                     }
@@ -188,10 +248,11 @@ public class MicrosoftEntraAuthModule : IModule
 
             var email = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email || c.Type == "email")?.Value!;
             var name = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name || c.Type == "name")?.Value!;
+            var objectId = claims.FirstOrDefault(c => c.Type == "oid" || c.Type == "http://schemas.microsoft.com/identity/claims/objectidentifier")?.Value;
 
             if (logger.IsEnabled(LogLevel.Information))
             {
-                logger.LogInformation("Microsoft account login: {User}", email);
+                logger.LogInformation("Microsoft account login: {User} (ObjectId: {ObjectId})", email, objectId);
             }
 
             var userClaims = new List<Claim>
@@ -200,6 +261,12 @@ public class MicrosoftEntraAuthModule : IModule
                 new(ClaimTypes.Name, name),
                 new(AuthModule.CLAIM_AUTH_PROVIDER, PROVIDER_NAME)
             };
+
+            // Store Microsoft object ID for use with Graph API calls
+            if (!string.IsNullOrEmpty(objectId))
+            {
+                userClaims.Add(new Claim(MicrosoftTokenProvider.CLAIM_OBJECT_ID, objectId));
+            }
 
             // Preserve Microsoft tokens in the bearer token for later use
             if (claims.FirstOrDefault(c => c.Type == MicrosoftTokenProvider.CLAIM_ACCESS_TOKEN)?.Value is string microsoftAccessToken)

@@ -12,13 +12,16 @@
 </template>
 
 <script setup lang="ts">
-import { inject } from 'vue'
+import { inject, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { NotificationService } from '../../../Components/Notifications/notifications'
 import { AppConfig } from '../../AppConfig'
 import { AuthService, useAuthCallback } from '../AuthService'
 
 const config = inject(AppConfig.token)!
 const authService = inject(AuthService.token)!
+const notifications = inject(NotificationService.token)!
+
 const router = useRouter()
 const route = useRoute()
 
@@ -29,6 +32,24 @@ const handleRedirect = () => {
 }
 
 useAuthCallback(handleRedirect)
+
+// Display authentication errors as notifications
+onMounted(() => {
+  const errorMessage = route.query.errorMessage as string | undefined
+
+  if (errorMessage) {
+    notifications.notify({
+      type: 'error',
+      title: 'Authentication Failed',
+      message: errorMessage,
+      persistent: true
+    })
+
+    // Clean up URL query parameters
+    const { error, errorMessage: _, ...remainingQuery } = route.query
+    router.replace({ query: remainingQuery })
+  }
+})
 
 definePage({
   meta: {
