@@ -9,27 +9,27 @@
     "update": "npx npm-check-updates --upgrade && npm install"
   },
   "devDependencies": {
-    "@iconify/json": "2.2.429",
-    "@types/node": "25.0.9",
-    "@vitejs/plugin-vue": "6.0.3",
+    "@iconify/json": "2.2.450",
+    "@types/node": "25.5.0",
+    "@vitejs/plugin-vue": "6.0.5",
     "core-dts": "0.0.3",
-    "lightningcss": "1.30.2",
+    "lightningcss": "1.32.0",
     "unplugin-auto-import": "21.0.0",
     "unplugin-icons": "23.0.1",
     "unplugin-vue-components": "31.0.0",
     "unplugin-vue-router": "0.19.2",
-    "vite": "7.3.1",
-    "vite-plugin-mkcert": "1.17.9",
-    "vite-plugin-vue-inspector": "5.3.2"
+    "vite": "8.0.0",
+    "vite-plugin-mkcert": "1.17.10",
+    "vite-plugin-vue-inspector": "5.4.0"
   },
   "dependencies": {
-    "@faker-js/faker": "10.2.0",
+    "@faker-js/faker": "10.3.0",
     "@jridgewell/trace-mapping": "0.3.31",
     "@microsoft/signalr": "10.0.0",
-    "@vueuse/core": "14.1.0",
+    "@vueuse/core": "14.2.1",
     "bootstrap": "5.3.8",
-    "core-js": "3.47.0",
-    "vue": "3.5.26",
-    "vue-router": "4.6.4"
+    "core-js": "3.48.0",
+    "vue": "3.5.30",
+    "vue-router": "5.0.3"
   }
 }

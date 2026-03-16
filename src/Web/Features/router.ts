@@ -14,7 +14,7 @@ export const Router = createRouter({
 })
 
 export function setupAuthGuard(profile: Profile, tokenValidator: TokenValidator) {
-  Router.beforeEach(async (to, from, next) => {
+  Router.beforeEach(async (to) => {
     const requiresAuth = to.meta.auth !== false // default is true
 
     if (requiresAuth) {
@@ -22,12 +22,9 @@ export function setupAuthGuard(profile: Profile, tokenValidator: TokenValidator)
       const isValid = await tokenValidator.ensureValidToken()
 
       if (!isValid) {
-        next({ path: '/auth/login', query: { redirect: to.fullPath } })
-        return
+        return { path: '/auth/login', query: { redirect: to.fullPath } }
       }
     }
-
-    next()
   })
 
   // Redirect to login if user is logged out (e.g., logout in another tab)
