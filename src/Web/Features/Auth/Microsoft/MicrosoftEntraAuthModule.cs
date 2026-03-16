@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
+using Web.Features.Auth;
 using Web.Util.Modules;
 
 namespace Web.Features.Auth.Microsoft;
@@ -60,8 +61,14 @@ public class MicrosoftEntraAuthModule : IModule
         // Register IHttpContextAccessor (required by MicrosoftTokenProvider)
         builder.Services.AddHttpContextAccessor();
 
+        // Register HttpClient (required for token refresh)
+        builder.Services.AddHttpClient();
+
         // Register Microsoft token provider for server-side use
         builder.Services.AddScoped<MicrosoftTokenProvider>();
+
+        // Register Microsoft token refresher for automatic token refresh
+        builder.Services.AddScoped<IAuthProviderRefresher, MicrosoftTokenRefresher>();
 
         // Extend existing authentication configuration
         var authBuilder = builder.Services.AddAuthentication();
@@ -105,25 +112,33 @@ public class MicrosoftEntraAuthModule : IModule
 
                         using (logger.BeginScope(new Dictionary<string, object> { ["User"] = email ?? "unknown" }))
                         {
-                            // Store Microsoft access token and refresh token as claims
-                            // These can be retrieved later to call Microsoft Graph API
-                            if (context.TokenEndpointResponse?.AccessToken is not null)
-                            {
-                                var claim = new Claim(MicrosoftTokenProvider.CLAIM_ACCESS_TOKEN, context.TokenEndpointResponse.AccessToken);
-                                context.Principal?.Identities.FirstOrDefault()?.AddClaim(claim);
-                                logger.LogDebug("Microsoft Access Token stored");
-                            }
-                            else
+                            var tokenResponse = context.TokenEndpointResponse;
+                            if (tokenResponse?.AccessToken is null)
                             {
                                 logger.LogWarning("Microsoft Access Token not received - check OAuth configuration");
+                                return Task.CompletedTask;
                             }
 
-                            if (context.TokenEndpointResponse?.RefreshToken is not null)
+                            if (string.IsNullOrEmpty(tokenResponse.ExpiresIn) || !int.TryParse(tokenResponse.ExpiresIn, out var expiresInSeconds))
                             {
-                                var claim = new Claim(MicrosoftTokenProvider.CLAIM_REFRESH_TOKEN, context.TokenEndpointResponse.RefreshToken);
-                                context.Principal?.Identities.FirstOrDefault()?.AddClaim(claim);
-                                logger.LogDebug("Microsoft Refresh Token stored");
+                                logger.LogWarning("Microsoft Access Token expiration not received or invalid");
+                                return Task.CompletedTask;
                             }
+
+                            var identity = context.Principal?.Identities.FirstOrDefault();
+                            if (identity is null)
+                            {
+                                logger.LogWarning("Claims identity not found - cannot store Microsoft tokens");
+                                return Task.CompletedTask;
+                            }
+
+                            var tokenProvider = context.HttpContext.RequestServices.GetRequiredService<MicrosoftTokenProvider>();
+                            tokenProvider.StoreTokens(
+                                identity,
+                                tokenResponse.AccessToken,
+                                expiresInSeconds,
+                                tokenResponse.RefreshToken
+                            );
                         }
 
                         return Task.CompletedTask;
@@ -276,6 +291,10 @@ public class MicrosoftEntraAuthModule : IModule
             if (claims.FirstOrDefault(c => c.Type == MicrosoftTokenProvider.CLAIM_REFRESH_TOKEN)?.Value is string microsoftRefreshToken)
             {
                 userClaims.Add(new Claim(MicrosoftTokenProvider.CLAIM_REFRESH_TOKEN, microsoftRefreshToken));
+            }
+            if (claims.FirstOrDefault(c => c.Type == MicrosoftTokenProvider.CLAIM_ACCESS_TOKEN_EXPIRES_AT)?.Value is string expiresAt)
+            {
+                userClaims.Add(new Claim(MicrosoftTokenProvider.CLAIM_ACCESS_TOKEN_EXPIRES_AT, expiresAt));
             }
 
             var claimsPrincipal = new ClaimsPrincipal(

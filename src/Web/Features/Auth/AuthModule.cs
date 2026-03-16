@@ -56,7 +56,12 @@ public class AuthModule : IModule
     {
         var group = routes.MapGroup("/auth");
 
-        group.MapPost("/refresh", static (RefreshRequest refreshRequest, IOptionsMonitor<BearerTokenOptions> optionsMonitor, TimeProvider timeProvider) =>
+        group.MapPost("/refresh", async (
+            RefreshRequest refreshRequest,
+            IOptionsMonitor<BearerTokenOptions> optionsMonitor,
+            TimeProvider timeProvider,
+            IEnumerable<IAuthProviderRefresher> tokenRefreshers,
+            ILogger<AuthModule> logger) =>
         {
             var identityBearerOptions = optionsMonitor.Get(BearerTokenDefaults.AuthenticationScheme);
             var refreshTicket = identityBearerOptions.RefreshTokenProtector.Unprotect(refreshRequest.RefreshToken);
@@ -66,7 +71,24 @@ public class AuthModule : IModule
                 return Results.Unauthorized();
             }
 
-            return TypedResults.SignIn(refreshTicket.Principal);
+            var principal = refreshTicket.Principal;
+            var provider = principal.Claims.FirstOrDefault(c => c.Type == CLAIM_AUTH_PROVIDER)?.Value;
+
+            // Support refresh external provider tokens if authenticated via external provider
+            var refresher = tokenRefreshers.FirstOrDefault(r => r.ProviderName == provider);
+            if (refresher != null)
+            {
+                try
+                {
+                    await refresher.RefreshTokensAsync(principal);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogWarning(ex, "Failed to refresh provider '{Provider}' tokens", provider);
+                }
+            }
+
+            return TypedResults.SignIn(principal);
         })
         .AllowAnonymous();
 

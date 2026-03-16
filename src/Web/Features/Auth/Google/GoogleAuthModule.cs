@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
-using Web.Features.Auth;
 using Web.Util.Modules;
 
 namespace Web.Features.Auth.Google;
