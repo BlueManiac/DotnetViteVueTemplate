@@ -1,4 +1,5 @@
 import { useLocalStorage } from "@vueuse/core"
+import type { InjectionKey } from "vue"
 import { watch } from "vue"
 import { AccessTokenResponse } from "./AuthService"
 
@@ -15,6 +16,8 @@ type AuthData = {
 }
 
 export class Profile {
+  static readonly token: InjectionKey<Profile> = Symbol(Profile.name)
+
   user = ref<UserData | null>(null)
 
   private authData = useLocalStorage<AuthData>('auth-data', {})

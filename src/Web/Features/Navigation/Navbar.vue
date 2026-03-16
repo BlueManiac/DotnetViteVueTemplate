@@ -46,9 +46,9 @@ import { AuthService } from '../Auth/AuthService'
 import { Profile } from '../Auth/Profile'
 import { navigationRoutes } from '../router'
 
-const config = inject(AppConfig)
-const authService = inject(AuthService)
-const profile = inject(Profile)
+const config = inject(AppConfig.token)!
+const authService = inject(AuthService.token)!
+const profile = inject(Profile.token)!
 
 const logout = () => authService.logout()
 </script>

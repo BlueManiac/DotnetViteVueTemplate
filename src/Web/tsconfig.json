@@ -23,9 +23,6 @@
       // Support absolute imports
       "/*": [
         "*"
-      ],
-      "vue-original": [
-        "Util/Client/di.d.ts"
       ]
     }
   }

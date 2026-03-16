@@ -3,7 +3,7 @@ import { inject } from 'vue'
 import { ApiService } from '../../ApiService'
 
 export const useHelloData = () => {
-  const api = inject(ApiService)
+  const api = inject(ApiService.token)!
 
   const rotation = ref(0)
   const speed = useStorage('speed', 1)

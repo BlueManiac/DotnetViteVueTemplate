@@ -1,5 +1,4 @@
 import Vue from '@vitejs/plugin-vue'
-import path from "node:path"
 import AutoImport from 'unplugin-auto-import/vite'
 import IconsResolver from 'unplugin-icons/resolver'
 import Icons from 'unplugin-icons/vite'
@@ -17,12 +16,6 @@ export default ({ mode }: { mode: string }): UserConfig => {
   })
 
   return {
-    resolve: {
-      alias: {
-        'vue-original': 'vue',
-        'vue': path.resolve(__dirname, 'Util/Client/di.ts'),
-      }
-    },
     plugins: [
       VueRouter({
         dts: 'typed-router.d.ts',

@@ -5,11 +5,11 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { inject } from 'vue'
 import { ApiService } from '../../ApiService'
 
-const api = inject(ApiService)
+const api = inject(ApiService.token)!
 
 const clientError = () => {
   throw new Error('client error')

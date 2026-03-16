@@ -1,4 +1,5 @@
 import { until } from '@vueuse/core'
+import type { InjectionKey } from 'vue'
 import { AppConfig } from './AppConfig'
 import { Profile } from './Auth/Profile'
 import { TokenValidator } from './Auth/TokenValidator'
@@ -7,6 +8,8 @@ import { useApi } from '/Util/Client/fetch'
 import { signalr, SignalrReciever, SignalrSender, useSignalr } from '/Util/Client/signalr'
 
 export class ApiService {
+  static readonly token: InjectionKey<ApiService> = Symbol(ApiService.name)
+
   private config: AppConfig
   private profile: Profile
   private health: HealthService

@@ -32,16 +32,18 @@ src/Web/
 
 ### Core Patterns
 
-#### 1. Custom Dependency Injection
-**DO** use class-based injection instead of string keys:
+#### 1. Dependency Injection
+**DO** use injection tokens with services:
 ```typescript
 // ✅ Correct
-const api = inject(ApiService)
-const profile = inject(Profile)
+const api = inject(ApiService.token)!
+const profile = inject(Profile.token)!
 
 // ❌ Wrong
 const api = inject('apiService')
 ```
+
+**Services** provide static injection tokens for type-safe DI. All services are singletons provided at app startup.
 
 #### 2. Module System
 **DO** implement `IModule` for all features:
@@ -106,7 +108,7 @@ definePage({
 #### 5. API Service Pattern
 **DO** use `ApiService` for all HTTP calls:
 ```typescript
-const api = inject(ApiService)
+const api = inject(ApiService.token)!
 
 // Type-safe responses
 const users = await api.get<User[]>('/api/users')
@@ -120,7 +122,7 @@ const data = await api.get('/api/data', { loading })
 #### 6. SignalR Integration
 **DO** use `api.useSignalr` with typed sender/receiver:
 ```typescript
-const api = inject(ApiService)
+const api = inject(ApiService.token)!
 
 type Sender = {
   SendMessage(msg: string): Promise<void>
@@ -154,7 +156,7 @@ if (result?.confirmed) {
 #### 8. Notifications
 **DO** use `NotificationService` for displaying notifications:
 ```typescript
-const notifications = inject(NotificationService)
+const notifications = inject(NotificationService.token)!
 
 notifications.notify({ type: 'success', title: 'Saved' })
 
@@ -289,19 +291,6 @@ const count = ref(0)
 </script>
 ```
 
-❌ **Don't** import from 'vue-original':
-```typescript
-// Wrong - vue-original is only for internal DI system implementation
-import { provide } from 'vue-original'
-```
-
-✅ **Do** import from 'vue':
-```typescript
-// Correct - always use the custom DI-enabled 'vue' import
-import { provide } from 'vue'
-const api = inject(ApiService)
-```
-
 ❌ **Don't** create global state stores:
 ```typescript
 // Wrong
@@ -310,11 +299,18 @@ export const globalState = reactive({ ... })
 
 ✅ **Do** use dependency injection:
 ```typescript
-// Correct
+// Correct - create a service class with static token
 export class StateService {
+  static readonly token: InjectionKey<StateService> = Symbol(StateService.name)
+  
   state = reactive({ ... })
 }
-app.provide(StateService)
+
+// In main.ts
+app.provide(StateService.token, new StateService())
+
+// In components
+const state = inject(StateService.token)!
 ```
 
 ### Examples

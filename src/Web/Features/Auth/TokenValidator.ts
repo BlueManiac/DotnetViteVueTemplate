@@ -1,6 +1,10 @@
+import type { InjectionKey } from 'vue'
+
 export type RefreshCallback = () => Promise<void>
 
 export class TokenValidator {
+  static readonly token: InjectionKey<TokenValidator> = Symbol(TokenValidator.name)
+
   private refreshPromise?: Promise<void>
   private refreshTimeout?: ReturnType<typeof setTimeout>
   private onRefresh?: RefreshCallback

@@ -1,8 +1,11 @@
 import { computedAsync } from '@vueuse/core'
+import type { InjectionKey } from 'vue'
 import { AppConfig } from '../AppConfig'
 import { NotificationService } from '/Components/Notifications/notifications'
 
 export class HealthService {
+  static readonly token: InjectionKey<HealthService> = Symbol(HealthService.name)
+
   private static readonly INITIAL_RETRY_DELAY = 500
   private static readonly MAX_RETRY_DELAY = 3000
   private static readonly REQUEST_TIMEOUT = 5000

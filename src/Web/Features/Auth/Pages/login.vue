@@ -17,8 +17,8 @@ import { useRoute, useRouter } from 'vue-router'
 import { AppConfig } from '../../AppConfig'
 import { AuthService, useAuthCallback } from '../AuthService'
 
-const config = inject(AppConfig)
-const authService = inject(AuthService)
+const config = inject(AppConfig.token)!
+const authService = inject(AuthService.token)!
 const router = useRouter()
 const route = useRoute()
 

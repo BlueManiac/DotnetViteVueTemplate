@@ -1,3 +1,4 @@
+import type { InjectionKey } from 'vue'
 import { ref } from 'vue'
 
 export type NotificationType = 'info' | 'success' | 'warning' | 'error'
@@ -17,6 +18,8 @@ export interface NotificationEntry {
 type RecordOrArray = Record<string, any> | { key: string, value: any }[]
 
 export class NotificationService {
+  static readonly token: InjectionKey<NotificationService> = Symbol(NotificationService.name)
+
   notifications = ref<NotificationEntry[]>([])
 
   dismiss(id: number) {

@@ -1,4 +1,5 @@
 import { computedAsync } from "@vueuse/core"
+import type { InjectionKey } from "vue"
 import { inject, watchEffect } from "vue"
 import { useRoute } from "vue-router"
 import { NotificationService } from "../../Components/Notifications/notifications"
@@ -18,6 +19,8 @@ export interface AccessTokenResponse {
 }
 
 export class AuthService {
+  static readonly token: InjectionKey<AuthService> = Symbol(AuthService.name)
+
   private api: ApiService
   private profile: Profile
   private notifications: NotificationService
@@ -104,8 +107,8 @@ export class AuthService {
  * Works with any authentication method that redirects back with accessToken, expiresIn, refreshToken, and tokenType.
  */
 export function useAuthCallback(onSuccess?: () => void) {
-  const profile = inject(Profile)
-  const authService = inject(AuthService)
+  const profile = inject(Profile.token)!
+  const authService = inject(AuthService.token)!
   const route = useRoute()
 
   const { accessToken, expiresIn, refreshToken, tokenType } = route.query as Record<keyof AccessTokenResponse, string>

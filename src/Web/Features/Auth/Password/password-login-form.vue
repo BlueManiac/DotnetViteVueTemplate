@@ -23,8 +23,8 @@ const emit = defineEmits<{
   success: []
 }>()
 
-const api = inject(ApiService)
-const profile = inject(Profile)
+const api = inject(ApiService.token)!
+const profile = inject(Profile.token)!
 
 const emailElement = ref<HTMLInputElement | null>()
 useFocus(emailElement, { initialValue: true })

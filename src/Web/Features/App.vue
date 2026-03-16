@@ -30,7 +30,7 @@ import { NotificationService } from '../Components/Notifications/notifications'
 import { HttpError } from '/Util/Client/fetch'
 
 const route = useRoute()
-const notificationService = inject(NotificationService)
+const notificationService = inject(NotificationService.token)!
 
 const isCentered = computed(() => route.meta?.display === 'centered')
 const isFull = computed(() => route.meta?.display === 'full')

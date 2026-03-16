@@ -1,13 +1,13 @@
 # DotnetViteVueTemplate
 
-A modern full-stack web application template combining ASP.NET Core with Vue 3 and Vite. This template provides a production-ready foundation with authentication, real-time communication, custom dependency injection, and a comprehensive component library.
+A modern full-stack web application template combining ASP.NET Core with Vue 3 and Vite. This template provides a production-ready foundation with authentication, real-time communication, type-safe dependency injection, and a comprehensive component library.
 
 > **Note**: This is an opinionated template that tightly integrates server-side C# (ASP.NET Core) with client-side Vue 3 in a single project. While this monolithic approach is less common than separate frontend/backend repositories, it offers simplified deployment, shared type safety opportunities, and streamlined development for small-to-medium applications.
 
 ## Features
 
 - **Modern Stack**: .NET 10, Vue 3 (Composition API), Vite 7, TypeScript
-- **Custom DI System**: Type-safe dependency injection wrapping Vue's provide/inject
+- **Type-Safe DI**: Standard Vue dependency injection with InjectionKey tokens
 - **Vertical Slice Architecture**: Self-contained feature modules with IModule pattern
 - **File-Based Routing**: Auto-registered routes with type safety via unplugin-vue-router
 - **Component Library**: Bootstrap 5-based components with auto-import
@@ -128,7 +128,6 @@ DotnetViteVueTemplate/
 │       │   └── Validation/           # Form validation directive
 │       ├── Util/                     # Utilities
 │       │   ├── Client/               # Frontend utilities
-│       │   │   ├── di.ts             # Custom dependency injection
 │       │   │   ├── fetch.ts          # HTTP utilities
 │       │   │   └── signalr.ts        # SignalR integration
 │       │   └── Modules/              # Backend module system
@@ -149,7 +148,7 @@ For detailed information about the architecture, patterns, and conventions used 
 📖 **[GitHub Copilot Instructions](.github/copilot-instructions.md)**
 
 Topics covered:
-- Custom Dependency Injection system
+- Dependency Injection with injection tokens
 - Vertical Slice Architecture with IModule
 - Component patterns and conventions
 - File-based routing and typed routes
