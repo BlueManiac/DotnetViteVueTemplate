@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.BearerToken;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity.Data;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
 using Web.Util.Modules;
@@ -10,8 +11,6 @@ namespace Web.Features.Auth;
 
 public class AuthModule : IModule
 {
-    public const string CLAIM_AUTH_PROVIDER = "auth_provider";
-
     public static void AddServices(WebApplicationBuilder builder)
     {
         builder.Services
@@ -47,10 +46,54 @@ public class AuthModule : IModule
             });
 
         builder.Services.AddAuthorization();
+        builder.Services.AddHttpContextAccessor();
         builder.Services.AddSingleton<AuthProviders>();
+        builder.Services.AddScoped(static sp =>
+        {
+            var httpContext = sp.GetRequiredService<IHttpContextAccessor>().HttpContext;
+            return new UserPrincipal(httpContext?.User ?? new ClaimsPrincipal());
+        });
     }
 
     public record UserResponse(string Name, string? Email, string? Provider);
+
+    /// <summary>
+    /// Creates bearer tokens for a user principal and returns a redirect result to the frontend.
+    /// </summary>
+    public static IResult CreateBearerTokenRedirect(
+        UserPrincipal user,
+        HttpContext context,
+        IConfiguration configuration,
+        AuthenticationProperties? authProperties)
+    {
+        var bearerTokenOptions = context.RequestServices
+            .GetRequiredService<IOptionsMonitor<BearerTokenOptions>>()
+            .Get(BearerTokenDefaults.AuthenticationScheme);
+
+        var ticket = new AuthenticationTicket(user.Principal, BearerTokenDefaults.AuthenticationScheme);
+        ticket.Properties.ExpiresUtc = DateTimeOffset.UtcNow.Add(bearerTokenOptions.BearerTokenExpiration);
+
+        var accessToken = bearerTokenOptions.BearerTokenProtector.Protect(ticket);
+        var refreshToken = bearerTokenOptions.RefreshTokenProtector.Protect(ticket);
+
+        var queryParams = new Dictionary<string, string?>
+        {
+            ["accessToken"] = accessToken,
+            ["tokenType"] = "Bearer",
+            ["expiresIn"] = ((long)bearerTokenOptions.BearerTokenExpiration.TotalSeconds).ToString(),
+            ["refreshToken"] = refreshToken
+        };
+
+        if (authProperties?.Items.TryGetValue("redirect", out var redirect) == true)
+        {
+            queryParams["redirect"] = redirect;
+        }
+
+        var frontendUrl = configuration["FrontendUrl"] ?? "https://localhost:5043";
+        var redirectUrl = QueryHelpers.AddQueryString($"{frontendUrl}/auth/login", queryParams);
+
+        return Results.Redirect(redirectUrl);
+    }
 
     public static void MapRoutes(IEndpointRouteBuilder routes)
     {
@@ -71,24 +114,23 @@ public class AuthModule : IModule
                 return Results.Unauthorized();
             }
 
-            var principal = refreshTicket.Principal;
-            var provider = principal.Claims.FirstOrDefault(c => c.Type == CLAIM_AUTH_PROVIDER)?.Value;
+            var user = new UserPrincipal(refreshTicket.Principal);
 
             // Support refresh external provider tokens if authenticated via external provider
-            var refresher = tokenRefreshers.FirstOrDefault(r => r.ProviderName == provider);
+            var refresher = tokenRefreshers.FirstOrDefault(r => r.ProviderName == user.Provider);
             if (refresher != null)
             {
                 try
                 {
-                    await refresher.RefreshTokensAsync(principal);
+                    await refresher.RefreshTokensAsync(refreshTicket.Principal);
                 }
                 catch (Exception ex)
                 {
-                    logger.LogWarning(ex, "Failed to refresh provider '{Provider}' tokens", provider);
+                    logger.LogWarning(ex, "Failed to refresh provider '{Provider}' tokens", user.Provider);
                 }
             }
 
-            return TypedResults.SignIn(principal);
+            return TypedResults.SignIn(refreshTicket.Principal);
         })
         .AllowAnonymous();
 
@@ -98,17 +140,14 @@ public class AuthModule : IModule
         })
         .AllowAnonymous();
 
-        group.MapGet("/user", static (ClaimsPrincipal user) =>
+        group.MapGet("/user", static (UserPrincipal user) =>
         {
-            if (user.Identity?.Name is null)
+            if (!user.IsAuthenticated)
             {
                 return Results.Unauthorized();
             }
 
-            var provider = user.Claims.FirstOrDefault(c => c.Type == CLAIM_AUTH_PROVIDER)?.Value;
-            var email = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-
-            return TypedResults.Ok(new UserResponse(user.Identity.Name, email, provider));
+            return TypedResults.Ok(new UserResponse(user.Name ?? user.Email ?? "Unknown", user.Email, user.Provider));
         });
 
         group.MapPost("/logout", static async (HttpContext context) =>

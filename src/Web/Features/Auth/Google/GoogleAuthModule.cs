@@ -1,9 +1,6 @@
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.BearerToken;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Options;
 using System.Security.Claims;
 using Web.Util.Modules;
 
@@ -76,7 +73,7 @@ public class GoogleAuthModule : IModule
         })
         .AllowAnonymous();
 
-        group.MapGet("/google-callback-handler", async (HttpContext context, IConfiguration configuration) =>
+        group.MapGet("/google-callback-handler", async (HttpContext context, IConfiguration configuration, ILogger<GoogleAuthModule> logger) =>
         {
             var authenticateResult = await context.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
@@ -87,51 +84,20 @@ public class GoogleAuthModule : IModule
                 return Results.Redirect($"{frontendUrl}/auth/login?error=google-auth-failed");
             }
 
-            var claims = authenticateResult.Principal.Claims;
+            var cookieUser = new UserPrincipal(authenticateResult.Principal);
 
-            var email = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value!;
-            var name = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!;
-
-            var userClaims = new List<Claim>
+            if (logger.IsEnabled(LogLevel.Information))
             {
-                new(ClaimTypes.Email, email),
-                new(ClaimTypes.Name, name),
-                new(AuthModule.CLAIM_AUTH_PROVIDER, PROVIDER_NAME)
-            };
-
-            var claimsPrincipal = new ClaimsPrincipal(
-                new ClaimsIdentity(userClaims, BearerTokenDefaults.AuthenticationScheme)
-            );
-
-            var bearerTokenOptions = context.RequestServices
-                .GetRequiredService<IOptionsMonitor<BearerTokenOptions>>()
-                .Get(BearerTokenDefaults.AuthenticationScheme);
-
-            var ticket = new AuthenticationTicket(
-                claimsPrincipal,
-                BearerTokenDefaults.AuthenticationScheme);
-
-            ticket.Properties.ExpiresUtc = DateTimeOffset.UtcNow.Add(bearerTokenOptions.BearerTokenExpiration);
-
-            var accessToken = bearerTokenOptions.BearerTokenProtector.Protect(ticket);
-            var refreshToken = bearerTokenOptions.RefreshTokenProtector.Protect(ticket);
-
-            var queryParams = new Dictionary<string, string?>
-            {
-                ["accessToken"] = accessToken,
-                ["tokenType"] = "Bearer",
-                ["expiresIn"] = ((long)bearerTokenOptions.BearerTokenExpiration.TotalSeconds).ToString(),
-                ["refreshToken"] = refreshToken
-            };
-
-            if (authenticateResult.Properties?.Items.TryGetValue("redirect", out var redirect) == true)
-            {
-                queryParams["redirect"] = redirect;
+                logger.LogInformation("Google account login: {User}", cookieUser.Email);
             }
 
-            var redirectUrl = QueryHelpers.AddQueryString($"{frontendUrl}/auth/login", queryParams);
+            var user = UserPrincipal.Create();
 
-            return Results.Redirect(redirectUrl);
+            user.Email = cookieUser.Email;
+            user.Name = cookieUser.Name;
+            user.Provider = PROVIDER_NAME;
+
+            return AuthModule.CreateBearerTokenRedirect(user, context, configuration, authenticateResult.Properties);
         })
         .AllowAnonymous();
     }

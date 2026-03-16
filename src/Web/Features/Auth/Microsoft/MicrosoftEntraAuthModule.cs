@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authentication.BearerToken;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Options;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
 using Web.Features.Auth;
@@ -58,14 +57,18 @@ public class MicrosoftEntraAuthModule : IModule
             return;
         }
 
-        // Register IHttpContextAccessor (required by MicrosoftTokenProvider)
+        // Register IHttpContextAccessor (required for accessing user claims)
         builder.Services.AddHttpContextAccessor();
 
         // Register HttpClient (required for token refresh)
         builder.Services.AddHttpClient();
 
-        // Register Microsoft token provider for server-side use
-        builder.Services.AddScoped<MicrosoftTokenProvider>();
+        // Register Microsoft user principal for typed access to Microsoft claims
+        builder.Services.AddScoped(static sp =>
+        {
+            var httpContext = sp.GetRequiredService<IHttpContextAccessor>().HttpContext;
+            return new MicrosoftUserPrincipal(httpContext?.User ?? new ClaimsPrincipal(), sp);
+        });
 
         // Register Microsoft token refresher for automatic token refresh
         builder.Services.AddScoped<IAuthProviderRefresher, MicrosoftTokenRefresher>();
@@ -108,9 +111,9 @@ public class MicrosoftEntraAuthModule : IModule
                     OnTokenValidated = context =>
                     {
                         var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<MicrosoftEntraAuthModule>>();
-                        var email = context.Principal?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email || c.Type == "email")?.Value;
+                        var user = new MicrosoftUserPrincipal(context.Principal!, context.HttpContext.RequestServices);
 
-                        using (logger.BeginScope(new Dictionary<string, object> { ["User"] = email ?? "unknown" }))
+                        using (logger.BeginScope(new Dictionary<string, object> { ["User"] = user.Email ?? "unknown" }))
                         {
                             var tokenResponse = context.TokenEndpointResponse;
                             if (tokenResponse?.AccessToken is null)
@@ -125,20 +128,9 @@ public class MicrosoftEntraAuthModule : IModule
                                 return Task.CompletedTask;
                             }
 
-                            var identity = context.Principal?.Identities.FirstOrDefault();
-                            if (identity is null)
-                            {
-                                logger.LogWarning("Claims identity not found - cannot store Microsoft tokens");
-                                return Task.CompletedTask;
-                            }
-
-                            var tokenProvider = context.HttpContext.RequestServices.GetRequiredService<MicrosoftTokenProvider>();
-                            tokenProvider.StoreTokens(
-                                identity,
-                                tokenResponse.AccessToken,
-                                expiresInSeconds,
-                                tokenResponse.RefreshToken
-                            );
+                            user.AccessToken = tokenResponse.AccessToken;
+                            user.RefreshToken = tokenResponse.RefreshToken;
+                            user.AccessTokenExpiresAt = DateTimeOffset.UtcNow.AddSeconds(expiresInSeconds);
                         }
 
                         return Task.CompletedTask;
@@ -259,75 +251,28 @@ public class MicrosoftEntraAuthModule : IModule
                 return Results.Redirect($"{frontendUrl}/auth/login?error=microsoft-auth-failed");
             }
 
-            var claims = authenticateResult.Principal.Claims;
-
-            var email = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email || c.Type == "email")?.Value!;
-            var name = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name || c.Type == "name")?.Value!;
-            var objectId = claims.FirstOrDefault(c => c.Type == "oid" || c.Type == "http://schemas.microsoft.com/identity/claims/objectidentifier")?.Value;
+            var cookieUser = new MicrosoftUserPrincipal(authenticateResult.Principal, context.RequestServices);
 
             if (logger.IsEnabled(LogLevel.Information))
             {
-                logger.LogInformation("Microsoft account login: {User} (ObjectId: {ObjectId})", email, objectId);
+                logger.LogInformation("Microsoft account login: {User} (ObjectId: {ObjectId})", cookieUser.Email, cookieUser.ObjectId);
             }
 
-            var userClaims = new List<Claim>
+            // Create clean bearer token principal with only necessary claims
+            var cleanIdentity = new ClaimsIdentity(BearerTokenDefaults.AuthenticationScheme);
+            var cleanPrincipal = new ClaimsPrincipal(cleanIdentity);
+            var user = new MicrosoftUserPrincipal(cleanPrincipal, context.RequestServices)
             {
-                new(ClaimTypes.Email, email),
-                new(ClaimTypes.Name, name),
-                new(AuthModule.CLAIM_AUTH_PROVIDER, PROVIDER_NAME)
+                Email = cookieUser.Email,
+                Name = cookieUser.Name,
+                Provider = PROVIDER_NAME,
+                ObjectId = cookieUser.ObjectId,
+                AccessToken = cookieUser.AccessToken,
+                RefreshToken = cookieUser.RefreshToken,
+                AccessTokenExpiresAt = cookieUser.AccessTokenExpiresAt
             };
 
-            // Store Microsoft object ID for use with Graph API calls
-            if (!string.IsNullOrEmpty(objectId))
-            {
-                userClaims.Add(new Claim(MicrosoftTokenProvider.CLAIM_OBJECT_ID, objectId));
-            }
-
-            // Preserve Microsoft tokens in the bearer token for later use
-            if (claims.FirstOrDefault(c => c.Type == MicrosoftTokenProvider.CLAIM_ACCESS_TOKEN)?.Value is string microsoftAccessToken)
-            {
-                userClaims.Add(new Claim(MicrosoftTokenProvider.CLAIM_ACCESS_TOKEN, microsoftAccessToken));
-            }
-            if (claims.FirstOrDefault(c => c.Type == MicrosoftTokenProvider.CLAIM_REFRESH_TOKEN)?.Value is string microsoftRefreshToken)
-            {
-                userClaims.Add(new Claim(MicrosoftTokenProvider.CLAIM_REFRESH_TOKEN, microsoftRefreshToken));
-            }
-            if (claims.FirstOrDefault(c => c.Type == MicrosoftTokenProvider.CLAIM_ACCESS_TOKEN_EXPIRES_AT)?.Value is string expiresAt)
-            {
-                userClaims.Add(new Claim(MicrosoftTokenProvider.CLAIM_ACCESS_TOKEN_EXPIRES_AT, expiresAt));
-            }
-
-            var claimsPrincipal = new ClaimsPrincipal(
-                new ClaimsIdentity(userClaims, BearerTokenDefaults.AuthenticationScheme)
-            );
-
-            var bearerTokenOptions = context.RequestServices
-                .GetRequiredService<IOptionsMonitor<BearerTokenOptions>>()
-                .Get(BearerTokenDefaults.AuthenticationScheme);
-
-            var ticket = new AuthenticationTicket(claimsPrincipal, BearerTokenDefaults.AuthenticationScheme);
-
-            ticket.Properties.ExpiresUtc = DateTimeOffset.UtcNow.Add(bearerTokenOptions.BearerTokenExpiration);
-
-            var accessToken = bearerTokenOptions.BearerTokenProtector.Protect(ticket);
-            var refreshToken = bearerTokenOptions.RefreshTokenProtector.Protect(ticket);
-
-            var queryParams = new Dictionary<string, string?>
-            {
-                ["accessToken"] = accessToken,
-                ["tokenType"] = "Bearer",
-                ["expiresIn"] = ((long)bearerTokenOptions.BearerTokenExpiration.TotalSeconds).ToString(),
-                ["refreshToken"] = refreshToken
-            };
-
-            if (authenticateResult.Properties?.Items.TryGetValue("redirect", out var redirect) == true)
-            {
-                queryParams["redirect"] = redirect;
-            }
-
-            var redirectUrl = QueryHelpers.AddQueryString($"{frontendUrl}/auth/login", queryParams);
-
-            return Results.Redirect(redirectUrl);
+            return AuthModule.CreateBearerTokenRedirect(user, context, configuration, authenticateResult.Properties);
         })
         .AllowAnonymous();
     }

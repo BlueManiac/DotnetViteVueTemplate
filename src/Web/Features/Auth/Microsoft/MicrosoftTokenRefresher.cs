@@ -12,27 +12,28 @@ namespace Web.Features.Auth.Microsoft;
 public class MicrosoftTokenRefresher(
     IConfiguration configuration,
     IHttpClientFactory httpClientFactory,
-    MicrosoftTokenProvider tokenProvider,
+    IServiceProvider serviceProvider,
     ILogger<MicrosoftTokenRefresher> logger
 ) : IAuthProviderRefresher
 {
     private readonly IConfiguration _configuration = configuration;
     private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
-    private readonly MicrosoftTokenProvider _tokenProvider = tokenProvider;
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
     private readonly ILogger<MicrosoftTokenRefresher> _logger = logger;
 
     public string ProviderName => MicrosoftEntraAuthModule.PROVIDER_NAME;
 
     public async Task<bool> RefreshTokensAsync(ClaimsPrincipal principal)
     {
-        if (principal.Identity is not ClaimsIdentity identity)
+        if (principal.Identity is not ClaimsIdentity)
         {
             _logger.LogWarning("Cannot refresh Microsoft token: Invalid identity");
             return false;
         }
 
-        var refreshToken = identity.Claims.FirstOrDefault(c => c.Type == MicrosoftTokenProvider.CLAIM_REFRESH_TOKEN)?.Value;
-        if (string.IsNullOrEmpty(refreshToken))
+        var user = new MicrosoftUserPrincipal(principal, _serviceProvider);
+
+        if (string.IsNullOrEmpty(user.RefreshToken))
         {
             _logger.LogWarning("Cannot refresh Microsoft access token: No refresh token available");
             return false;
@@ -58,7 +59,7 @@ public class MicrosoftTokenRefresher(
                 ["client_id"] = clientId,
                 ["client_secret"] = clientSecret,
                 ["grant_type"] = "refresh_token",
-                ["refresh_token"] = refreshToken
+                ["refresh_token"] = user.RefreshToken
             });
 
             var response = await httpClient.PostAsync(tokenEndpoint, requestContent);
@@ -78,7 +79,14 @@ public class MicrosoftTokenRefresher(
                 return false;
             }
 
-            _tokenProvider.StoreTokens(identity, tokenResponse.AccessToken, tokenResponse.ExpiresIn, tokenResponse.RefreshToken);
+            user.AccessToken = tokenResponse.AccessToken;
+            user.AccessTokenExpiresAt = DateTimeOffset.UtcNow.AddSeconds(tokenResponse.ExpiresIn);
+
+            // Microsoft returns null if the refresh token doesn't need to be updated
+            if (!string.IsNullOrEmpty(tokenResponse.RefreshToken))
+            {
+                user.RefreshToken = tokenResponse.RefreshToken;
+            }
 
             _logger.LogInformation("Microsoft access token refreshed successfully");
             return true;

@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Authentication.BearerToken;
-using System.Security.Claims;
 using Web.Util.Modules;
 
 namespace Web.Features.Auth.Password;
@@ -25,20 +24,20 @@ public class PasswordAuthModule : IModule
 
         var group = routes.MapGroup("/auth");
 
-        group.MapPost("/login", static (LoginRequest request) =>
+        group.MapPost("/login", static (LoginRequest request, ILogger<PasswordAuthModule> logger) =>
         {
-            var claims = new List<Claim>
+            if (logger.IsEnabled(LogLevel.Information))
             {
-                new(ClaimTypes.Email, request.UserName),
-                new(ClaimTypes.Name, request.UserName),
-                new(AuthModule.CLAIM_AUTH_PROVIDER, PROVIDER_NAME)
-            };
+                logger.LogInformation("Password authentication login: {User}", request.UserName);
+            }
 
-            var claimsPrincipal = new ClaimsPrincipal(
-                new ClaimsIdentity(claims, BearerTokenDefaults.AuthenticationScheme)
-            );
+            var user = UserPrincipal.Create();
 
-            return TypedResults.SignIn(claimsPrincipal);
+            user.Email = request.UserName;
+            user.Name = request.UserName;
+            user.Provider = PROVIDER_NAME;
+
+            return TypedResults.SignIn(user.Principal);
         })
         .AllowAnonymous();
     }
