@@ -1,7 +1,7 @@
 // Types automatically inferred from translation files
 /* eslint-disable */
 
-import type en from '../../Localization/en'
+import type en from '../../../Localization/en'
 export type { Locales } from './LocalizationService'
 
 // Infer the base structure from en.ts

@@ -42,10 +42,10 @@
 
 <script setup lang="ts">
 import { inject } from 'vue'
-import { AppConfig } from '../AppConfig'
 import { AuthService } from '../Auth/AuthService'
 import { Profile } from '../Auth/Profile'
-import { navigationRoutes } from '../router'
+import { AppConfig } from '/Util/AppConfig'
+import { navigationRoutes } from '/Util/router'
 
 const config = inject(AppConfig.token)!
 const authService = inject(AuthService.token)!

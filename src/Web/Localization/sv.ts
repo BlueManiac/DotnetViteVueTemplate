@@ -1,4 +1,4 @@
-import type { Translation } from '../Features/Localization/localization-types'
+import type { Translation } from '../Features/Infrastructure/Localization/localization-types'
 
 // Keep keys sorted alphabetically for maintainability
 const sv = {

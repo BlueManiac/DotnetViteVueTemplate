@@ -14,9 +14,9 @@
 <script setup lang="ts">
 import { inject, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { NotificationService } from '../../../Components/Notifications/notifications'
-import { AppConfig } from '../../AppConfig'
 import { AuthService, useAuthCallback } from '../AuthService'
+import { NotificationService } from '../Infrastructure/Notifications/notifications'
+import { AppConfig } from '/Util/AppConfig'
 
 const config = inject(AppConfig.token)!
 const authService = inject(AuthService.token)!

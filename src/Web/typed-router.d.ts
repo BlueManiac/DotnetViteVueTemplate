@@ -30,9 +30,9 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/sitemap': RouteRecordInfo<
-      '/sitemap',
-      '/sitemap',
+    '/infrastructure/sitemap': RouteRecordInfo<
+      '/infrastructure/sitemap',
+      '/infrastructure/sitemap',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -56,9 +56,9 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
-    'Features/Sitemap/Pages/index.vue': {
+    'Features/Infrastructure/Sitemap/Pages/index.vue': {
       routes:
-        | '/sitemap'
+        | '/infrastructure/sitemap'
       views:
         | never
     }

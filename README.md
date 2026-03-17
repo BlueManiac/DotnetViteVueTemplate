@@ -118,21 +118,34 @@ DotnetViteVueTemplate/
 │       │   │   ├── AuthService.ts    # Frontend authentication service
 │       │   │   └── Pages/            # Auth routes (auto-registered)
 │       │   ├── Examples/             # Example feature implementations
-│       │   └── Home/                 # Home page feature
+│       │   ├── Home/                 # Home page feature
+│       │   └── Infrastructure/       # Infrastructure features
+│       │       ├── Health/           # Health check endpoints
+│       │       ├── Localization/     # Internationalization system
+│       │       ├── Notifications/    # Notification system
+│       │       └── Sitemap/          # Sitemap generation
 │       ├── Components/               # Reusable UI components
 │       │   ├── ColorThemes/          # Theme switcher
 │       │   ├── Modals/               # Modal system
-│       │   ├── Notifications/        # Notification system
 │       │   ├── Tables/               # Data table with virtual scrolling
 │       │   ├── Tabs/                 # Tab container system
 │       │   └── Validation/           # Form validation directive
 │       ├── Util/                     # Utilities
+│       │   ├── AppConfig.ts          # Application configuration
+│       │   ├── router.ts             # Vue router configuration
 │       │   ├── Client/               # Frontend utilities
 │       │   │   ├── fetch.ts          # HTTP utilities
 │       │   │   └── signalr.ts        # SignalR integration
-│       │   └── Modules/              # Backend module system
-│       │       ├── IModule.cs        # Module interface
-│       │       └── WebApplicationExtensions.cs
+│       │   ├── Cqrs/                 # CQRS route extensions
+│       │   ├── Modules/              # Backend module system
+│       │   │   ├── IModule.cs        # Module interface
+│       │   │   └── WebApplicationExtensions.cs
+│       │   └── Plugins/              # Vite plugins
+│       ├── main.ts                   # Frontend entry point
+│       ├── App.vue                   # Root Vue component
+│       ├── ApiService.ts             # HTTP API service
+│       ├── routes.ts                 # Route definitions
+│       ├── main.css                  # Global styles
 │       ├── Program.cs                # ASP.NET entry point
 │       ├── vite.config.ts            # Vite configuration
 │       └── package.json              # Frontend dependencies

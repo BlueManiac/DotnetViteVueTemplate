@@ -1,4 +1,4 @@
-﻿/// <reference path="./Features/Localization/localization.d.ts" />
+﻿/// <reference path="./Features/Infrastructure/Localization/localization.d.ts" />
 
 // Ensure vue file imports are not reported as warnings
 declare module '*.vue' {

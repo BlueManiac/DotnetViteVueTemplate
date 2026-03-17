@@ -7,7 +7,7 @@
 
 <script setup lang="ts">
 import { inject } from 'vue'
-import { AppConfig } from '/Features/AppConfig'
+import { AppConfig } from '/Util/AppConfig'
 
 const { redirect } = defineProps<{
   redirect?: string

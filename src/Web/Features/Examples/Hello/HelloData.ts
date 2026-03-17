@@ -1,6 +1,6 @@
 ﻿import { useIntervalFn, useStorage } from '@vueuse/core'
 import { inject } from 'vue'
-import { ApiService } from '../../ApiService'
+import { ApiService } from '/ApiService'
 
 export const useHelloData = () => {
   const api = inject(ApiService.token)!

@@ -26,7 +26,7 @@
 <script setup lang="ts">
 import { inject, onErrorCaptured } from 'vue'
 import { useRoute } from 'vue-router'
-import { NotificationService } from '../Components/Notifications/notifications'
+import { NotificationService } from './Features/Infrastructure/Notifications/notifications'
 import { HttpError } from '/Util/Client/fetch'
 
 const route = useRoute()

@@ -2,10 +2,10 @@ import { computedAsync } from "@vueuse/core"
 import type { InjectionKey } from "vue"
 import { inject, watch } from "vue"
 import { useRoute } from "vue-router"
-import { NotificationService } from "../../Components/Notifications/notifications"
-import { ApiService } from "../ApiService"
+import { NotificationService } from "../Infrastructure/Notifications/notifications"
 import { Profile } from "./Profile"
 import { TokenValidator } from "./TokenValidator"
+import { ApiService } from "/ApiService"
 
 type UserResponse = {
   name: string

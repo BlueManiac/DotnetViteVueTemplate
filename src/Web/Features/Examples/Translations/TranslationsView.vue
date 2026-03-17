@@ -48,7 +48,7 @@
 
 <script setup lang="ts">
 import { computed, inject } from 'vue'
-import { LocalizationService } from '../../Localization/LocalizationService'
+import { LocalizationService } from '../../Infrastructure/Localization/LocalizationService'
 
 const localization = inject(LocalizationService.token)!
 

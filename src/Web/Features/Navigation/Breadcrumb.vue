@@ -10,5 +10,5 @@
 </template>
 
 <script setup lang="ts">
-import { routePath } from '../router'
+import { routePath } from '/Util/router'
 </script>

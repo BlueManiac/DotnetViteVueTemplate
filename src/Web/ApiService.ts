@@ -1,9 +1,9 @@
 import { until } from '@vueuse/core'
 import type { InjectionKey } from 'vue'
-import { AppConfig } from './AppConfig'
-import { Profile } from './Auth/Profile'
-import { TokenValidator } from './Auth/TokenValidator'
-import { HealthService } from './Health/HealthService'
+import { Profile } from './Features/Auth/Profile'
+import { TokenValidator } from './Features/Auth/TokenValidator'
+import { HealthService } from './Features/Infrastructure/Health/HealthService'
+import { AppConfig } from './Util/AppConfig'
 import { useApi } from '/Util/Client/fetch'
 import { signalr, SignalrReciever, SignalrSender, useSignalr } from '/Util/Client/signalr'
 

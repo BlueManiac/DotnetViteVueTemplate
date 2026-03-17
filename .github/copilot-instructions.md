@@ -19,15 +19,25 @@ For comprehensive information, refer to:
 
 ```
 src/Web/
+├── main.ts                # Frontend entry point
+├── App.vue                # Root Vue component
+├── ApiService.ts          # HTTP API service
+├── routes.ts              # Route definitions
+├── main.css               # Global styles
 ├── Features/              # Vertical slice modules
 │   ├── {Feature}/
 │   │   ├── {Feature}Module.cs      # Backend: IModule implementation
 │   │   ├── {Feature}Service.ts     # Frontend: Injectable service
 │   │   └── Pages/                  # Auto-registered routes
+│   └── Infrastructure/    # System/admin features (Health, Localization, Notifications, Sitemap)
 ├── Components/            # Reusable UI components (auto-imported)
 ├── Util/
-│   ├── Client/           # Frontend utilities (di.ts, fetch.ts, signalr.ts)
-│   └── Modules/          # Backend module system (IModule.cs)
+│   ├── AppConfig.ts       # Application configuration
+│   ├── router.ts          # Vue router configuration
+│   ├── Client/            # Frontend utilities (fetch.ts, signalr.ts)
+│   ├── Cqrs/              # CQRS route extensions
+│   ├── Modules/           # Backend module system (IModule.cs)
+│   └── Plugins/           # Vite plugins
 ```
 
 ### Core Patterns

@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 import { inject, Ref } from 'vue'
-import { ApiService } from '../../ApiService'
+import { ApiService } from '/ApiService'
 
 const api = inject(ApiService.token)!
 

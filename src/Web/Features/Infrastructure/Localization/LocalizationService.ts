@@ -1,8 +1,8 @@
 import { shallowRef, type App, type InjectionKey } from 'vue'
 import type { TranslationFunctions, Translations } from './localization-types'
 
-import en from '../../Localization/en'
-import sv from '../../Localization/sv'
+import en from '../../../Localization/en'
+import sv from '../../../Localization/sv'
 
 // Single source of truth: add new locales here
 export const dictionaries = { en, sv } as const

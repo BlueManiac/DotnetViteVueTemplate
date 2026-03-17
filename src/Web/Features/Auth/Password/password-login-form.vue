@@ -17,7 +17,7 @@ import { useFocus } from '@vueuse/core'
 import { inject, watch } from 'vue'
 import { AccessTokenResponse } from '../AuthService'
 import { Profile } from '../Profile'
-import { ApiService } from '/Features/ApiService'
+import { ApiService } from '/ApiService'
 
 const emit = defineEmits<{
   success: []

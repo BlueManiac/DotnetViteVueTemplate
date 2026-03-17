@@ -1,7 +1,7 @@
 import { computedAsync } from '@vueuse/core'
 import type { InjectionKey } from 'vue'
-import { AppConfig } from '../AppConfig'
-import { NotificationService } from '/Components/Notifications/notifications'
+import { NotificationService } from '../Notifications/notifications'
+import { AppConfig } from '/Util/AppConfig'
 
 export class HealthService {
   static readonly token: InjectionKey<HealthService> = Symbol(HealthService.name)

@@ -3,24 +3,24 @@ import './main.css'
 
 import 'bootstrap'
 
-import '../Util/Client/array'
+import './Util/Client/array'
 
 import { useTitle } from '@vueuse/core'
-import { initializeTheme } from '../Components/ColorThemes/color-themes'
-import { NotificationService } from '../Components/Notifications/notifications'
 import { ApiService } from './ApiService'
-import { AppConfig } from './AppConfig'
-import { AuthService } from './Auth/AuthService'
-import { Profile } from './Auth/Profile'
-import { TokenValidator } from './Auth/TokenValidator'
-import { HealthService } from './Health/HealthService'
-import { LocalizationService } from './Localization/LocalizationService'
+import { initializeTheme } from './Components/ColorThemes/color-themes'
+import { AuthService } from './Features/Auth/AuthService'
+import { Profile } from './Features/Auth/Profile'
+import { TokenValidator } from './Features/Auth/TokenValidator'
+import { HealthService } from './Features/Infrastructure/Health/HealthService'
+import { LocalizationService } from './Features/Infrastructure/Localization/LocalizationService'
+import { NotificationService } from './Features/Infrastructure/Notifications/notifications'
+import { AppConfig } from './Util/AppConfig'
 
 initializeTheme()
 
 import { createApp } from 'vue'
 import App from './App.vue'
-import { Router, setupAuthGuard, title } from './router'
+import { Router, setupAuthGuard, title } from './Util/router'
 
 const config = new AppConfig()
 const profile = new Profile()
