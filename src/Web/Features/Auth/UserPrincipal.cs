@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authentication.BearerToken;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Persistence.Auth;
 using System.Security.Claims;
 
@@ -12,15 +12,15 @@ public class UserPrincipal(ClaimsPrincipal principal) : ICurrentUser
 
     public static UserPrincipal Create()
     {
-        var identity = new ClaimsIdentity(BearerTokenDefaults.AuthenticationScheme);
+        var identity = new ClaimsIdentity(JwtBearerDefaults.AuthenticationScheme);
         var principal = new ClaimsPrincipal(identity);
         return new UserPrincipal(principal);
     }
 
-    public string? UserId
+    public Guid? UserId
     {
-        get => _principal.FindFirstValue(ClaimTypes.NameIdentifier);
-        set => SetClaim(ClaimTypes.NameIdentifier, value);
+        get => Guid.TryParse(_principal.FindFirstValue(ClaimTypes.NameIdentifier), out var id) ? id : null;
+        set => SetClaim(ClaimTypes.NameIdentifier, value?.ToString());
     }
 
     public string? Name

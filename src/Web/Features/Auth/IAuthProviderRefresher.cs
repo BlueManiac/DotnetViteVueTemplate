@@ -1,3 +1,4 @@
+using Persistence.Shared.Cqrs;
 using System.Security.Claims;
 
 namespace Web.Features.Auth;
@@ -18,8 +19,19 @@ public interface IAuthProviderRefresher
     /// <summary>
     /// Refreshes the provider's tokens and optionally updates related claims.
     /// The principal's claims can be modified in-place.
+    /// Throw an exception to signal failure; the caller will log a warning.
     /// </summary>
-    /// <param name="principal">The claims principal containing the user's claims and tokens</param>
-    /// <returns>True if the refresh was successful, false otherwise. Returning false will log a warning but not fail the bearer token refresh.</returns>
-    Task<bool> RefreshTokensAsync(ClaimsPrincipal principal);
+    Task RefreshTokensAsync(ClaimsPrincipal principal);
+
+    /// <summary>
+    /// Persists provider-specific tokens to the database and strips them from the principal
+    /// so they are not embedded in the JWT. Called during token issuance.
+    /// </summary>
+    Task PersistTokensAsync(UserPrincipal user, CommandExecutor commandExecutor) => Task.CompletedTask;
+
+    /// <summary>
+    /// Loads persisted provider tokens from the database into the principal's claims.
+    /// Called before <see cref="RefreshTokensAsync"/> during JWT refresh.
+    /// </summary>
+    Task LoadTokensAsync(UserPrincipal user, QueryExecutor queryExecutor) => Task.CompletedTask;
 }

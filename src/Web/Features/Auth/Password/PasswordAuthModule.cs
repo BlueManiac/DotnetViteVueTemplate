@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authentication.BearerToken;
 using Web.Util.Modules;
 
 namespace Web.Features.Auth.Password;
@@ -24,7 +23,11 @@ public class PasswordAuthModule : IModule
 
         var group = routes.MapGroup("/auth");
 
-        group.MapPost("/login", static (LoginRequest request, ILogger<PasswordAuthModule> logger) =>
+        group.MapPost("/login", async (
+            LoginRequest request,
+            HttpContext context,
+            UserTokenService tokenService,
+            ILogger<PasswordAuthModule> logger) =>
         {
             if (logger.IsEnabled(LogLevel.Information))
             {
@@ -37,7 +40,7 @@ public class PasswordAuthModule : IModule
             user.Name = request.UserName;
             user.Provider = PROVIDER_NAME;
 
-            return TypedResults.SignIn(user.Principal);
+            return TypedResults.Ok(await tokenService.IssueTokensAsync(user, context.Request.Headers.UserAgent.ToString()));
         })
         .AllowAnonymous();
     }

@@ -260,7 +260,7 @@ try {
 
 #### CQRS Patterns
 - **Don't** create separate queries for different filtering criteria - use one query that accepts multiple optional parameters
-- **Don't** create separate queries for single vs multiple items - use one query that accepts multiple parameters
+- **Don't** create separate queries for single vs multiple items - use one query that accepts multiple parameters. Use singular names regardless of how many results are returned (e.g. `UserQuery` not `UsersQuery`, `UserClaimQuery` not `UserClaimsQuery`)
 - **Define** request records above the command/query class in the same file
 - **Format** request parameters on separate lines for readability
 

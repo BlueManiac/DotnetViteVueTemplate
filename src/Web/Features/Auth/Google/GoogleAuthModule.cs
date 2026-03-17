@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
-using System.Security.Claims;
 using Web.Util.Modules;
 
 namespace Web.Features.Auth.Google;
@@ -73,7 +72,11 @@ public class GoogleAuthModule : IModule
         })
         .AllowAnonymous();
 
-        group.MapGet("/google-callback-handler", async (HttpContext context, IConfiguration configuration, ILogger<GoogleAuthModule> logger) =>
+        group.MapGet("/google-callback-handler", async (
+            HttpContext context,
+            IConfiguration configuration,
+            UserTokenService tokenService,
+            ILogger<GoogleAuthModule> logger) =>
         {
             var authenticateResult = await context.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
@@ -97,7 +100,7 @@ public class GoogleAuthModule : IModule
             user.Name = cookieUser.Name;
             user.Provider = PROVIDER_NAME;
 
-            return AuthModule.CreateBearerTokenRedirect(user, context, configuration, authenticateResult.Properties);
+            return await AuthModule.CreateTokenRedirect(user, context, configuration, tokenService, authenticateResult.Properties);
         })
         .AllowAnonymous();
     }

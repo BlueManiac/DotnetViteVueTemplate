@@ -1,11 +1,16 @@
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.BearerToken;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Persistence.Auth;
+using Persistence.Auth.Tokens.Commands;
+using Persistence.Auth.Users;
+using Persistence.Auth.Users.Queries;
+using Persistence.Shared.Cqrs;
 using System.Security.Claims;
+using System.Text;
 using Web.Util.Modules;
 
 namespace Web.Features.Auth;
@@ -14,33 +19,46 @@ public class AuthModule : IModule
 {
     public static void AddServices(WebApplicationBuilder builder)
     {
+        var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("Jwt:Key configuration is required");
+
+        if (jwtKey.Length < 32)
+        {
+            throw new InvalidOperationException("Jwt:Key must be at least 32 characters long");
+        }
+
         builder.Services
-            .AddAuthentication(static options =>
+            .AddAuthentication(options =>
             {
-                // Set Bearer Token as the default scheme for API authentication
-                options.DefaultScheme = BearerTokenDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = BearerTokenDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
             // Cookie scheme for temporary external authentication (Google, Microsoft, etc.)
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddBearerToken(BearerTokenDefaults.AuthenticationScheme, static options =>
+            .AddJwtBearer(options =>
             {
-                options.BearerTokenExpiration = TimeSpan.FromMinutes(60);
-                options.RefreshTokenExpiration = TimeSpan.FromDays(7);
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                    ValidAudience = builder.Configuration["Jwt:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+                    ClockSkew = TimeSpan.Zero
+                };
 
                 // Allow SignalR to pass tokens via query string
-                options.Events = new()
+                options.Events = new JwtBearerEvents
                 {
-                    OnMessageReceived = static context =>
+                    OnMessageReceived = context =>
                     {
                         var accessToken = context.Request.Query["access_token"];
-                        var path = context.HttpContext.Request.Path;
-
-                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/api"))
+                        if (!string.IsNullOrEmpty(accessToken) &&
+                            context.HttpContext.Request.Path.StartsWithSegments("/api"))
                         {
                             context.Token = accessToken;
                         }
-
                         return Task.CompletedTask;
                     }
                 };
@@ -49,6 +67,7 @@ public class AuthModule : IModule
         builder.Services.AddAuthorization();
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddSingleton<AuthProviders>();
+        builder.Services.AddScoped<UserTokenService>();
         builder.Services.AddScoped(static sp =>
         {
             var httpContext = sp.GetRequiredService<IHttpContextAccessor>().HttpContext;
@@ -60,30 +79,23 @@ public class AuthModule : IModule
     public record UserResponse(string Name, string? Email, string? Provider);
 
     /// <summary>
-    /// Creates bearer tokens for a user principal and returns a redirect result to the frontend.
+    /// Creates JWT access token and database-backed refresh token, then redirects to the frontend.
     /// </summary>
-    public static IResult CreateBearerTokenRedirect(
+    public static async Task<IResult> CreateTokenRedirect(
         UserPrincipal user,
         HttpContext context,
         IConfiguration configuration,
+        UserTokenService tokenService,
         AuthenticationProperties? authProperties)
     {
-        var bearerTokenOptions = context.RequestServices
-            .GetRequiredService<IOptionsMonitor<BearerTokenOptions>>()
-            .Get(BearerTokenDefaults.AuthenticationScheme);
-
-        var ticket = new AuthenticationTicket(user.Principal, BearerTokenDefaults.AuthenticationScheme);
-        ticket.Properties.ExpiresUtc = DateTimeOffset.UtcNow.Add(bearerTokenOptions.BearerTokenExpiration);
-
-        var accessToken = bearerTokenOptions.BearerTokenProtector.Protect(ticket);
-        var refreshToken = bearerTokenOptions.RefreshTokenProtector.Protect(ticket);
+        var tokens = await tokenService.IssueTokensAsync(user, context.Request.Headers.UserAgent.ToString());
 
         var queryParams = new Dictionary<string, string?>
         {
-            ["accessToken"] = accessToken,
-            ["tokenType"] = "Bearer",
-            ["expiresIn"] = ((long)bearerTokenOptions.BearerTokenExpiration.TotalSeconds).ToString(),
-            ["refreshToken"] = refreshToken
+            ["accessToken"] = tokens.AccessToken,
+            ["tokenType"] = tokens.TokenType,
+            ["expiresIn"] = tokens.ExpiresIn.ToString(),
+            ["refreshToken"] = tokens.RefreshToken
         };
 
         if (authProperties?.Items.TryGetValue("redirect", out var redirect) == true)
@@ -103,36 +115,58 @@ public class AuthModule : IModule
 
         group.MapPost("/refresh", async (
             RefreshRequest refreshRequest,
-            IOptionsMonitor<BearerTokenOptions> optionsMonitor,
-            TimeProvider timeProvider,
+            UserTokenService tokenService,
+            CommandExecutor commandExecutor,
+            QueryExecutor queryExecutor,
             IEnumerable<IAuthProviderRefresher> tokenRefreshers,
             ILogger<AuthModule> logger) =>
         {
-            var identityBearerOptions = optionsMonitor.Get(BearerTokenDefaults.AuthenticationScheme);
-            var refreshTicket = identityBearerOptions.RefreshTokenProtector.Unprotect(refreshRequest.RefreshToken);
+            try
+            {
+                var rotation = await commandExecutor.Execute<UserTokenRotateRequest, UserTokenRotateResponse>(
+                    new UserTokenRotateRequest(refreshRequest.RefreshToken)
+                );
 
-            if (refreshTicket?.Properties?.ExpiresUtc is not { } expiresUtc || timeProvider.GetUtcNow() >= expiresUtc)
+                var userRecord = await queryExecutor.Execute<UserRequest, User?>(
+                    new UserRequest(UserId: rotation.UserId)
+                );
+
+                if (userRecord == null)
+                {
+                    return Results.Unauthorized();
+                }
+
+                var user = UserPrincipal.Create();
+
+                user.UserId = rotation.UserId;
+                user.Email = userRecord.Email;
+                user.Name = userRecord.Name;
+                user.Provider = userRecord.Provider;
+
+                // Support refresh external provider tokens if authenticated via external provider
+                var refresher = tokenRefreshers.FirstOrDefault(r => r.ProviderName == user.Provider);
+                if (refresher != null)
+                {
+                    try
+                    {
+                        // Provider tokens are stored in the DB, not in the JWT — load them before refreshing
+                        await refresher.LoadTokensAsync(user, queryExecutor);
+                        // Refresh the provider's access token (e.g. get a new Google/Microsoft token using the stored refresh token)
+                        await refresher.RefreshTokensAsync(user.Principal);
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogWarning(ex, "Failed to refresh provider '{Provider}' tokens", user.Provider);
+                    }
+                }
+
+                // Rotate refresh token (create new, old one is already revoked)
+                return TypedResults.Ok(await tokenService.IssueTokensAsync(user, rotation.DeviceInfo));
+            }
+            catch (UnauthorizedAccessException)
             {
                 return Results.Unauthorized();
             }
-
-            var user = new UserPrincipal(refreshTicket.Principal);
-
-            // Support refresh external provider tokens if authenticated via external provider
-            var refresher = tokenRefreshers.FirstOrDefault(r => r.ProviderName == user.Provider);
-            if (refresher != null)
-            {
-                try
-                {
-                    await refresher.RefreshTokensAsync(refreshTicket.Principal);
-                }
-                catch (Exception ex)
-                {
-                    logger.LogWarning(ex, "Failed to refresh provider '{Provider}' tokens", user.Provider);
-                }
-            }
-
-            return TypedResults.SignIn(refreshTicket.Principal);
         })
         .AllowAnonymous();
 
@@ -152,9 +186,17 @@ public class AuthModule : IModule
             return TypedResults.Ok(new UserResponse(user.Name ?? user.Email ?? "Unknown", user.Email, user.Provider));
         });
 
-        group.MapPost("/logout", static async (HttpContext context) =>
+        group.MapPost("/logout", async (
+            CommandExecutor commandExecutor,
+            ICurrentUser currentUser) =>
         {
-            await context.SignOutAsync(BearerTokenDefaults.AuthenticationScheme);
+            if (currentUser.UserId is { } userId)
+            {
+                await commandExecutor.Execute<UserTokenRevokeAllRequest, int>(
+                    new UserTokenRevokeAllRequest(userId)
+                );
+            }
+
             return TypedResults.Ok();
         });
     }

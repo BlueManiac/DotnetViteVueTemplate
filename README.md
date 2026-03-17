@@ -12,7 +12,7 @@ A modern full-stack web application template combining ASP.NET Core with Vue 3 a
 - **File-Based Routing**: Auto-registered routes with type safety via unplugin-vue-router
 - **Component Library**: Bootstrap 5-based components with auto-import
 - **Real-Time Communication**: SignalR integration with typed proxies
-- **Authentication**: Bearer token authentication with automatic refresh
+- **Authentication**: JWT access tokens with database-backed refresh token rotation
 - **Developer Experience**: HMR, HTTPS dev server, Vue Inspector, runtime error overlay
 
 ## Quick Start
@@ -171,6 +171,56 @@ Topics covered:
 - Form validation
 - Authentication flow
 - Theme system
+
+## Authentication
+
+The template uses **JWT access tokens** (short-lived, 60 min by default) paired with **database-backed refresh tokens** (7 days by default) with rotation.
+
+### How it works
+
+| Step | Details |
+|------|---------|
+| Login | Returns a JWT access token + opaque refresh token |
+| API calls | `Authorization: Bearer <jwt>` header, handled automatically by `ApiService` |
+| Token refresh | The frontend calls `POST /api/auth/refresh` with the refresh token before expiry; the old token is revoked and a new pair is issued |
+| Logout | All refresh tokens for the user are revoked server-side |
+
+### Configuration
+
+Add the following to `appsettings.Local.json` (or environment variables in production):
+
+```json
+{
+  "Jwt": {
+    "Key": "<at-least-32-character-secret>",
+    "Issuer": "https://your-domain.com",
+    "Audience": "https://your-domain.com"
+  }
+}
+```
+
+Token lifetimes can be adjusted in `appsettings.json`:
+
+```json
+{
+  "Authentication": {
+    "AccessTokenExpirationMinutes": 60,
+    "RefreshTokenExpirationDays": 7
+  }
+}
+```
+
+### Auth providers
+
+- **Password** — enabled by default in development (`Authentication:Password:Enabled`)
+- **Google OAuth** — configure `Authentication:Google:ClientId` / `ClientSecret`
+- **Microsoft Entra (Azure AD)** — configure `Authentication:Microsoft:ClientId` / `ClientSecret` / `TenantId`
+
+External provider tokens (e.g. Microsoft Graph access tokens) are stored in the database and **not** embedded in the JWT. They are loaded on demand during token refresh via `IAuthProviderRefresher`.
+
+### Frontend
+
+Use `AuthService` (injected via `AuthService.token`) to check login state and trigger login/logout. The `ApiService` handles token storage and refresh transparently — you don't need to manage tokens manually in components.
 
 ## Building for Production
 

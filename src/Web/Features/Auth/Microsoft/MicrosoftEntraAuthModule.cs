@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.BearerToken;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.WebUtilities;
+using Persistence.Shared.Cqrs;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
-using Web.Features.Auth;
 using Web.Util.Modules;
 
 namespace Web.Features.Auth.Microsoft;
@@ -240,7 +240,11 @@ public class MicrosoftEntraAuthModule : IModule
         })
         .AllowAnonymous();
 
-        group.MapGet("/microsoft-callback-handler", async (HttpContext context, IConfiguration configuration, ILogger<MicrosoftEntraAuthModule> logger) =>
+        group.MapGet("/microsoft-callback-handler", async (
+            HttpContext context,
+            IConfiguration configuration,
+            UserTokenService tokenService,
+            ILogger<MicrosoftEntraAuthModule> logger) =>
         {
             var authenticateResult = await context.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
@@ -259,7 +263,7 @@ public class MicrosoftEntraAuthModule : IModule
             }
 
             // Create clean bearer token principal with only necessary claims
-            var cleanIdentity = new ClaimsIdentity(BearerTokenDefaults.AuthenticationScheme);
+            var cleanIdentity = new ClaimsIdentity(JwtBearerDefaults.AuthenticationScheme);
             var cleanPrincipal = new ClaimsPrincipal(cleanIdentity);
             var user = new MicrosoftUserPrincipal(cleanPrincipal, context.RequestServices)
             {
@@ -272,7 +276,7 @@ public class MicrosoftEntraAuthModule : IModule
                 AccessTokenExpiresAt = cookieUser.AccessTokenExpiresAt
             };
 
-            return AuthModule.CreateBearerTokenRedirect(user, context, configuration, authenticateResult.Properties);
+            return await AuthModule.CreateTokenRedirect(user, context, configuration, tokenService, authenticateResult.Properties);
         })
         .AllowAnonymous();
     }

@@ -8,7 +8,7 @@ public interface ICurrentUser
     /// <summary>
     /// The unique identifier of the current user.
     /// </summary>
-    string? UserId { get; }
+    Guid? UserId { get; }
 
     /// <summary>
     /// The display name of the current user.

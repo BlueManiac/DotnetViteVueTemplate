@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Authentication.BearerToken;
-using Microsoft.Extensions.Options;
 using System.Security.Claims;
 
 namespace Web.Features.Auth.Microsoft;
@@ -110,23 +108,19 @@ public class MicrosoftUserPrincipal : UserPrincipal
                 _logger.LogDebug("Microsoft Access Token expires in {Minutes} minutes", (int)expiresInMinutes);
             }
 
-            var bearerTokenOptions = _serviceProvider
-                .GetRequiredService<IOptionsMonitor<BearerTokenOptions>>()
-                .Get(BearerTokenDefaults.AuthenticationScheme);
+            var configuration = _serviceProvider.GetRequiredService<IConfiguration>();
+            var jwtExpirationMinutes = configuration.GetValue("Authentication:AccessTokenExpirationMinutes", 60);
+            var jwtExpiresAt = DateTimeOffset.UtcNow.AddMinutes(jwtExpirationMinutes);
 
-            var bearerTokenExpiresAt = DateTimeOffset.UtcNow.Add(bearerTokenOptions.BearerTokenExpiration);
-
-            if (value.Value >= bearerTokenExpiresAt)
+            if (value.Value < jwtExpiresAt)
             {
-                return;
+                var timeDifference = (jwtExpiresAt - value.Value).TotalMinutes;
+                _logger.LogWarning(
+                    "Microsoft access token expires {Minutes} minutes before JWT token. " +
+                    "The Microsoft token will be automatically refreshed during JWT token refresh.",
+                    (int)timeDifference
+                );
             }
-
-            var timeDifference = (bearerTokenExpiresAt - value.Value).TotalMinutes;
-            _logger.LogWarning(
-                "Microsoft access token expires {Minutes} minutes before bearer token. " +
-                "The Microsoft token will be automatically refreshed during bearer token refresh.",
-                (int)timeDifference
-            );
         }
     }
 }

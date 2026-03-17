@@ -1,3 +1,4 @@
+using Persistence.Auth;
 using Persistence.Database;
 using Persistence.Shared.Cqrs;
 using Persistence.Shared.Features;
@@ -18,6 +19,7 @@ builder.Services.Configure<HostOptions>(options =>
 });
 
 builder.Services.AddFeature<DatabaseFeature<DatabaseContext>>(builder.Configuration.GetSection("Database"));
+builder.Services.AddFeature<AuthFeature>(builder.Configuration);
 builder.Services.AddCqrs();
 
 builder.AddModules();
