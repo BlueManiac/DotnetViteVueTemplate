@@ -6,6 +6,7 @@ import ModalsView from './Modals/ModalsView.vue'
 import RealTime from './RealTime/RealTime.vue'
 import TableView from './Tables/TableView.vue'
 import TabsView from './Tabs/TabsView.vue'
+import TranslationsView from './Translations/TranslationsView.vue'
 
 export const exampleRoutes: RouteRecordRaw[] = [
   {
@@ -46,6 +47,11 @@ export const exampleRoutes: RouteRecordRaw[] = [
         path: 'tabs',
         component: TabsView,
         meta: { title: 'Tabs' }
+      },
+      {
+        path: 'translations',
+        component: TranslationsView,
+        meta: { title: 'Translations' }
       },
     ]
   }

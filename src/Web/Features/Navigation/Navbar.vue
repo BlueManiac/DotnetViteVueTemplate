@@ -33,6 +33,7 @@
           <router-link v-if="profile.isLoggedIn.value" to="/auth/login" @click="logout()">Logout</router-link>
           <router-link v-else to="/auth/login">Login</router-link>
         </div>
+        <language-switcher />
         <color-theme-toggle />
       </div>
     </div>

@@ -14,6 +14,7 @@ import { AuthService } from './Auth/AuthService'
 import { Profile } from './Auth/Profile'
 import { TokenValidator } from './Auth/TokenValidator'
 import { HealthService } from './Health/HealthService'
+import { LocalizationService } from './Localization/LocalizationService'
 
 initializeTheme()
 
@@ -31,6 +32,7 @@ const tokenValidator = new TokenValidator(
 )
 const api = new ApiService(tokenValidator, config, profile, health)
 const authService = new AuthService(tokenValidator, api, profile, notifications)
+const localization = new LocalizationService()
 
 setupAuthGuard(profile, tokenValidator)
 
@@ -43,6 +45,9 @@ const app = createApp(App)
   .provide(NotificationService.token, notifications)
   .provide(ApiService.token, api)
   .provide(AuthService.token, authService)
+  .provide(LocalizationService.token, localization)
+
+localization.registerGlobalProperty(app, '$t')
 
 Router.isReady().then(() => {
   app.mount('#app')
