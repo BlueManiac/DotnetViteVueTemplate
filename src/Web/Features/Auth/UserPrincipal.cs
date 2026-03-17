@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Authentication.BearerToken;
+using Persistence.Auth;
 using System.Security.Claims;
 
 namespace Web.Features.Auth;
 
-public class UserPrincipal(ClaimsPrincipal principal)
+public class UserPrincipal(ClaimsPrincipal principal) : ICurrentUser
 {
     public const string CLAIM_AUTH_PROVIDER = "auth_provider";
 

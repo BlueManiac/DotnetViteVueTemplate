@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
+using Persistence.Auth;
 using System.Security.Claims;
 using Web.Util.Modules;
 
@@ -53,6 +54,7 @@ public class AuthModule : IModule
             var httpContext = sp.GetRequiredService<IHttpContextAccessor>().HttpContext;
             return new UserPrincipal(httpContext?.User ?? new ClaimsPrincipal());
         });
+        builder.Services.AddScoped<ICurrentUser>(static sp => sp.GetRequiredService<UserPrincipal>());
     }
 
     public record UserResponse(string Name, string? Email, string? Provider);
