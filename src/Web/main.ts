@@ -5,7 +5,7 @@ import 'bootstrap'
 
 import './Util/Client/array'
 
-import { useTitle } from '@vueuse/core'
+import { until, useTitle } from '@vueuse/core'
 import { ApiService } from './ApiService'
 import { initializeTheme } from './Components/ColorThemes/color-themes'
 import { AuthService } from './Features/Auth/AuthService'
@@ -63,7 +63,10 @@ if (import.meta.env.DEV) {
     console.clear()
   })
 
-  const script = document.createElement('script')
-  script.src = `${import.meta.env.VITE_BACKEND_URL}/_framework/aspnetcore-browser-refresh.js`
-  document.body.appendChild(script)
+  // Wait for backend to be ready before loading browser refresh script
+  until(health.backendReady).toBe(true).then(() => {
+    const script = document.createElement('script')
+    script.src = `${import.meta.env.VITE_BACKEND_URL}/_framework/aspnetcore-browser-refresh.js`
+    document.body.appendChild(script)
+  })
 }
