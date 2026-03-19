@@ -1,23 +1,17 @@
 <template>
-  <form class="d-flex flex-column gap-3" @submit.prevent="submit">
-    <div class="form-floating">
-      <input type="email" v-model="email" class="form-control" placeholder="name@example.com" ref="emailElement" required autocomplete="email">
-      <label>Email address</label>
-    </div>
-    <div class="form-floating">
-      <input type="password" v-model="password" class="form-control" placeholder="Password" required autocomplete="current-password">
-      <label>Password</label>
-    </div>
-    <button class="w-100 btn btn-lg btn-primary" type="submit" :disabled="!valid">Sign in</button>
+  <form class="d-flex flex-column gap-3" v-validate @submit="submit">
+    <input-text v-model="email" type="email" required autocomplete="email" autofocus floating>Email address</input-text>
+    <input-text v-model="password" type="password" required autocomplete="current-password" floating>Password</input-text>
+    <btn class="w-100 btn-lg" type="submit" :disabled="!valid">Sign in</btn>
   </form>
 </template>
 
 <script setup lang="ts">
-import { useFocus } from '@vueuse/core'
-import { inject, watch } from 'vue'
-import { AccessTokenResponse } from '../AuthService'
-import { Profile } from '../Profile'
+import { inject } from 'vue'
+import { AccessTokenResponse } from '../../AuthService'
+import { Profile } from '../../Profile'
 import { ApiService } from '/ApiService'
+import { useFormValidation } from '/Components/Validation/useFormValidation'
 
 const emit = defineEmits<{
   success: []
@@ -26,19 +20,10 @@ const emit = defineEmits<{
 const api = inject(ApiService.token)!
 const profile = inject(Profile.token)!
 
-const emailElement = ref<HTMLInputElement | null>()
-useFocus(emailElement, { initialValue: true })
+const { vValidate, valid } = useFormValidation()
 
 const email = ref('')
 const password = ref('')
-
-const validEmail = ref<boolean>(false)
-watch(email, () => {
-  validEmail.value = emailElement.value?.validity.valid ?? false
-})
-const valid = computed(() => {
-  return validEmail.value && password.value
-})
 
 const submit = async () => {
   const response = await api.post<AccessTokenResponse>('/auth/login', { username: email.value, password: password.value }, { auth: false })

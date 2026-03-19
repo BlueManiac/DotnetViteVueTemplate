@@ -8,11 +8,11 @@
 import { useFocus } from '@vueuse/core'
 
 const {
-  focus,
+  autofocus,
   id = Math.random().toString(36).substring(2, 12)
 } = defineProps<{
   placeholder?: string,
-  focus?: boolean,
+  autofocus?: boolean,
   id?: string,
   min?: number | string,
   max?: number | string,
@@ -22,7 +22,7 @@ const {
 const value = defineModel<number>()
 const inputElement = ref()
 
-if (focus) {
+if (autofocus) {
   useFocus(inputElement, { initialValue: true })
 }
 </script>

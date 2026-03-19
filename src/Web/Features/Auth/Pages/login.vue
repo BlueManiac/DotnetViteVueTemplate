@@ -4,7 +4,7 @@
     <div class="col-12 col-lg-5 col-xl-3 px-3 px-lg-0">
       <div class="d-flex flex-column gap-3 bg-body-secondary p-4 rounded-3 shadow">
         <template v-if="health.backendReady.value">
-          <password-login-form v-if="authService.providers.value.includes('password')" @success="handleRedirect" />
+          <email-password-login-form v-if="authService.providers.value.includes('email-password')" @success="handleRedirect" />
           <google-signin-btn v-if="authService.providers.value.includes('google')" class="w-100" :redirect="route.query.redirect as string" />
           <microsoft-signin-btn v-if="authService.providers.value.includes('microsoft')" class="w-100" :redirect="route.query.redirect as string" />
         </template>
@@ -56,7 +56,7 @@ onMounted(() => {
     })
 
     // Clean up URL query parameters
-    const { error, errorMessage: _, ...remainingQuery } = route.query
+    const { error: _error, errorMessage: _, ...remainingQuery } = route.query
     router.replace({ query: remainingQuery })
   }
 })

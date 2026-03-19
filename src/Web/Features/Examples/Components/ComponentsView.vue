@@ -26,7 +26,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Option } from '/Components/dropdown.vue'
-import { vValidate } from '/Components/Validation/v-validate'
+import { useFormValidation } from '/Components/Validation/useFormValidation'
+
+const { vValidate } = useFormValidation()
 
 const checked = ref(false)
 const date = ref<Date>(new Date())

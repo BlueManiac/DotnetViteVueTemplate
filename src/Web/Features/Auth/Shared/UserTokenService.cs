@@ -40,8 +40,8 @@ public class UserTokenService(
             claimsLoader.Invalidate(refresher.ProviderName, userId);
         }
 
-        var accessToken = GenerateAccessToken(user.Principal, refresher);
         var expirationMinutes = configuration.GetValue("Authentication:AccessTokenExpirationMinutes", 60);
+        var accessToken = GenerateAccessToken(user.Principal, expirationMinutes, refresher);
 
         var refreshToken = await commandExecutor.Execute<UserTokenCreateRequest, UserTokenCreateResponse>(
             new UserTokenCreateRequest(
@@ -57,12 +57,10 @@ public class UserTokenService(
         );
     }
 
-    private string GenerateAccessToken(ClaimsPrincipal principal, IAuthProviderRefresher? refresher = null)
+    private string GenerateAccessToken(ClaimsPrincipal principal, int expirationMinutes, IAuthProviderRefresher? refresher = null)
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-        var expirationMinutes = configuration.GetValue("Authentication:AccessTokenExpirationMinutes", 60);
 
         var allowedClaimTypes = refresher != null
             ? UserPrincipal.BaseClaimTypes.Union(refresher.PublicClaimTypes)
