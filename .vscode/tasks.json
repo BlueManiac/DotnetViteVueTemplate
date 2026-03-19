@@ -1,9 +1,7 @@
 {
     "version": "2.0.0",
     "options": {
-        "env": {
-            "DOTNET_WATCH_RESTART_ON_RUDE_EDIT": "true"
-        }
+        "env": {}
     },
     "tasks": [
         {
@@ -39,7 +37,8 @@
                 "watch",
                 "run",
                 "--project",
-                "${workspaceFolder}\\src\\Web\\Web.csproj"
+                "${workspaceFolder}\\src\\Web\\Web.csproj",
+                "--non-interactive"
             ],
             "problemMatcher": "$msCompile",
             "presentation": {
