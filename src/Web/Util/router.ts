@@ -1,7 +1,7 @@
 ﻿import { watch } from 'vue'
 import { createRouter, createWebHistory, RouteLocationNormalizedLoaded, RouteRecordRaw } from 'vue-router'
 import { Profile } from '../Features/Auth/Profile'
-import type { TokenValidator } from '../Features/Auth/TokenValidator'
+import type { TokenValidator } from '../Features/Auth/Shared/TokenValidator'
 import { routes } from '../routes'
 
 const routeMap = new Map<string, RouteRecordRaw>()

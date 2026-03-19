@@ -1,10 +1,10 @@
 using Web.Util.Modules;
 
-namespace Web.Features.Auth.Password;
+namespace Web.Features.Auth.Providers.EmailPassword;
 
 public class PasswordAuthModule : IModule
 {
-    public const string PROVIDER_NAME = "password";
+    public const string PROVIDER_NAME = "email-password";
 
     public record LoginRequest(string UserName, string Password);
 

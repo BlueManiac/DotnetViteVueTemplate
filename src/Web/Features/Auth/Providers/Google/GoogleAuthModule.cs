@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.Extensions.Caching.Memory;
 using Web.Util.Modules;
 
-namespace Web.Features.Auth.Google;
+namespace Web.Features.Auth.Providers.Google;
 
 public class GoogleAuthModule : IModule
 {

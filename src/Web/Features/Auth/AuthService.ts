@@ -4,7 +4,7 @@ import { inject, onMounted, watch } from "vue"
 import { useRoute } from "vue-router"
 import { NotificationService } from "../Infrastructure/Notifications/notifications"
 import { Profile } from "./Profile"
-import { TokenValidator } from "./TokenValidator"
+import { TokenValidator } from "./Shared/TokenValidator"
 import { ApiService } from "/ApiService"
 
 type UserResponse = {

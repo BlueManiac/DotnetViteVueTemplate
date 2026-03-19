@@ -8,7 +8,7 @@ using System.Security.Claims;
 using System.Text.RegularExpressions;
 using Web.Util.Modules;
 
-namespace Web.Features.Auth.Microsoft;
+namespace Web.Features.Auth.Providers.Microsoft;
 
 /// <summary>
 /// Microsoft Entra ID (Azure AD) authentication provider using OpenID Connect.

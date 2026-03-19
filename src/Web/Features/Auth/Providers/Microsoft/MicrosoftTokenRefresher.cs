@@ -1,10 +1,8 @@
 using System.Collections.Immutable;
-using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text.Json.Serialization;
-using Web.Features.Auth;
 
-namespace Web.Features.Auth.Microsoft;
+namespace Web.Features.Auth.Providers.Microsoft;
 
 /// <summary>
 /// Implements token refresh for Microsoft Entra ID authentication.

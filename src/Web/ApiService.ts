@@ -1,7 +1,7 @@
 import { until } from '@vueuse/core'
 import type { InjectionKey } from 'vue'
 import { Profile } from './Features/Auth/Profile'
-import { TokenValidator } from './Features/Auth/TokenValidator'
+import { TokenValidator } from './Features/Auth/Shared/TokenValidator'
 import { HealthService } from './Features/Infrastructure/Health/HealthService'
 import { AppConfig } from './Util/AppConfig'
 import { useApi } from '/Util/Client/fetch'

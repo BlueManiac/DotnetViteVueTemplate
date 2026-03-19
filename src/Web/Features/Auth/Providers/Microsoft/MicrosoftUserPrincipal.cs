@@ -1,6 +1,6 @@
 using System.Security.Claims;
 
-namespace Web.Features.Auth.Microsoft;
+namespace Web.Features.Auth.Providers.Microsoft;
 
 public class MicrosoftUserPrincipal : UserPrincipal
 {
