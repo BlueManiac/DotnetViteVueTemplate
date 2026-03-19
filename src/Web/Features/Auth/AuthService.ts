@@ -1,6 +1,6 @@
 import { computedAsync } from "@vueuse/core"
 import type { InjectionKey } from "vue"
-import { inject, watch } from "vue"
+import { inject, onMounted, watch } from "vue"
 import { useRoute } from "vue-router"
 import { NotificationService } from "../Infrastructure/Notifications/notifications"
 import { Profile } from "./Profile"
@@ -99,24 +99,25 @@ export class AuthService {
 }
 
 /**
- * Composable to handle authentication callback with tokens in URL query parameters.
- * Works with any authentication method that redirects back with accessToken, expiresIn, refreshToken, and tokenType.
+ * Composable to handle OAuth authentication callbacks.
+ * Exchanges the one-time code from the URL for tokens via the backend,
+ * keeping tokens out of browser history and server logs.
  */
 export function useAuthCallback(onSuccess?: () => void) {
   const profile = inject(Profile.token)!
-  const authService = inject(AuthService.token)!
+  const api = inject(ApiService.token)!
   const route = useRoute()
 
-  const { accessToken, expiresIn, refreshToken, tokenType } = route.query as Record<keyof AccessTokenResponse, string>
+  onMounted(async () => {
+    const code = route.query.code as string | undefined
+    if (!code) return
 
-  if (accessToken && expiresIn && refreshToken) {
-    profile.setAuthTokens({
-      accessToken,
-      expiresIn: parseInt(expiresIn),
-      refreshToken,
-      tokenType: tokenType || 'Bearer'
-    })
-
-    onSuccess?.()
-  }
+    try {
+      const data = await api.post<AccessTokenResponse>('/auth/exchange', { code }, { auth: false })
+      profile.setAuthTokens(data)
+      onSuccess?.()
+    } catch {
+      // Code expired or already used
+    }
+  })
 }

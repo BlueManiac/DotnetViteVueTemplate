@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.Tokens;
 using Persistence.Auth;
 using Persistence.Auth.Claims;
@@ -11,6 +12,7 @@ using Persistence.Auth.Users;
 using Persistence.Auth.Users.Queries;
 using Persistence.Shared.Cqrs;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Web.Util.Modules;
 
@@ -93,29 +95,37 @@ public class AuthModule : IModule
             return new UserPrincipal(httpContext?.User ?? new ClaimsPrincipal());
         });
         builder.Services.AddScoped<ICurrentUser>(static sp => sp.GetRequiredService<UserPrincipal>());
+
+        // Needed for auth token exchange caching
+        builder.Services.AddMemoryCache();
     }
 
     public record UserResponse(string Name, string? Email, string? Provider);
+    public record ExchangeCodeRequest(string Code);
+
+    private static string ExchangeCacheKey(string code)
+    {
+        return $"auth_exchange:{code}";
+    }
 
     /// <summary>
-    /// Creates JWT access token and database-backed refresh token, then redirects to the frontend.
+    /// Issues tokens, stores them under a short-lived one-time code, and redirects to the frontend
+    /// with only the code in the URL. The frontend exchanges the code for tokens via POST /auth/exchange.
     /// </summary>
     public static async Task<IResult> CreateTokenRedirect(
         UserPrincipal user,
         HttpContext context,
         IConfiguration configuration,
         UserTokenService tokenService,
-        AuthenticationProperties? authProperties)
+        AuthenticationProperties? authProperties,
+        IMemoryCache cache)
     {
         var tokens = await tokenService.IssueTokensAsync(user, context.Request.Headers.UserAgent.ToString());
 
-        var queryParams = new Dictionary<string, string?>
-        {
-            ["accessToken"] = tokens.AccessToken,
-            ["tokenType"] = tokens.TokenType,
-            ["expiresIn"] = tokens.ExpiresIn.ToString(),
-            ["refreshToken"] = tokens.RefreshToken
-        };
+        var code = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
+        cache.Set(ExchangeCacheKey(code), tokens, TimeSpan.FromMinutes(5));
+
+        var queryParams = new Dictionary<string, string?> { ["code"] = code };
 
         if (authProperties?.Items.TryGetValue("redirect", out var redirect) == true)
         {
@@ -193,6 +203,19 @@ public class AuthModule : IModule
         group.MapGet("/providers", static (AuthProviders providers) =>
         {
             return TypedResults.Ok(new { providers = providers.Providers });
+        })
+        .AllowAnonymous();
+
+        group.MapPost("/exchange", (ExchangeCodeRequest request, IMemoryCache cache) =>
+        {
+            var cacheKey = ExchangeCacheKey(request.Code);
+            if (!cache.TryGetValue<UserTokenService.TokenResponse>(cacheKey, out var tokens) || tokens is null)
+            {
+                return Results.Unauthorized();
+            }
+
+            cache.Remove(cacheKey);
+            return TypedResults.Ok(tokens);
         })
         .AllowAnonymous();
 

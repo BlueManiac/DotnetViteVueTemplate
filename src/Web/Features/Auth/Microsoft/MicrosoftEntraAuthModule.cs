@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.WebUtilities;
-using Persistence.Shared.Cqrs;
+using Microsoft.Extensions.Caching.Memory;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
 using Web.Util.Modules;
@@ -244,6 +244,7 @@ public class MicrosoftEntraAuthModule : IModule
             HttpContext context,
             IConfiguration configuration,
             UserTokenService tokenService,
+            IMemoryCache cache,
             ILogger<MicrosoftEntraAuthModule> logger) =>
         {
             var authenticateResult = await context.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -276,7 +277,7 @@ public class MicrosoftEntraAuthModule : IModule
                 AccessTokenExpiresAt = cookieUser.AccessTokenExpiresAt
             };
 
-            return await AuthModule.CreateTokenRedirect(user, context, configuration, tokenService, authenticateResult.Properties);
+            return await AuthModule.CreateTokenRedirect(user, context, configuration, tokenService, authenticateResult.Properties, cache);
         })
         .AllowAnonymous();
     }
