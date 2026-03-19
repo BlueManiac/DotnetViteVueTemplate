@@ -26,4 +26,9 @@ export function setupBrowserRefresh() {
   const script = document.createElement('script')
   script.src = `${import.meta.env.VITE_BACKEND_URL}/_framework/aspnetcore-browser-refresh.js`
   document.body.appendChild(script)
+
+  // Workaround for dotnet compile error overlay staying visible when there are no errors
+  const style = document.createElement('style')
+  style.textContent = '#dotnet-compile-error:empty { display: none; }'
+  document.head.appendChild(style)
 }
