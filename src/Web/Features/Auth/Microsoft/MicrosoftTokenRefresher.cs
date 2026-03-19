@@ -1,7 +1,4 @@
-using Persistence.Auth.Claims;
-using Persistence.Auth.Claims.Commands;
-using Persistence.Auth.Claims.Queries;
-using Persistence.Shared.Cqrs;
+using System.Collections.Immutable;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text.Json.Serialization;
@@ -27,60 +24,15 @@ public class MicrosoftTokenRefresher(
 
     public string ProviderName => MicrosoftEntraAuthModule.PROVIDER_NAME;
 
-    public async Task PersistTokensAsync(UserPrincipal user, CommandExecutor commandExecutor)
-    {
-        if (user.UserId == null) return;
+    public IReadOnlySet<string> PublicClaimTypes { get; } = ImmutableHashSet.Create(
+        MicrosoftUserPrincipal.CLAIM_OBJECT_ID
+    );
 
-        var msUser = new MicrosoftUserPrincipal(user.Principal, _serviceProvider);
-
-        if (msUser.AccessToken == null) return;
-
-        var claims = new[]
-        {
-            (MicrosoftUserPrincipal.CLAIM_ACCESS_TOKEN, msUser.AccessToken),
-            (MicrosoftUserPrincipal.CLAIM_REFRESH_TOKEN, msUser.RefreshToken),
-            (MicrosoftUserPrincipal.CLAIM_ACCESS_TOKEN_EXPIRES_AT, msUser.AccessTokenExpiresAt?.ToString("o"))
-        };
-
-        await commandExecutor.Execute<UserClaimsSetRequest>(
-            new UserClaimsSetRequest(user.UserId.Value, MicrosoftEntraAuthModule.PROVIDER_NAME, claims)
-        );
-
-        // Strip provider tokens from the principal so they are not embedded in the JWT
-        msUser.AccessToken = null;
-        msUser.RefreshToken = null;
-        msUser.AccessTokenExpiresAt = null;
-    }
-
-    public async Task LoadTokensAsync(UserPrincipal user, QueryExecutor queryExecutor)
-    {
-        if (user.UserId == null) return;
-
-        var claims = await queryExecutor.Execute<UserClaimRequest, IAsyncEnumerable<UserClaim>>(
-            new UserClaimRequest(user.UserId.Value, MicrosoftEntraAuthModule.PROVIDER_NAME)
-        );
-
-        var msUser = new MicrosoftUserPrincipal(user.Principal, _serviceProvider);
-
-        await foreach (var claim in claims)
-        {
-            switch (claim.ClaimType)
-            {
-                case MicrosoftUserPrincipal.CLAIM_ACCESS_TOKEN:
-                    msUser.AccessToken = claim.ClaimValue;
-                    break;
-                case MicrosoftUserPrincipal.CLAIM_REFRESH_TOKEN:
-                    msUser.RefreshToken = claim.ClaimValue;
-                    break;
-                case MicrosoftUserPrincipal.CLAIM_ACCESS_TOKEN_EXPIRES_AT:
-                    if (DateTimeOffset.TryParse(claim.ClaimValue, out var expiresAt))
-                    {
-                        msUser.AccessTokenExpiresAt = expiresAt;
-                    }
-                    break;
-            }
-        }
-    }
+    public IReadOnlySet<string> PrivateClaimTypes { get; } = ImmutableHashSet.Create(
+        MicrosoftUserPrincipal.CLAIM_ACCESS_TOKEN,
+        MicrosoftUserPrincipal.CLAIM_REFRESH_TOKEN,
+        MicrosoftUserPrincipal.CLAIM_ACCESS_TOKEN_EXPIRES_AT
+    );
 
     public async Task RefreshTokensAsync(ClaimsPrincipal principal)
     {

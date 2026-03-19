@@ -28,6 +28,21 @@ public class QueryExecutor(IServiceProvider serviceProvider)
             return (await queryable.FirstOrDefaultAsync(cancellationToken))!;
         }
 
+        if (typeof(TResult).IsGenericType && typeof(TResult).GetGenericTypeDefinition() == typeof(List<>))
+        {
+            var innerType = typeof(TResult).GetGenericArguments()[0];
+            var queryableType = typeof(IQueryable<>).MakeGenericType(innerType);
+            var queryType = typeof(IQuery<,>).MakeGenericType(typeof(TRequest), queryableType);
+
+            var queryHandler = _serviceProvider.GetService(queryType);
+            if (queryHandler is not null)
+            {
+                dynamic handler = queryHandler;
+                dynamic queryable = handler.Execute(request, cancellationToken);
+                return (TResult)(object)await ToListAsync(queryable, cancellationToken);
+            }
+        }
+
         if (typeof(TResult).IsGenericType && typeof(TResult).GetGenericTypeDefinition() == typeof(IAsyncEnumerable<>))
         {
             var innerType = typeof(TResult).GetGenericArguments()[0];
@@ -44,5 +59,10 @@ public class QueryExecutor(IServiceProvider serviceProvider)
         }
 
         throw new InvalidOperationException($"No query handler found for request '{typeof(TRequest).Name}' with result '{typeof(TResult).Name}', 'Task<{typeof(TResult).Name}>', or 'IQueryable<{typeof(TResult).Name}>'");
+    }
+
+    private static Task<List<T>> ToListAsync<T>(IQueryable<T> source, CancellationToken ct)
+    {
+        return source.ToListAsync(ct);
     }
 }

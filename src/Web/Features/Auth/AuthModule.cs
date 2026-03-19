@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.IdentityModel.Tokens;
 using Persistence.Auth;
+using Persistence.Auth.Claims;
 using Persistence.Auth.Tokens.Commands;
 using Persistence.Auth.Users;
 using Persistence.Auth.Users.Queries;
@@ -60,6 +61,24 @@ public class AuthModule : IModule
                             context.Token = accessToken;
                         }
                         return Task.CompletedTask;
+                    },
+                    OnTokenValidated = async context =>
+                    {
+                        var services = context.HttpContext.RequestServices;
+                        var user = new UserPrincipal(context.Principal!);
+                        var loader = services.GetRequiredService<UserClaimService>();
+
+                        var loadedClaims = await loader.GetClaimsAsync(user);
+                        if (loadedClaims.Count == 0) return;
+
+                        var identity = user.Identity;
+                        if (identity == null) return;
+
+                        var loadedTypes = new HashSet<string>(loadedClaims.Select(c => c.Type));
+                        var toRemove = identity.Claims.Where(c => loadedTypes.Contains(c.Type)).ToList();
+                        foreach (var claim in toRemove) identity.TryRemoveClaim(claim);
+
+                        identity.AddClaims(loadedClaims);
                     }
                 };
             });
@@ -118,6 +137,7 @@ public class AuthModule : IModule
             UserTokenService tokenService,
             CommandExecutor commandExecutor,
             QueryExecutor queryExecutor,
+            UserClaimService claimsLoader,
             IEnumerable<IAuthProviderRefresher> tokenRefreshers,
             ILogger<AuthModule> logger) =>
         {
@@ -143,15 +163,15 @@ public class AuthModule : IModule
                 user.Name = userRecord.Name;
                 user.Provider = userRecord.Provider;
 
-                // Support refresh external provider tokens if authenticated via external provider
+                // Load all DB-backed claims (e.g. provider tokens) into the fresh principal
+                user.Identity?.AddClaims(await claimsLoader.GetClaimsAsync(user));
+
+                // Refresh external provider tokens if authenticated via external provider
                 var refresher = tokenRefreshers.FirstOrDefault(r => r.ProviderName == user.Provider);
                 if (refresher != null)
                 {
                     try
                     {
-                        // Provider tokens are stored in the DB, not in the JWT — load them before refreshing
-                        await refresher.LoadTokensAsync(user, queryExecutor);
-                        // Refresh the provider's access token (e.g. get a new Google/Microsoft token using the stored refresh token)
                         await refresher.RefreshTokensAsync(user.Principal);
                     }
                     catch (Exception ex)

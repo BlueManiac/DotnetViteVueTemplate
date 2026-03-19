@@ -13,7 +13,9 @@ public class AuthFeature : IFeature, IEntityConfiguration
 {
     public IServiceCollection AddServices(IServiceCollection services, IConfiguration configuration)
     {
+        services.AddMemoryCache();
         services.AddHostedService<UserTokenCleanupService>();
+        services.AddScoped<UserClaimService>();
 
         return services;
     }

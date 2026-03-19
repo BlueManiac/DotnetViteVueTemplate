@@ -4,6 +4,7 @@ namespace Web.Features.Auth.Microsoft;
 
 public class MicrosoftUserPrincipal : UserPrincipal
 {
+    public const string CLAIM_OBJECT_ID = "oid";
     public const string CLAIM_ACCESS_TOKEN = "microsoft_access_token";
     public const string CLAIM_REFRESH_TOKEN = "microsoft_refresh_token";
     public const string CLAIM_ACCESS_TOKEN_EXPIRES_AT = "microsoft_access_token_expires_at";

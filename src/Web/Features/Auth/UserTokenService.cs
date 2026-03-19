@@ -1,4 +1,5 @@
 using Microsoft.IdentityModel.Tokens;
+using Persistence.Auth.Claims;
 using Persistence.Auth.Tokens.Commands;
 using Persistence.Auth.Users.Commands;
 using Persistence.Shared.Cqrs;
@@ -11,6 +12,7 @@ namespace Web.Features.Auth;
 public class UserTokenService(
     IConfiguration configuration,
     CommandExecutor commandExecutor,
+    UserClaimService claimsLoader,
     IEnumerable<IAuthProviderRefresher> tokenRefreshers)
 {
     public record TokenResponse(string AccessToken, string RefreshToken, int ExpiresIn, string TokenType = "Bearer");
@@ -30,14 +32,15 @@ public class UserTokenService(
 
         user.UserId = userId;
 
-        // Persist provider tokens to DB and strip them from the principal before JWT generation
+        // Persist provider tokens to DB before JWT generation
         var refresher = tokenRefreshers.FirstOrDefault(r => r.ProviderName == user.Provider);
         if (refresher != null)
         {
             await refresher.PersistTokensAsync(user, commandExecutor);
+            claimsLoader.Invalidate(refresher.ProviderName, userId);
         }
 
-        var accessToken = GenerateAccessToken(user.Principal);
+        var accessToken = GenerateAccessToken(user.Principal, refresher);
         var expirationMinutes = configuration.GetValue("Authentication:AccessTokenExpirationMinutes", 60);
 
         var refreshToken = await commandExecutor.Execute<UserTokenCreateRequest, UserTokenCreateResponse>(
@@ -54,17 +57,23 @@ public class UserTokenService(
         );
     }
 
-    private string GenerateAccessToken(ClaimsPrincipal principal)
+    private string GenerateAccessToken(ClaimsPrincipal principal, IAuthProviderRefresher? refresher = null)
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var expirationMinutes = configuration.GetValue("Authentication:AccessTokenExpirationMinutes", 60);
 
+        var allowedClaimTypes = refresher != null
+            ? UserPrincipal.BaseClaimTypes.Union(refresher.PublicClaimTypes)
+            : UserPrincipal.BaseClaimTypes;
+
+        var claims = principal.Claims.Where(c => allowedClaimTypes.Contains(c.Type));
+
         var token = new JwtSecurityToken(
             issuer: configuration["Jwt:Issuer"],
             audience: configuration["Jwt:Audience"],
-            claims: principal.Claims,
+            claims: claims,
             expires: DateTime.UtcNow.AddMinutes(expirationMinutes),
             signingCredentials: creds);
 

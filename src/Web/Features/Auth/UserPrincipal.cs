@@ -8,6 +8,17 @@ public class UserPrincipal(ClaimsPrincipal principal) : ICurrentUser
 {
     public const string CLAIM_AUTH_PROVIDER = "auth_provider";
 
+    /// <summary>
+    /// Claim types always included in the JWT regardless of provider.
+    /// </summary>
+    public static readonly IReadOnlySet<string> BaseClaimTypes = new HashSet<string>
+    {
+        ClaimTypes.NameIdentifier,
+        ClaimTypes.Name,
+        ClaimTypes.Email,
+        CLAIM_AUTH_PROVIDER
+    };
+
     protected readonly ClaimsPrincipal _principal = principal;
 
     public static UserPrincipal Create()
@@ -44,6 +55,7 @@ public class UserPrincipal(ClaimsPrincipal principal) : ICurrentUser
     public bool IsAuthenticated => _principal.Identity?.IsAuthenticated ?? false;
 
     public ClaimsPrincipal Principal => _principal;
+    public ClaimsIdentity? Identity => _principal.Identity as ClaimsIdentity;
 
     protected void SetClaim(string type, string? value)
     {

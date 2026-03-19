@@ -1,4 +1,6 @@
+using Persistence.Auth.Claims.Commands;
 using Persistence.Shared.Cqrs;
+using System.Collections.Immutable;
 using System.Security.Claims;
 
 namespace Web.Features.Auth;
@@ -17,6 +19,19 @@ public interface IAuthProviderRefresher
     string ProviderName { get; }
 
     /// <summary>
+    /// Claim types that should be included in the JWT in addition to the base <see cref="UserPrincipal.BaseClaimTypes"/>.
+    /// All other provider-specific claims are excluded by default.
+    /// </summary>
+    IReadOnlySet<string> PublicClaimTypes => ImmutableHashSet<string>.Empty;
+
+    /// <summary>
+    /// Claim types that are persisted to the database and excluded from the JWT.
+    /// The default <see cref="PersistTokensAsync"/> implementation automatically saves these claims.
+    /// They are reloaded into the principal by <see cref="UserClaimService"/> on the next request.
+    /// </summary>
+    IReadOnlySet<string> PrivateClaimTypes => ImmutableHashSet<string>.Empty;
+
+    /// <summary>
     /// Refreshes the provider's tokens and optionally updates related claims.
     /// The principal's claims can be modified in-place.
     /// Throw an exception to signal failure; the caller will log a warning.
@@ -27,11 +42,20 @@ public interface IAuthProviderRefresher
     /// Persists provider-specific tokens to the database and strips them from the principal
     /// so they are not embedded in the JWT. Called during token issuance.
     /// </summary>
-    Task PersistTokensAsync(UserPrincipal user, CommandExecutor commandExecutor) => Task.CompletedTask;
+    async Task PersistTokensAsync(UserPrincipal user, CommandExecutor commandExecutor)
+    {
+        if (PrivateClaimTypes.Count == 0 || user.UserId == null) return;
 
-    /// <summary>
-    /// Loads persisted provider tokens from the database into the principal's claims.
-    /// Called before <see cref="RefreshTokensAsync"/> during JWT refresh.
-    /// </summary>
-    Task LoadTokensAsync(UserPrincipal user, QueryExecutor queryExecutor) => Task.CompletedTask;
+        var claims = user.Principal.Claims
+            .Where(c => PrivateClaimTypes.Contains(c.Type))
+            .Select(c => (c.Type, (string?)c.Value))
+            .ToArray();
+
+        if (claims.Length == 0) return;
+
+        await commandExecutor.Execute(
+            new UserClaimsSetRequest(user.UserId.Value, ProviderName, claims)
+        );
+    }
+
 }

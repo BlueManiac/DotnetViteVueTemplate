@@ -13,7 +13,7 @@ public class UserClaimsSetCommand(DbContext db) : ICommand<UserClaimsSetRequest>
 {
     public async Task ExecuteAsync(UserClaimsSetRequest request, CancellationToken ct)
     {
-        var claimTypes = request.Claims.Select(c => c.ClaimType).ToList();
+        var claimTypes = request.Claims.Select(c => c.ClaimType).ToHashSet();
 
         var existing = await db.Set<UserClaim>()
             .Where(c => c.UserId == request.UserId && c.Provider == request.Provider && claimTypes.Contains(c.ClaimType))
