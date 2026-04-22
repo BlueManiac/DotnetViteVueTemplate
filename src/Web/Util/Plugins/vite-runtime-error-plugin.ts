@@ -38,7 +38,26 @@ export function viteRuntimeErrorOverlayPlugin(options?: {
     },
 
     configureServer(server) {
+      let lastLoadedTime = 0
+      let lastErrorTime = 0
+
+      // Log markers for VS Code's background problem matcher.
+      // The problem matcher uses begin/end patterns to cycle error reporting:
+      // - "Client loaded successfully." signals a clean load (end pattern, clears errors)
+      // - "Client error reported." signals an error was captured (end pattern, keeps errors)
+      // Debounce prevents duplicate messages from multiple browser tabs.
+      server.ws.on(`${packageName}:loaded`, () => {
+        const now = Date.now()
+        if (now - lastLoadedTime < 500) return
+        lastLoadedTime = now
+        server.config.logger.info('Client loaded successfully.', { timestamp: true })
+      })
+
       server.ws.on(MESSAGE_TYPE, (data: unknown, client: WebSocketClient) => {
+        const now = Date.now()
+        if (now - lastErrorTime < 500) return
+        lastErrorTime = now
+
         const error = Object.assign(new Error(), data)
 
         if (options?.filter && !options.filter(error)) {
@@ -66,6 +85,8 @@ export function viteRuntimeErrorOverlayPlugin(options?: {
           timestamp: true,
           error: err,
         })
+
+        server.config.logger.info('Client error reported.', { timestamp: true }) // VS Code problem matcher end marker
 
         // https://vitejs.dev/guide/api-plugin.html#client-server-communication
         // https://github.com/vitejs/vite/blob/5b58eca05939c0667cf9698e83f4f4849f3296f4/packages/vite/src/node/server/middlewares/error.ts#L54-L57
@@ -105,6 +126,11 @@ window.addEventListener("error", (evt) => {
 window.addEventListener("unhandledrejection", (evt) => {
   sendError(evt.reason);
 });
+
+// Notify server that client loaded successfully (for VS Code problem matcher)
+if (window.top === window.self) {
+  hot.send("${packageName}:loaded");
+}
 
 `
 

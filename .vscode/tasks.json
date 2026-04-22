@@ -33,14 +33,23 @@
             "label": "watch backend",
             "command": "dotnet",
             "type": "process",
+            "isBackground": true,
             "args": [
                 "watch",
                 "run",
                 "--project",
                 "${workspaceFolder}\\src\\Web\\Web.csproj",
-                "--non-interactive"
+                "--launch-profile",
+                "Web"
             ],
-            "problemMatcher": "$msCompile",
+            "problemMatcher": {
+                "base": "$msCompile",
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "Building",
+                    "endsPattern": "Application started"
+                }
+            },
             "presentation": {
                 "reveal": "always",
                 "panel": "new",
@@ -51,11 +60,49 @@
         {
             "label": "watch frontend",
             "type": "shell",
+            "isBackground": true,
             "command": "powershell",
             "args": [
                 "${workspaceFolder}/src/Web/Properties/npmrun.ps1"
             ],
-            "problemMatcher": [],
+            "problemMatcher": [
+                {
+                    "pattern": {
+                        "regexp": "^$"
+                    },
+                    "background": {
+                        "activeOnStart": true,
+                        "beginsPattern": "VITE.*ready",
+                        "endsPattern": "Local:.*https?://localhost"
+                    }
+                },
+                {
+                    "owner": "vite-runtime",
+                    "source": "vite-runtime",
+                    "fileLocation": "absolute",
+                    "severity": "error",
+                    "pattern": [
+                        {
+                            "regexp": "^\\S+\\s+\\[vite\\]\\s+Client error:\\s+(.+)$",
+                            "message": 1
+                        },
+                        {
+                            "regexp": "^\\s+Plugin:\\s+vite-runtime-error-plugin$"
+                        },
+                        {
+                            "regexp": "^\\s+File:\\s+(.+):(\\d+):(\\d+)$",
+                            "file": 1,
+                            "line": 2,
+                            "column": 3
+                        }
+                    ],
+                    "background": {
+                        "activeOnStart": false,
+                        "beginsPattern": "\\[vite\\].*page reload|\\[vite\\].*hmr",
+                        "endsPattern": "Client error reported\\.|Client loaded successfully\\."
+                    }
+                }
+            ],
             "presentation": {
                 "reveal": "always",
                 "panel": "new",
