@@ -18,11 +18,11 @@
       // Vue types
       "vue"
     ],
-    "baseUrl": "./",
+    "rootDir": "./",
     "paths": {
       // Support absolute imports
       "/*": [
-        "*"
+        "./*"
       ]
     }
   }
